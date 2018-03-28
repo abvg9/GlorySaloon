@@ -346,6 +346,51 @@ public class HomeController {
 	}	
 
 	/**
+	 * Mapeo de saloon
+	 */
+	@RequestMapping(value = "/saloon", method = RequestMethod.GET)
+	public String saloon(Locale locale, Model model) {
+		return "saloon";
+		
+	}	
+
+	/**
+	 * Mapeo de reglas
+	 */
+	@RequestMapping(value = "/reglas", method = RequestMethod.GET)
+	public String reglas(Locale locale, Model model) {
+		return "reglas";
+		
+	}	
+	
+	/**
+	 * Mapeo de foro
+	 */
+	@RequestMapping(value = "/foro", method = RequestMethod.GET)
+	public String foro(Locale locale, Model model) {
+		return "foro";
+		
+	}	
+	
+	/**
+	 * Mapeo de ranking
+	 */
+	@RequestMapping(value = "/ranking", method = RequestMethod.GET)
+	public String ranking(Locale locale, Model model) {
+		return "ranking";
+		
+	}	
+	
+	/**
+	 * Mapeo de compras
+	 */
+	@RequestMapping(value = "/compras", method = RequestMethod.GET)
+	public String compras(Locale locale, Model model) {
+		return "compras";
+		
+	}	
+	
+	/**
 	 * A not-very-dynamic view that shows an "about us".
 	 */
 	@RequestMapping(value = "/about", method = RequestMethod.GET)
