@@ -5,9 +5,12 @@ body {
 	padding: 0;
 }
 
-div#header {
-	height: 100px; /* alto del logo */
-	background: #ffffff url('../img/logo.jpg') no-repeat fixed;
+div#header { /* alto del logo */
+	height: 200px;
+	width: 1800px;
+	display: block;
+	margin:auto;
+	background: #ffffff url('../img/headerExtenso.jpg') no-repeat;
 	border-bottom: 1px solid black; 
 }
 div#header a#cajaMain {
