@@ -7,10 +7,14 @@
 <%@ include file="../jspf/header.jspf"%>
 
 <div class="starter-template">
-	<h1>Home</h1>
-	<p class="lead">Bienvenido a casa</p>
+	<h1>¡Bienvenido!</h1>
+	<div class="containerImgSaloon">IMAGEN1</div>
+	<div class="containerImgReglas">IMAGEN2</div>
+	<div class="containerImgForo">IMAGEN3</div>
+	<div class="containerImgRank">IMAGEN4</div>
+	<div class="containerImgCompras">IMAGEN5</div>
 
-	<%@ include file="../jspf/authinfo.jspf"%>		
+	<!--<%@ include file="../jspf/authinfo.jspf"%>	-->	
 </div>
 
 <%@ include file="../jspf/footer.jspf"%>
