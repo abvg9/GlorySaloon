@@ -4,7 +4,7 @@ FASE 1
 		Id, nombre, password, puntuaciones, amigos, dinero, estadísticas, email, ¿img?, ¿nacionalidad?
 1. Crear un registro
 2. Diseño básico en html de HEADER	
-3. Diseño básico en html de HOME
+3. Diseño básico en html de HOME		(En curso: Pablo)
 4. Diseño básico en html de COMPRAS
 5. Diseño básico en html de FORO
 6. Diseño básico en html de REGLAS
