@@ -2,13 +2,14 @@
 <%@ taglib prefix="sec"
 	uri="http://www.springframework.org/security/tags"%>
 
+<br><br><br><br><br>
 <sec:authorize access="isAnonymous()">
 <div>
-	No estás registrado.
+	¿Todavía no estás registrado? Regístrate <a>aquí</a>
 </div>
 </sec:authorize>
 <sec:authorize access="isAuthenticated()">
-<div>
+<div >
 	<p>Tu usuario es : <sec:authentication property="principal.username" />    
 	<p>Roles detectados: 
 	<sec:authorize access="hasRole('USER')">

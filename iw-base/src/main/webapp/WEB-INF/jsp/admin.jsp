@@ -38,7 +38,7 @@
 	</tbody>
 	</table>
 
-	<%@ include file="../jspf/authinfo.jspf"%>		
+	<!--<%@ include file="../jspf/authinfo.jspf"%>	-->	
 </div>
 
 <%@ include file="../jspf/footer.jspf"%>

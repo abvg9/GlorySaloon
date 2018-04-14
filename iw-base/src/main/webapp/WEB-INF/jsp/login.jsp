@@ -7,25 +7,28 @@
 <%@ include file="../jspf/header.jspf"%>
 
 <div class="starter-template">
-	<h1>Registro</h1>
-
+	<h1>¡Inicia sesión!</h1>
+	<br><br><br>
     <form action="/login" method="post">               
         <fieldset>
-            <legend>Please Login</legend>
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username"/>        
-            <label for="password">Password</label>
+           <!-- <legend>Please Login</legend> --> 
+           <div class = "rightAl">
+            <label for="username">Usuario</label>
+            <input type="text" id="username" name="username"/><br><br>
+            <label for="password">Contraseña</label>
             <input type="password" id="password" name="password"/>
-            
+            </div>
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-            
+            <br>
             <div class="form-actions">
-                <button type="submit" class="btn">Log in</button>
+                <button type="submit" class="btn rightAlBtn">Entrar</button>
             </div>
         </fieldset>
     </form>
-
-	<%@ include file="../jspf/authinfo.jspf"%>		
+	<br><br><br><br><br>
+	<div>
+	¿Todavía no estás registrado? Regístrate <a>aquí</a>
+	</div>		
 </div>
 
 <%@ include file="../jspf/footer.jspf"%>
