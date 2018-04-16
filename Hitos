@@ -1,7 +1,7 @@
 FASE 1
 
 0. Creacion de usuarios, modificacion, acceso, eliminación.
-		Id, nombre, password, puntuaciones, amigos, dinero, estadísticas, email, ¿img?, ¿nacionalidad?
+		Id, nombre, password, puntuaciones, amigos, dinero, estadísticas, email, ¿img?, ¿nacionalidad? (En curso: Velas)
 1. Crear un registro
 2. Diseño básico en html de HEADER	
 3. Diseño básico en html de HOME		(En curso: Pablo)
@@ -28,7 +28,7 @@ FASE 1
 
 FASE 2
 
-1. Diseño de esqueletos de los datos:
+1. Diseño de esqueletos de los datos: (En curso: Velas)
 	Creación dinámica de tablas -> Partida (jugada, usuarios implicados, puntuacion actual(nota: es en función del dinero/fichas), cartas distribuidas y por distribuir, )
 	Estadisticas (Clave principal id_usuario)
 	Foro( FORERO(mensajes, fechas, bool responde, nombre), 
