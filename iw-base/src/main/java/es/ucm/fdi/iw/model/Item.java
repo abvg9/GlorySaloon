@@ -1,30 +1,23 @@
 package es.ucm.fdi.iw.model;
 
-import java.awt.image.BufferedImage;
+import java.util.List;
 
-import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 
+@Entity
 public class Item {
 	
 	private long id;
-	BufferedImage imagen;
 	private double precio;
 	private String nombre;
 	private String descripcion;
+	private List<User> propietarios;
 	
-	public BufferedImage getImagen() {
-		return imagen;
-	}
-
-	public void getImagen(BufferedImage imagen) {
-		this.imagen = imagen;
-	}
-
 	@Id
 	@GeneratedValue
-	@Column(unique=true)
 	public long getId() {
 		return id;
 	}
@@ -56,5 +49,15 @@ public class Item {
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
+
+	@ManyToMany(targetEntity=User.class)
+	public List<User> getPropietarios() {
+		return propietarios;
+	}
+
+	public void setPropietarios(List<User> propietarios) {
+		this.propietarios = propietarios;
+	}
+
 	
 }

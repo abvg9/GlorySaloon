@@ -1,21 +1,20 @@
 package es.ucm.fdi.iw.model;
 
-import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-
 import es.uc.fdi.iw.common.enums.Juegos;
 
+@Entity
 public class Reglas {
 	
 	private Juegos juego;
 	private String reglas;
 	private long id;
 	private String descripcion;
-		
+	
 	@Id
 	@GeneratedValue
-	@Column(unique=true)
 	public long getId() {
 		return id;
 	}
@@ -32,7 +31,6 @@ public class Reglas {
 		this.reglas = reglas;
 	}
 	
-	@Column(unique=true)
 	public Juegos getJuego() {
 		return juego;
 	}

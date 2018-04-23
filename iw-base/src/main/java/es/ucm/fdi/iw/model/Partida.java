@@ -1,20 +1,21 @@
 package es.ucm.fdi.iw.model;
 
 import java.util.List;
-
-import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+
 import es.uc.fdi.iw.common.enums.Juegos;
 
+@Entity
 public class Partida {
 	
 	private long id;
 	private List<User> jugadores;
 	private int MaxJugadores;
 	private Juegos juego;
-	private String contraseña;
+	private String pass;
 
 	// una partida tiene **muchos** jugadores
 	@OneToMany(targetEntity=User.class)
@@ -28,7 +29,6 @@ public class Partida {
 
 	@Id
 	@GeneratedValue
-	@Column(unique=true)
 	public long getId() {
 		return id;
 	}
@@ -54,11 +54,11 @@ public class Partida {
 	}
 
 	public String getContraseña() {
-		return contraseña;
+		return pass;
 	}
 
 	public void setContraseña(String contraseña) {
-		this.contraseña = contraseña;
+		this.pass = contraseña;
 	}
 	
 }

@@ -1,14 +1,14 @@
 package es.ucm.fdi.iw.model;
 
 import java.sql.Date;
-
-import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 import es.uc.fdi.iw.common.enums.Temas;
 
+@Entity
 public class ComentarioForo {
 	
 	private long id;
@@ -19,7 +19,6 @@ public class ComentarioForo {
 
 	@Id
 	@GeneratedValue
-	@Column(unique=true)
 	public long getId() {
 		return id;
 	}

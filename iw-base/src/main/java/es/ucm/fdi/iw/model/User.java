@@ -1,19 +1,19 @@
 package es.ucm.fdi.iw.model;
 
-import java.awt.image.BufferedImage;
 import java.util.List;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+
 import es.uc.fdi.iw.common.enums.Nacionalidades;
 
 @Entity
 public class User {
+	
+
 	private long id;
 	private String login; //nombre usuario
 	private String password;
@@ -22,20 +22,18 @@ public class User {
 	private double dinero;
 	private String email;
 	private Nacionalidades nacion;
-	BufferedImage imagen;
 	private List<User> amigos;
-	private List<ComentarioForo> comentFor;
-	private int pGanadas; //partidas ganadas
-	private int pPerdidas;
-	private int pJugadas;
+    private List<ComentarioForo> comentarios;
+	private int Pganadas; //partidas ganadas
+	private int Pperdidas;
+	private int Pjugadas;
 	private double Dperdido; //dinero perdido
 	private double Dganado;
-	private Partida partida;
+	private Partida partida;	
 	private List<Item> items;
 	
 	@Id
 	@GeneratedValue
-	@Column(unique=true)
 	public long getId() {
 		return id;
 	}
@@ -45,7 +43,6 @@ public class User {
 	}	
 
 	//Nombre.
-	@Column(unique=true)
 	public String getLogin() {
 		return login;
 	}
@@ -86,7 +83,6 @@ public class User {
 		this.dinero = dinero;
 	}
 
-	@Column(unique=true)
 	public String getEmail() {
 		return email;
 	}
@@ -102,16 +98,8 @@ public class User {
 	public void setNacion(Nacionalidades nacion) {
 		this.nacion = nacion;
 	}
-	
-	public BufferedImage getImagen() {
-		return imagen;
-	}
 
-	public void setImagen(BufferedImage imagen) {
-		this.imagen = imagen;
-	}
-
-	@ManyToMany(targetEntity=User.class)
+	@ManyToMany(targetEntity=User.class,mappedBy="login")
 	public List<User> getAmigos() {
 		return amigos;
 	}
@@ -120,59 +108,18 @@ public class User {
 		this.amigos = amigos;
 	}
 	
-	public int getpGanadas() {
-		return pGanadas;
-	}
-	
-	public void setpGanadas(int pGanadas) {
-		this.pGanadas = pGanadas;
-	}
-	
-	public int getpPerdidas() {
-		return pPerdidas;
-	}
-	
-	public void setpPerdidas(int pPerdidas) {
-		this.pPerdidas = pPerdidas;
-	}
-	
-	public int getpJugadas() {
-		return pJugadas;
-	}
-	
-	public void setpJugadas(int pJugadas) {
-		this.pJugadas = pJugadas;
-	}
-	public double getDperdido() {
-		return Dperdido;
-	}
-	
-	public void setDperdido(double dperdido) {
-		Dperdido = dperdido;
-	}
-	
-	public double getDganado() {
-		return Dganado;
-	}
-	
-	public void setDganado(double dganado) {
-		Dganado = dganado;
-	}
-	
 	// un usuario tiene **muchos** comentarios posteados en el foro
 	@OneToMany(targetEntity=ComentarioForo.class)
-	@JoinColumn(name="user")
 	public List<ComentarioForo> getComentFor() {
-		return comentFor;
+		return comentarios;
 	}
 
 	public void setComentFor(List<ComentarioForo> comentFor) {
-		this.comentFor = comentFor;
+		this.comentarios = comentFor;
 	}
 
 	// un usuario esta en una partida
-	@ManyToOne(targetEntity= Partida.class)
-	@JoinColumn(name="id")
+	@ManyToOne(targetEntity=Partida.class)
 	public Partida getPartida() {
 		return partida;
 	}
@@ -181,6 +128,7 @@ public class User {
 		this.partida = partida;
 	}
 
+	@ManyToMany(targetEntity=Item.class, mappedBy="propietarios")
 	public List<Item> getItems() {
 		return items;
 	}
@@ -188,5 +136,45 @@ public class User {
 	public void setItems(List<Item> items) {
 		this.items = items;
 	}
-	
+
+	public int getPganadas() {
+		return Pganadas;
+	}
+
+	public void setPganadas(int pganadas) {
+		Pganadas = pganadas;
+	}
+
+	public int getPperdidas() {
+		return Pperdidas;
+	}
+
+	public void setPperdidas(int pperdidas) {
+		Pperdidas = pperdidas;
+	}
+
+	public double getDperdido() {
+		return Dperdido;
+	}
+
+	public void setDperdido(double dperdido) {
+		Dperdido = dperdido;
+	}
+
+	public double getDganado() {
+		return Dganado;
+	}
+
+	public void setDganado(double dganado) {
+		Dganado = dganado;
+	}
+
+	public int getPjugadas() {
+		return Pjugadas;
+	}
+
+	public void setPjugadas(int pjugadas) {
+		Pjugadas = pjugadas;
+	}
+		
 }

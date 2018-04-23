@@ -46,20 +46,19 @@ public class UserController {
 			@RequestParam(required=true) String password,
 			@RequestParam(required=true) String email,
 			@RequestParam(required=true) Nacionalidades nacion,
-			@RequestParam(required=true) BufferedImage imagen,
+			@RequestParam(required=false) BufferedImage imagen,
 			@RequestParam(required=false) String isAdmin, Model m) {
 		User u = new User();
 		u.setLogin(login);
 		u.setPassword(passwordEncoder.encode(password));
 		u.setRoles("on".equals(isAdmin) ? "ADMIN,USER" : "USER");
 		u.setEmail(email);
-		u.setpPerdidas(0);
+		u.setPperdidas(0);
 		u.setDganado(0);
 		u.setDinero(0);
 		u.setDperdido(0);
 		u.setNacion(nacion);
-		u.setImagen(imagen);
-		u.setpJugadas(0);
+		u.setPjugadas(0);
 		entityManager.persist(u);
 		
 		return "user";
@@ -76,6 +75,7 @@ public class UserController {
 		u.setLogin(login);
 		u.setPassword(passwordEncoder.encode(password));
 		u.setRoles("on".equals(isAdmin) ? "ADMIN,USER" : "USER");
+		/* Hay que hacer un createNamedQuery en user y usarlo aqui, mira apuntes!*/
 		m.addAttribute("users", entityManager
 				.createNamedQuery
 				("select u from User u where password ='"+password+"'"+
