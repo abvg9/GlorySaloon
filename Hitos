@@ -38,3 +38,27 @@ FASE 2
 3. Usar widgets (calendario, votaciones)
 
 4. 
+
+FASE 3
+Casos de uso de la bd
+
+([] : quien tiene permisos )
+1.- User :
+
+ 	1.1 -Cuenta :
+	
+		1.- Crear cuenta -> crearse su cuenta.
+
+		2.- Loggearse 
+
+		3.- Borrar -> solo su cuenta.
+
+		4.- Modificar -> solo su cuenta.
+	
+		5.- 
+	
+	
+	
+
+
+
