@@ -43,6 +43,8 @@ public class AdminController {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
+	
+	// Punto de entrada a la base de datos.
 	@Autowired
 	private EntityManager entityManager;
 
@@ -69,9 +71,9 @@ public class AdminController {
 		u.setLogin(login);
 		u.setPassword(passwordEncoder.encode(password));
 		u.setRoles("on".equals(isAdmin) ? "ADMIN,USER" : "USER");
-		entityManager.persist(u);
-		
+		entityManager.persist(u);	
 		entityManager.flush();
+		
 		m.addAttribute("users", entityManager
 				.createQuery("select u from User u").getResultList());
 		

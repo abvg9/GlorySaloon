@@ -12,10 +12,12 @@
 
 	<hr/>
 
-	<form action="/admin/addUser" method="post">
+	<form action="/user/crear_Cuenta" method="post">
 		<label for="login">login<input name="login"/></label>
 		<label for="password">password<input type="password" name="password"/></label>
 		<label for="isAdmin">is admin?<input type="checkbox" name="isAdmin"></label>
+		<label for="email">email<input name="email"/></label>
+		<label for="nacion">nacion<input name="nacion"/></label>
 		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             
             <div class="form-actions">
@@ -27,12 +29,12 @@
 	
 	<table>
 	<thead>
-	<tr><th>id<th>login<th>roles</tr>
+	<tr><th>id<th>login<th>roles<th>dinero<th>email<th>nacion</tr>
 	</thead>
 	<tbody>
 	<c:forEach items="${users}" var="u">
 		<tr>
-		<td>${u.id}<td>${u.login}<td>${u.roles}
+		<td>${u.id}<td>${u.login}<td>${u.roles}<td>${u.dinero}<td>${u.email}<td>${u.nacion}
 		</tr>	
 	</c:forEach>
 	</tbody>
