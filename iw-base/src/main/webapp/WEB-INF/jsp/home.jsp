@@ -6,15 +6,30 @@
 
 <%@ include file="../jspf/header.jspf"%>
 
-<div class="starter-template">
-	<h1>¡Bienvenido!</h1>
-	<div class="containerImgSaloon">IMAGEN1</div>
-	<div class="containerImgReglas">IMAGEN2</div>
-	<div class="containerImgForo">IMAGEN3</div>
-	<div class="containerImgRank">IMAGEN4</div>
-	<div class="containerImgCompras">IMAGEN5</div>
 
-	<!--<%@ include file="../jspf/authinfo.jspf"%>	-->	
+<div class="starter-template">
+
+	<div class="topHome">
+		<a href="/saloon"><img class="imgHome" src="${s}/img/Saloon.jpg"></a>
+	</div>
+	<div class="midHome">
+		<div class="leftHome">
+			<div class="left1Home">
+				<a href="/ranking"><img class="imgHome" src="${s}/img/Ranking.jpg"></a>
+			</div>
+			<div class="left2Home">
+				<a href="/compras"><img class="imgHome" src="..${s}/img/Tienda.jpg"></a>
+			</div>
+		</div>
+		<div class="rightHome">
+			<a href="/reglas"><img class="imgHome" src="${s}/img/Reglas.jpg"></a>
+		</div>
+	</div>
+	<div class="botHome">
+		<a href="/foro"><img class="imgHome" src="${s}/img/Foro.jpg"></a>
+	</div>
+
+	<!--<%@ include file="../jspf/authinfo.jspf"%>	-->
 </div>
 
 <%@ include file="../jspf/footer.jspf"%>

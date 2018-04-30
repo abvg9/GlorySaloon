@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import es.uc.fdi.iw.common.enums.Nacionalidades;
 import es.ucm.fdi.iw.LocalData;
 import es.ucm.fdi.iw.model.User;
 
@@ -65,23 +64,14 @@ public class AdminController {
 	@RequestMapping(value = "/addUser", method = RequestMethod.POST)
 	@Transactional
 	public String addUser(
-			@RequestParam(required=true) String login, 
-			@RequestParam(required=true) String password,
-			@RequestParam(required=true) String email,
-			@RequestParam(required=true) Nacionalidades nacion,
+			@RequestParam String login, 
+			@RequestParam String password, 
 			@RequestParam(required=false) String isAdmin, Model m) {
 		User u = new User();
 		u.setLogin(login);
 		u.setPassword(passwordEncoder.encode(password));
 		u.setRoles("on".equals(isAdmin) ? "ADMIN,USER" : "USER");
-		u.setEmail(email);
-		u.setPperdidas(0);
-		u.setDganado(0);
-		u.setDinero(0);
-		u.setDperdido(0);
-		u.setNacion(nacion);
-		u.setPjugadas(0);
-		entityManager.persist(u);
+		entityManager.persist(u);	
 		entityManager.flush();
 		
 		m.addAttribute("users", entityManager

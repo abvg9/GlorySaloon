@@ -1,8 +1,6 @@
 package es.ucm.fdi.iw.controller;
 
-import java.util.Date;
-import java.util.List;
-
+import java.awt.image.BufferedImage;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +12,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import es.uc.fdi.iw.common.enums.Nacionalidades;
-import es.uc.fdi.iw.common.enums.Temas;
 import es.ucm.fdi.iw.LocalData;
-import es.ucm.fdi.iw.model.ComentarioForo;
+import es.ucm.fdi.iw.model.Item;
 import es.ucm.fdi.iw.model.User;
 
 @Controller	
@@ -44,68 +39,77 @@ public class UserController {
         model.addAttribute("s", "../static");
     }
     
-	@RequestMapping(value = "/crearCuenta", method = RequestMethod.POST)
+	@RequestMapping(value = "/crear_Cuenta", method = RequestMethod.POST)
 	@Transactional
 	public String crearCuenta(
 			@RequestParam(required=true) String login, 
 			@RequestParam(required=true) String password,
 			@RequestParam(required=true) String email,
 			@RequestParam(required=true) Nacionalidades nacion,
+			@RequestParam(required=false) BufferedImage imagen,
 			@RequestParam(required=false) String isAdmin, Model m) {
-			
-		/*El usuario no tiene un nombre o un email igual al de otro usuario*/
-		if(entityManager.createNamedQuery("noRepes")
-			    .setParameter("loginParam", login)
-			    .setParameter("emailParam", email)
-			    .getResultList().isEmpty()) {
-			User u = new User();
-			u.setLogin(login);
-			u.setPassword(passwordEncoder.encode(password));
-			u.setRoles("on".equals(isAdmin) ? "ADMIN,USER" : "USER");
-			u.setEmail(email);
-			u.setPperdidas(0);
-			u.setDganado(0);
-			u.setDinero(0);
-			u.setDperdido(0);
-			u.setNacion(nacion);
-			u.setPjugadas(0);
-			entityManager.persist(u);
-			entityManager.flush();
-		}else {
-			
-			//el campo login o email ya estan cogidos (return "redirect:/camposMalMetidos";)
-		}
+		User u = new User();
+		u.setLogin(login);
+		u.setPassword(passwordEncoder.encode(password));
+		u.setRoles("on".equals(isAdmin) ? "ADMIN,USER" : "USER");
+		u.setEmail(email);
+		u.setPperdidas(0);
+		u.setDganado(0);
+		u.setDinero(0);
+		u.setDperdido(0);
+		u.setNacion(nacion);
+		u.setPjugadas(0);
+		entityManager.persist(u);
 		
-		return "redirect:/admin";
-	}
-		
-	@RequestMapping(value = "/comentar", method = RequestMethod.POST)
-	@Transactional
-	public String Comentar(
-			@RequestParam(required=true) User login, 
-			@RequestParam(required=true) String comentario,
-			@RequestParam(required=true) Temas tema, Model m) {
-		
-		ComentarioForo c = new ComentarioForo();
-		c.setComentario(comentario);
-		c.setTema(tema);
-		c.setUsuario(login);
-		c.setFecha(new Date());
-		entityManager.persist(c);
-		entityManager.flush();
-
-		return "redirect:/foro";
+		return "user";
 	}
 	
-	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/verAmigos", method = RequestMethod.GET)
-	@ResponseBody
-	public List<User> verAmigo_s(
-			@RequestParam(required=true) String login) {
-				
-		return (List<User>)entityManager.createNamedQuery("noRepes")
-			    .setParameter("loginParam", login)
-			    .getResultList();
+	@RequestMapping(value = "/entrar", method = RequestMethod.POST)
+	@Transactional
+	public String Entrar(
+			@RequestParam(required=true) String login, 
+			@RequestParam(required=true) String password,
+			@RequestParam(required=false) String isAdmin,Model m) {
+			
+		User u = new User();
+		u.setLogin(login);
+		u.setPassword(passwordEncoder.encode(password));
+		u.setRoles("on".equals(isAdmin) ? "ADMIN,USER" : "USER");
+		/* Hay que hacer un createNamedQuery en user y usarlo aqui, mira apuntes!*/
+		m.addAttribute("users", entityManager
+				.createNamedQuery
+				("select u from User u where password ='"+password+"'"+
+				"AND login ='"+login+"'").getResultList());
+		
+		return "user";
+	}
+	
+	@RequestMapping(value = "/compra", method = RequestMethod.POST)
+	@Transactional
+	public String ComprarItem(
+			@RequestParam(required=true) String login,
+			@RequestParam(required=true) String idIt, Model m) {
+			
+			User u = entityManager.getReference(User.class, login);
+			Item i = entityManager.getReference(Item.class, idIt);
+			
+			if(i.getPrecio() <= u.getDinero()) {
+				if(!u.getItems().contains(i)) {
+					u.setDinero(u.getDinero()-i.getPrecio());
+					u.getItems().add(i);
+					entityManager.persist(u);	
+					entityManager.flush();
+				}else {
+					// Ya tenia ese objeto
+				}
+			}else {
+				//No tiene dinero
+			}
+
+		
+		entityManager.persist(u);
+		
+		return "user";
 	}
 
 }

@@ -19,7 +19,7 @@
 body {
     background-image: url("../img/fondoWebLargo.jpg");
     background-repeat: repeat-y;
-    background-size: cover;
+    background-size: 100%;
 }
 
 p {
@@ -78,4 +78,75 @@ h1 {
 	padding-left:15%;
 	padding-right: 15%;
 	margin-right: 5%;
+}
+/*
+*	Para hacer divs horizontalmente aligned
+*/
+.topHome{
+	margin-left: 10%;
+	margin-right: 10%;
+	padding-bottom: 2%;
+	width: 80%;
+}
+.midHome{
+	margin-left: 2%;
+	padding-bottom: 2%;
+	width: 100%;
+}
+.botHome{
+	margin-left: 10%;
+	margin-right: 10%;
+	padding-bottom: 2%;
+	padding-top: 2%;
+	width: 80%;
+}
+
+.leftHome{
+	width: 40%;
+  	display: inline-block;
+}
+
+.rightHome{
+	width: 40%;
+	padding-left: 1%;
+	display: inline-block;
+}
+.left1Home{
+	width: 100%;
+	padding-bottom: 2%;
+}
+.left2Home{
+	width: 100%;
+	padding-top: 2%;
+}
+.imgHome{
+	max-width: 100%;
+}
+
+
+/*
+Tabla ranking
+*/
+
+#customers {
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#customers td, #customers th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#customers tr:nth-child(even){background-color: #f2f2f2;}
+
+#customers tr:hover {background-color: #ddd;}
+
+#customers th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #4CAF50;
+    color: white;
 }

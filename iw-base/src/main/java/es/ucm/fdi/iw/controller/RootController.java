@@ -1,12 +1,12 @@
 package es.ucm.fdi.iw.controller;
 
 import java.security.Principal;
+
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-
 
 @Controller	
 public class RootController {
