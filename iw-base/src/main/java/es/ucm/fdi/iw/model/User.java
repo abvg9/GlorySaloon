@@ -1,36 +1,45 @@
 package es.ucm.fdi.iw.model;
 
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-
 import es.uc.fdi.iw.common.enums.Nacionalidades;
 
 @Entity
+@NamedQueries({
+@NamedQuery(name="noRepes",
+query="select u from User u where u.login = :loginParam or u.email = :emailParam"),
+@NamedQuery(name="verAmigos",
+query="select u.amigos from User u where u.login = :loginParam")
+})
 public class User {
 	
-
 	private long id;
-	private String login; //nombre usuario
+	private String login;
 	private String password;
-	private String roles; // split by , to separate roles
+	private String roles;
 	private byte enabled;
 	private double dinero;
 	private String email;
 	private Nacionalidades nacion;
 	private List<User> amigos;
     private List<ComentarioForo> comentarios;
-	private int Pganadas; //partidas ganadas
+	private int Pganadas;
 	private int Pperdidas;
 	private int Pjugadas;
-	private double Dperdido; //dinero perdido
+	private double Dperdido;
 	private double Dganado;
 	private Partida partida;	
-	private List<Item> items;
+	private List<Item> propiedades;
 	
 	@Id
 	@GeneratedValue
@@ -42,7 +51,7 @@ public class User {
 		this.id = id;
 	}	
 
-	//Nombre.
+	@Column(unique=true)
 	public String getLogin() {
 		return login;
 	}
@@ -83,6 +92,7 @@ public class User {
 		this.dinero = dinero;
 	}
 
+	@Column(unique=true)
 	public String getEmail() {
 		return email;
 	}
@@ -99,7 +109,10 @@ public class User {
 		this.nacion = nacion;
 	}
 
-	@ManyToMany(targetEntity=User.class,mappedBy="login")
+	@JoinTable(name = "user_amigos",
+    joinColumns = {@JoinColumn(name = "amigo_A", referencedColumnName = "id", nullable=false)},
+    inverseJoinColumns = {@JoinColumn(name = "amigo_B", referencedColumnName = "id", nullable =false)})
+	@ManyToMany(targetEntity=User.class)
 	public List<User> getAmigos() {
 		return amigos;
 	}
@@ -108,17 +121,16 @@ public class User {
 		this.amigos = amigos;
 	}
 	
-	// un usuario tiene **muchos** comentarios posteados en el foro
 	@OneToMany(targetEntity=ComentarioForo.class)
-	public List<ComentarioForo> getComentFor() {
+	@JoinColumn(name="usuario_id")
+	public List<ComentarioForo> getComentarios() {
 		return comentarios;
 	}
-
-	public void setComentFor(List<ComentarioForo> comentFor) {
-		this.comentarios = comentFor;
+	
+	public void setComentarios(List<ComentarioForo> comentarios) {
+		this.comentarios = comentarios;
 	}
 
-	// un usuario esta en una partida
 	@ManyToOne(targetEntity=Partida.class)
 	public Partida getPartida() {
 		return partida;
@@ -128,13 +140,13 @@ public class User {
 		this.partida = partida;
 	}
 
-	@ManyToMany(targetEntity=Item.class, mappedBy="propietarios")
-	public List<Item> getItems() {
-		return items;
+	@ManyToMany(targetEntity=Item.class)
+	public List<Item> getPropiedades() {
+		return propiedades;
 	}
 
-	public void setItems(List<Item> items) {
-		this.items = items;
+	public void setPropiedades(List<Item> propiedades) {
+		this.propiedades = propiedades;
 	}
 
 	public int getPganadas() {

@@ -1,11 +1,11 @@
 package es.ucm.fdi.iw.model;
 
-import java.sql.Date;
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-
 import es.uc.fdi.iw.common.enums.Temas;
 
 @Entity
@@ -26,8 +26,7 @@ public class ComentarioForo {
 	public void setId(long id) {
 		this.id = id;
 	}	
-	
-	// un comentario tiene un dueño
+
 	@ManyToOne(targetEntity=User.class)
 	public User getUsuario() {
 		return usuario;
@@ -36,21 +35,21 @@ public class ComentarioForo {
 	public void setUsuario(User usuario) {
 		this.usuario = usuario;
 	}
-
+	
 	public Date getFecha() {
 		return fecha;
 	}
 
-	public void setFecha(Date fecha) {
-		this.fecha = fecha;
+	public void setFecha(Date date) {
+		this.fecha = date;
 	}
 
-	public String getComentarios() {
+	public String getComentario() {
 		return comentario;
 	}
 
-	public void setComentarios(String comentarios) {
-		this.comentario = comentarios;
+	public void setComentario(String comentario) {
+		this.comentario = comentario;
 	}
 
 	public Temas getTema() {

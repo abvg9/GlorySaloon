@@ -12,7 +12,7 @@
 
 	<hr/>
 
-	<form action="/user/crear_Cuenta" method="post">
+	<form action="user/crearCuenta" method="post">
 		<label for="login">login<input name="login"/></label>
 		<label for="password">password<input type="password" name="password"/></label>
 		<label for="isAdmin">is admin?<input type="checkbox" name="isAdmin"></label>

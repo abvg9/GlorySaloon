@@ -5,7 +5,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-
 import es.uc.fdi.iw.common.enums.Juegos;
 
 @Entity
@@ -17,7 +16,6 @@ public class Partida {
 	private Juegos juego;
 	private String pass;
 
-	// una partida tiene **muchos** jugadores
 	@OneToMany(targetEntity=User.class)
 	public List<User> getJugadores() {
 		return jugadores;
@@ -26,7 +24,7 @@ public class Partida {
 	public void setJugadores(List<User> jugadores) {
 		this.jugadores = jugadores;
 	}
-
+	
 	@Id
 	@GeneratedValue
 	public long getId() {
@@ -53,12 +51,12 @@ public class Partida {
 		this.juego = juego;
 	}
 
-	public String getContraseña() {
+	public String getPass() {
 		return pass;
 	}
 
-	public void setContraseña(String contraseña) {
-		this.pass = contraseña;
+	public void setPass(String pass) {
+		this.pass = pass;
 	}
 	
 }

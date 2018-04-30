@@ -1,4 +1,5 @@
--- INSERT INTO user(id,enabled,login,password,roles) VALUES (1, 1, 'a', 'aa', 'USER');
--- INSERT INTO user VALUES (2, 1, 'b', 'bb', 'USER,ADMIN');
-INSERT INTO user(id,enabled,login,password,roles) VALUES (1, 1, 'a', '$2a$04$N78IYN6VzrWZzpsy6Xvz2uCdUm7Su9FDpAqhXjAcSzCgreVM2sUnC', 'USER');
-INSERT INTO user VALUES (2, 1, 'b', '$2a$04$NwYuA6rd/UbCs3H8mntvPuqyFuUsX8sTKI1WDYwqrXhncXWIklscW', 'USER,ADMIN');
+-- INSERT INTO item(id,precio,nombre,descripcion,propietarios) VALUES (1, 10, 'patata', 'es fea', 'velas');
+-- INSERT INTO comentarioforo(id,usuario,fecha,comentario,tema) VALUES (1, 'velas', '10/03/1994', 'funciona', 'General');
+
+INSERT INTO user(id,dganado,dinero,dperdido,email,enabled,login,nacion,password,pganadas,pjugadas,pperdidas,roles) VALUES (1, 0.0, 0.0, 0.0, 'velas178@hotmail.com', 0, 'velas', 0, '$2a$04$N78IYN6VzrWZzpsy6Xvz2uCdUm7Su9FDpAqhXjAcSzCgreVM2sUnC', 0, 0, 0, 'USER,ADMIN');
+-- pass aa

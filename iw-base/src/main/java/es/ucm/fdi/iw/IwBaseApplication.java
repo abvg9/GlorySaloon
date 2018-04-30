@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @SpringBootApplication
 @EnableTransactionManagement
 public class IwBaseApplication {
-
+	
 	public static void main(String[] args) {
 		SpringApplication.run(IwBaseApplication.class, args);
 	}
