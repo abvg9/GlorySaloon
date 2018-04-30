@@ -2,10 +2,8 @@ package es.ucm.fdi.iw.model;
 
 import java.util.List;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
@@ -16,10 +14,10 @@ public class Item {
 	private double precio;
 	private String nombre;
 	private String descripcion;
-	private List<User> propietario;
+	private List<User> propietarios;
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue
 	public long getId() {
 		return id;
 	}
@@ -36,7 +34,6 @@ public class Item {
 		this.precio = precio;
 	}
 
-	@Column(unique=true)
 	public String getNombre() {
 		return nombre;
 	}
@@ -54,12 +51,13 @@ public class Item {
 	}
 
 	@ManyToMany(targetEntity=User.class)
-	public List<User> getPropietario() {
-		return propietario;
+	public List<User> getPropietarios() {
+		return propietarios;
 	}
 
-	public void setPropietario(List<User> propietario) {
-		this.propietario = propietario;
+	public void setPropietarios(List<User> propietarios) {
+		this.propietarios = propietarios;
 	}
+
 	
 }
