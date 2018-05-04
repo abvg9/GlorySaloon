@@ -12,14 +12,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Min;
+
 import es.uc.fdi.iw.common.enums.Nacionalidades;
 
 @Entity
 @NamedQueries({
-@NamedQuery(name="noRepes",
-query="select u from User u where u.login = :loginParam or u.email = :emailParam"),
-@NamedQuery(name="verAmigos",
-query="select u.amigos from User u where u.login = :loginParam")
+@NamedQuery(name="getUsuario",
+query="select u from User u where u.login = :loginParam")
 })
 public class User {
 	
@@ -40,7 +41,7 @@ public class User {
 	private double Dganado;
 	private Partida partida;	
 	private List<Item> propiedades;
-	
+		
 	@Id
 	@GeneratedValue
 	public long getId() {
@@ -84,6 +85,7 @@ public class User {
 		this.enabled = enabled;
 	}
 
+	@DecimalMin("0.00")
 	public double getDinero() {
 		return dinero;
 	}
@@ -149,6 +151,7 @@ public class User {
 		this.propiedades = propiedades;
 	}
 
+	@Min(0)
 	public int getPganadas() {
 		return Pganadas;
 	}
@@ -157,6 +160,7 @@ public class User {
 		Pganadas = pganadas;
 	}
 
+	@Min(0)
 	public int getPperdidas() {
 		return Pperdidas;
 	}
@@ -165,6 +169,7 @@ public class User {
 		Pperdidas = pperdidas;
 	}
 
+	@DecimalMin("0.00")
 	public double getDperdido() {
 		return Dperdido;
 	}
@@ -173,6 +178,7 @@ public class User {
 		Dperdido = dperdido;
 	}
 
+	@DecimalMin("0.00")
 	public double getDganado() {
 		return Dganado;
 	}
@@ -181,6 +187,7 @@ public class User {
 		Dganado = dganado;
 	}
 
+	@Min(0)
 	public int getPjugadas() {
 		return Pjugadas;
 	}

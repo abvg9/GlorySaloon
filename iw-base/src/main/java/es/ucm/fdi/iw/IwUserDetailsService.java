@@ -1,23 +1,22 @@
 package es.ucm.fdi.iw;
 
 import java.util.ArrayList;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
 import org.apache.log4j.Logger;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-
 import es.ucm.fdi.iw.model.User;
 
 public class IwUserDetailsService implements UserDetailsService {
 
 	private static Logger log = Logger.getLogger(IwUserDetailsService.class);
+	
+	public static User u;
 
     private EntityManager entityManager;
-    
+       
     @PersistenceContext
     public void setEntityManager(EntityManager em){
         this.entityManager = em;
@@ -25,7 +24,7 @@ public class IwUserDetailsService implements UserDetailsService {
 
     public UserDetails loadUserByUsername(String username){
     	try {
-	        User u = entityManager.createQuery("from User where login = :login", User.class)
+	        IwUserDetailsService.u = entityManager.createQuery("from User where login = :login", User.class)
 	                            .setParameter("login", username)
 	                            .getSingleResult();
 	        // build UserDetails object
@@ -34,6 +33,7 @@ public class IwUserDetailsService implements UserDetailsService {
 	        	roles.add(new SimpleGrantedAuthority("ROLE_" + r));
 		        log.info("Roles for " + username + " include " + roles.get(roles.size()-1));
 	        }
+
 	        return new org.springframework.security.core.userdetails.User(
 	        		u.getLogin(), u.getPassword(), roles); 
 	    } catch (Exception e) {
