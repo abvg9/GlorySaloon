@@ -1,7 +1,11 @@
 package es.ucm.fdi.iw.controller;
 
 import java.security.Principal;
+<<<<<<< HEAD
 import javax.persistence.EntityManager;
+=======
+
+>>>>>>> 84f0d72a8272ea9592a3403962fa629c43a6aa21
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

@@ -5,8 +5,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+<<<<<<< HEAD
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Min;
+=======
+
+>>>>>>> 84f0d72a8272ea9592a3403962fa629c43a6aa21
 import es.uc.fdi.iw.common.enums.Juegos;
 
 @Entity
@@ -21,6 +25,7 @@ public class Partida {
 	private double apostado;
 	private int turno;
 
+	// una partida tiene **muchos** jugadores
 	@OneToMany(targetEntity=User.class)
 	public List<User> getJugadores() {
 		return jugadores;
@@ -29,7 +34,7 @@ public class Partida {
 	public void setJugadores(List<User> jugadores) {
 		this.jugadores = jugadores;
 	}
-	
+
 	@Id
 	@GeneratedValue
 	public long getId() {
@@ -56,12 +61,12 @@ public class Partida {
 		this.juego = juego;
 	}
 
-	public String getPass() {
+	public String getContraseña() {
 		return pass;
 	}
 
-	public void setPass(String pass) {
-		this.pass = pass;
+	public void setContraseña(String contraseña) {
+		this.pass = contraseña;
 	}
 
 	@DecimalMin("0.00")

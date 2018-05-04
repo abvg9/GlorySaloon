@@ -12,7 +12,11 @@
 
 	<hr/>
 
+<<<<<<< HEAD
 	<form action="/user/crearCuenta" method="post">
+=======
+	<form action="/user/crear_Cuenta" method="post">
+>>>>>>> 84f0d72a8272ea9592a3403962fa629c43a6aa21
 		<label for="login">login<input name="login"/></label>
 		<label for="password">password<input type="password" name="password"/></label>
 		<label for="isAdmin">is admin?<input type="checkbox" name="isAdmin"></label>

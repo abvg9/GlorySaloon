@@ -1,10 +1,14 @@
 package es.ucm.fdi.iw.controller;
 
+<<<<<<< HEAD
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Date;
 import java.util.List;
+=======
+import java.awt.image.BufferedImage;
+>>>>>>> 84f0d72a8272ea9592a3403962fa629c43a6aa21
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
@@ -18,15 +22,21 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+<<<<<<< HEAD
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import es.uc.fdi.iw.common.enums.Juegos;
+=======
+>>>>>>> 84f0d72a8272ea9592a3403962fa629c43a6aa21
 import es.uc.fdi.iw.common.enums.Nacionalidades;
-import es.uc.fdi.iw.common.enums.Temas;
 import es.ucm.fdi.iw.LocalData;
+<<<<<<< HEAD
 import es.ucm.fdi.iw.model.ComentarioForo;
 import es.ucm.fdi.iw.model.Item;
 import es.ucm.fdi.iw.model.Partida;
+=======
+import es.ucm.fdi.iw.model.Item;
+>>>>>>> 84f0d72a8272ea9592a3403962fa629c43a6aa21
 import es.ucm.fdi.iw.model.User;
 
 @Controller	
@@ -49,6 +59,7 @@ public class UserController {
         model.addAttribute("s", "../static");
     }
     
+<<<<<<< HEAD
     /*#######################################################################
     #########################################################################
     ###                                                                   ###
@@ -63,13 +74,18 @@ public class UserController {
      */
       
 	@RequestMapping(value = "/crearCuenta", method = RequestMethod.POST)
+=======
+	@RequestMapping(value = "/crear_Cuenta", method = RequestMethod.POST)
+>>>>>>> 84f0d72a8272ea9592a3403962fa629c43a6aa21
 	@Transactional
 	public String crearCuenta(
 			@RequestParam(required=true) String login, 
 			@RequestParam(required=true) String password,
 			@RequestParam(required=true) String email,
 			@RequestParam(required=true) Nacionalidades nacion,
+			@RequestParam(required=false) BufferedImage imagen,
 			@RequestParam(required=false) String isAdmin, Model m) {
+<<<<<<< HEAD
 			
 		/*El usuario no tiene un nombre o un email igual al de otro usuario*/
 		if(entityManager.createNamedQuery("noRepes")
@@ -98,9 +114,24 @@ public class UserController {
 			
 			//el campo login o email ya estan cogidos (return "redirect:/camposMalMetidos";)
 		}
+=======
+		User u = new User();
+		u.setLogin(login);
+		u.setPassword(passwordEncoder.encode(password));
+		u.setRoles("on".equals(isAdmin) ? "ADMIN,USER" : "USER");
+		u.setEmail(email);
+		u.setPperdidas(0);
+		u.setDganado(0);
+		u.setDinero(0);
+		u.setDperdido(0);
+		u.setNacion(nacion);
+		u.setPjugadas(0);
+		entityManager.persist(u);
+>>>>>>> 84f0d72a8272ea9592a3403962fa629c43a6aa21
 		
-		return "redirect:/admin";
+		return "user";
 	}
+<<<<<<< HEAD
 		  
     /*#######################################################################
     #########################################################################
@@ -474,12 +505,27 @@ public class UserController {
      */
 	
 	@RequestMapping(value = "/comentar", method = RequestMethod.POST)
+=======
+	
+	@RequestMapping(value = "/entrar", method = RequestMethod.POST)
+>>>>>>> 84f0d72a8272ea9592a3403962fa629c43a6aa21
 	@Transactional
-	public String Comentar(
-			@RequestParam(required=true) User login, 
-			@RequestParam(required=true) String comentario,
-			@RequestParam(required=true) Temas tema, Model m) {
+	public String Entrar(
+			@RequestParam(required=true) String login, 
+			@RequestParam(required=true) String password,
+			@RequestParam(required=false) String isAdmin,Model m) {
+			
+		User u = new User();
+		u.setLogin(login);
+		u.setPassword(passwordEncoder.encode(password));
+		u.setRoles("on".equals(isAdmin) ? "ADMIN,USER" : "USER");
+		/* Hay que hacer un createNamedQuery en user y usarlo aqui, mira apuntes!*/
+		m.addAttribute("users", entityManager
+				.createNamedQuery
+				("select u from User u where password ='"+password+"'"+
+				"AND login ='"+login+"'").getResultList());
 		
+<<<<<<< HEAD
 		ComentarioForo c = new ComentarioForo();
 		c.setComentario(comentario);
 		c.setTema(tema);
@@ -502,6 +548,37 @@ public class UserController {
 		entityManager.flush();
 
 		return "redirect:/foro";
+=======
+		return "user";
+	}
+	
+	@RequestMapping(value = "/compra", method = RequestMethod.POST)
+	@Transactional
+	public String ComprarItem(
+			@RequestParam(required=true) String login,
+			@RequestParam(required=true) String idIt, Model m) {
+			
+			User u = entityManager.getReference(User.class, login);
+			Item i = entityManager.getReference(Item.class, idIt);
+			
+			if(i.getPrecio() <= u.getDinero()) {
+				if(!u.getItems().contains(i)) {
+					u.setDinero(u.getDinero()-i.getPrecio());
+					u.getItems().add(i);
+					entityManager.persist(u);	
+					entityManager.flush();
+				}else {
+					// Ya tenia ese objeto
+				}
+			}else {
+				//No tiene dinero
+			}
+
+		
+		entityManager.persist(u);
+		
+		return "user";
+>>>>>>> 84f0d72a8272ea9592a3403962fa629c43a6aa21
 	}
 
 	
