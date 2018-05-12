@@ -51,13 +51,20 @@
 </c:if>
 
 <c:if test="${not empty user.partida}">
-<form action="/user/empezarPartida" method="post">
-	<input hidden="submit" name="id_p" value="${user.partida.id}" />
-	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-	<div class="form-actions">
-		<button type="submit" class="btn">Empezar partida</button>
-	</div>
-</form>
+	<form action="/user/empezarPartida" method="post">
+		<input hidden="submit" name="id_p" value="${user.partida.id}" />
+		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+		<div class="form-actions">
+			<button type="submit" class="btn">Empezar partida</button>
+		</div>
+	</form>
+	
+	<form action="/user/salirDeLaPartida" method="post">
+		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+		<div class="form-actions">
+			<button type="submit" class="btn">Salir de la partida</button>
+		</div>
+	</form>
 </c:if>
 
 <c:if test="${empty user.partida}">
