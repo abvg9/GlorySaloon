@@ -404,15 +404,15 @@ public class UserController {
 	
 	@RequestMapping(value = "/logout", method = RequestMethod.POST)
 	public String logout(HttpSession session) {
-		/*
-			session.removeAttribute(CargaAtributos.user);
-			session.removeAttribute(CargaAtributos.tema);
-			session.removeAttribute(CargaAtributos.imagen);
-			session.removeAttribute(CargaAtributos.mensaje);
-			session.removeAttribute(CargaAtributos.foro);
-			session.removeAttribute(CargaAtributos.tienda);
-		*/
-		session.invalidate();
+
+		session.removeAttribute(CargaAtributos.user);
+		session.removeAttribute(CargaAtributos.tema);
+		session.removeAttribute(CargaAtributos.imagen);
+		session.removeAttribute(CargaAtributos.mensaje);
+		session.removeAttribute(CargaAtributos.foro);
+		session.removeAttribute(CargaAtributos.tienda);
+
+		//session.invalidate();
 		CargaAtributos.u=null;
 		return "login";
 	}
@@ -587,7 +587,7 @@ public class UserController {
 	public String salirDeLaPartida() {
 		
 		Partida p = CargaAtributos.u.getPartida();
-		//modificar estadisticas usuario
+		//modificar estadisticas usuario(si ya ha jugado)
 		p.getJugadores().remove(CargaAtributos.u);
 		CargaAtributos.u.setPartida(null);
 		
@@ -595,13 +595,14 @@ public class UserController {
 			User u2 = p.getJugadores().get(0);
 			u2.setPartida(null);
 			p.getJugadores().remove(0);
-			entityManager.persist(u2);
-			entityManager.remove(p);
+			entityManager.merge(u2);
+			entityManager.remove(entityManager.merge(p));
 			//enviar mensaje de que la partida acabo
+			return "saloon";
 		}
 
-		entityManager.persist(CargaAtributos.u);	
-		entityManager.persist(p);
+		entityManager.merge(CargaAtributos.u);	
+		entityManager.remove(entityManager.merge(p));
 		return "saloon";
 	}
 	
