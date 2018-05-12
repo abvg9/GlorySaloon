@@ -1,0 +1,81 @@
+@font-face {
+
+	font-family: ‘Algerian’;
+	
+		src: url('../fonts/ALGER.eot');
+	   
+	   	src: url('../fonts/ALGER.eot?#iefix') format('embedded-opentype'),
+	
+	        url('../fonts/ALGER.woff') format('woff'),
+	
+	        url('../fonts/ALGER.ttf') format('truetype'),
+	
+	
+	  font-weight: normal;
+	
+	  font-style: normal;
+
+}
+body {
+    background-image: url("../img/fondoWebLargo.jpg");
+    background-repeat: repeat-y;
+    background-size: cover;
+}
+
+p {
+
+	Font-family: ‘Algerian’;
+
+}
+h1 {
+
+	Font-family: ‘Algerian’;
+
+}
+
+.rightAl{
+	text-align: right;
+	margin-right: 40%;
+	
+}
+.rightAlBtn{
+	text-align: right;
+	margin-right: -5%;
+	
+}
+
+.containerImgSaloon{
+	margin-left: 10%;
+	padding: 100px;
+	padding-left:15%;
+	padding-right: 15%;
+	margin-right: 5%;
+}
+.containerImgForo{
+	margin-left: 10%;
+	padding: 100px;
+	padding-left:15%;
+	padding-right: 15%;
+	margin-right: 5%;
+}
+.containerImgRank{
+	margin-left: 10%;
+	padding: 100px;
+	padding-left:15%;
+	padding-right: 15%;
+	margin-right: 5%;
+}
+.containerImgCompras{
+	margin-left: 10%;
+	padding: 100px;
+	padding-left:15%;
+	padding-right: 15%;
+	margin-right: 5%;
+}
+.containerImgReglas{
+	margin-left: 10%;
+	padding: 100px;
+	padding-left:15%;
+	padding-right: 15%;
+	margin-right: 5%;
+}
