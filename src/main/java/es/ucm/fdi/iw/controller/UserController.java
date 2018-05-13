@@ -165,12 +165,8 @@ public class UserController {
 	 */
 	@RequestMapping(value = "/modificarPerfil", method = RequestMethod.POST)
 	@Transactional
-	public String modificarPerfil(String nombre,
-								  String contNueva,
-     @RequestParam(required=true) String contActual,
-								  String email,
-								  Nacionalidades nacion,
-								  HttpSession session){
+	public String modificarPerfil(String nombre,String contNueva,@RequestParam(required=true) String contActual,
+								  String email,Nacionalidades nacion,HttpSession session){
 				
 		if(passwordEncoder.matches(contActual, CargaAtributos.u.getPassword())) {
 			
@@ -210,7 +206,8 @@ public class UserController {
 	}
 
 	/**
-	 * Operacion modificadora: Añade un nuevo amigo a la lista de amigos del usuario. Revisa si el amigo existe en la BD y si no lo tenia anteriormente.
+	 * Operacion modificadora: Añade un nuevo amigo a la lista de amigos del usuario. 
+	 * Revisa si el amigo existe en la BD y si no lo tenia anteriormente.
 	 * Esta operacion no añade en la lista del amigo el usuario en cuestion.
 	 * @param nombreA: Nombre del amigo
 	 * @return Te redirige al perfil, cargando en el sesion la respusta(correcta o incorrecta ante la peticion)
@@ -286,7 +283,8 @@ public class UserController {
 	}
 	
 	/**
-	 * Operacion modificadora: Elimina la cuenta de usuario logueado de la BD.
+	 * Operacion modificadora: Elimina la cuenta de usuario logueado de la BD
+	 * @param nombre: Nombre del usuario del que se elimina su cuenta
 	 * @return Te redirige al login tras borrar tu cuenta
 	 */
 	@RequestMapping(value = "/eliminarCuenta", method = RequestMethod.POST)
@@ -337,6 +335,7 @@ public class UserController {
 			session.removeAttribute(CargaAtributos.mensaje);
 			session.removeAttribute(CargaAtributos.tema);
 			session.removeAttribute(CargaAtributos.imagen);
+			//session.invalidate();
 			CargaAtributos.u = null;
 		}
 	
@@ -346,7 +345,7 @@ public class UserController {
 	}
 	
 	/**
-	 * Operacion modificadora: Eliminar amigo de la lista de amigos del usuario
+	 * Operacion modificadora: Elimina un amigo de la lista de amigos del usuario
 	 * @param nombreAmigo: Nombre del amigo del usuario
 	 * @return Te redirige al perfil
 	 */
@@ -376,7 +375,7 @@ public class UserController {
 	}
 	
 	/**
-	 * Operacion modificadora: Elimina un item de la lista de propiedades del usuario.
+	 * Operacion modificadora: Elimina un item de la lista de propiedades del usuario
 	 * @param id: Id del item
 	 * @return Te redirige al perfil, cargando en el sesion la respusta(correcta o incorrecta ante la peticion)
 	 */
@@ -405,6 +404,10 @@ public class UserController {
 		return "perfil";
 	}
 	
+	/**
+	 * Operacion modificadora: Elimina todas las varaibales de sesion y saca elimina los datos de usuario cargados
+	 * @return Te redirige al login
+	 */
 	@RequestMapping(value = "/logout", method = RequestMethod.POST)
 	public String logout(HttpSession session) {
 
@@ -493,7 +496,7 @@ public class UserController {
 				if("".equals(cont)) {
 					p.setPass("no");
 				}else {
-					p.setPass(cont);
+					p.setPass(passwordEncoder.encode(cont));
 				}
 				CargaAtributos.u.setListo(false);
 				
@@ -501,6 +504,7 @@ public class UserController {
 				CargaAtributos.u.setPartida(p);
 				entityManager.persist(p);
 				entityManager.persist(entityManager.merge(CargaAtributos.u));
+				session.setAttribute(CargaAtributos.mensaje, "Estas dentro de la partida");
 				return "saloon";
 				
 			}
@@ -533,11 +537,12 @@ public class UserController {
 			
 			if(p.getMaxJugadores() > p.getJugadores().size()+1 && p.isAbierta()) {
 				
-				if("no".equals(p.getPass()) || pass.equals(p.getPass())) {
+				if("no".equals(p.getPass()) || passwordEncoder.matches(pass, p.getPass())) {
 					CargaAtributos.u.setPartida(p);
 					p.getJugadores().add(CargaAtributos.u);
 					entityManager.persist(p);
 					entityManager.persist(CargaAtributos.u);
+					session.setAttribute(CargaAtributos.mensaje, "Estas dentro de la partida");
 				}else {
 					session.setAttribute(CargaAtributos.mensaje, "Contraseña incorrecta.");
 					return "saloon";
@@ -565,7 +570,7 @@ public class UserController {
 	@RequestMapping(value = "/verSaloon", method = RequestMethod.GET)
 	public String verPartidas(HttpSession session,Juegos juego,String nombrePar) {
 		
-		session.removeAttribute(CargaAtributos.mensaje);
+		session.setAttribute(CargaAtributos.mensaje, null);
 		List<Partida> partidas = new ArrayList<Partida>();	
 		
 		if(!"".equals(nombrePar)) {
@@ -737,20 +742,20 @@ public class UserController {
 	@Transactional
 	public String salirDeLaPartida(HttpSession session) {
 			
-		//modificar estadisticas usuario(si ya ha jugado)
-		CargaAtributos.u.getPartida().getJugadores().remove(CargaAtributos.u);
-		CargaAtributos.u.setPartida(null);
-		
-		if(CargaAtributos.u.getPartida().getJugadores().size() < 2) {		
+		//modificar estadisticas usuario(si ya ha jugado)		
+		if(CargaAtributos.u.getPartida().getJugadores().size() < 2) {	
+			
 			User u2 = CargaAtributos.u.getPartida().getJugadores().get(0);
 			u2.setPartida(null);
 			CargaAtributos.u.getPartida().getJugadores().remove(0);
 			entityManager.merge(u2);
+			entityManager.remove(entityManager.merge(CargaAtributos.u.getPartida()));
 			session.setAttribute(CargaAtributos.mensaje,"La partida acabo.");
 		}
 
-		entityManager.merge(CargaAtributos.u);	
-		entityManager.remove(entityManager.merge(CargaAtributos.u.getPartida()));
+		CargaAtributos.u.getPartida().getJugadores().remove(CargaAtributos.u);
+		CargaAtributos.u.setPartida(null);
+		entityManager.merge(CargaAtributos.u);
 		return "saloon";
 	}
 	
@@ -814,7 +819,7 @@ public class UserController {
 		
 	/**
 	 * Operacion modicadora: Usuario compra item
-	 * @param id_item: Id del item que quiere comprar
+	 * @param id_it: Id del item que quiere comprar
 	 * @return Mensaje de error o redireccion en caso contrario
 	 */
 	@RequestMapping(value = "/comprarItem", method = RequestMethod.POST)
@@ -847,7 +852,7 @@ public class UserController {
 			session.setAttribute(CargaAtributos.mensaje,"El item no existe");
 		}
 		CargaAtributos.cargaTienda(session, entityManager);
-		return CargaAtributos.tienda;
+		return "tienda";
 	}
 
     /*#######################################################################
@@ -872,9 +877,8 @@ public class UserController {
 	 */
 	@RequestMapping(value = "/comentar", method = RequestMethod.POST)
 	@Transactional
-	public String Comentar(
-			@RequestParam(required=true) String comentario,
-			@RequestParam(required=true) Temas tema, HttpSession session) {
+	public String Comentar(@RequestParam(required=true) String comentario,@RequestParam(required=true) Temas tema, 
+						   HttpSession session) {
 		
 		ComentarioForo c = new ComentarioForo();
 
@@ -885,7 +889,7 @@ public class UserController {
 		entityManager.persist(entityManager.merge(c));
 		CargaAtributos.cargaForo(session, entityManager,tema);
 		session.setAttribute(CargaAtributos.tema,tema);
-		return CargaAtributos.foro;
+		return "foro";
 	}
 	
 	/**
@@ -901,7 +905,7 @@ public class UserController {
 		entityManager.remove(entityManager.merge(c));
 		CargaAtributos.cargaForo(session, entityManager,c.getTema());
 		session.setAttribute(CargaAtributos.tema,c.getTema());
-		return CargaAtributos.foro;
+		return "foro";
 	}
 	
 	/**
@@ -911,10 +915,10 @@ public class UserController {
 	 */
 	@RequestMapping(value = "/foro", method = RequestMethod.GET)
 	public String foro(Temas tema, HttpSession session) {
-		session.removeAttribute(CargaAtributos.mensaje);
+		session.setAttribute(CargaAtributos.mensaje, null);
 		CargaAtributos.cargaForo(session, entityManager, tema);
 		session.setAttribute(CargaAtributos.tema,tema);
-		return CargaAtributos.foro;
+		return "foro";
 	}
 	
 	/*#######################################################################
@@ -933,8 +937,9 @@ public class UserController {
      */
 	
 	/**
-	 * Operacion observadora: Muestra el ranking entre los amigos del usuario
-	 * @return Te redirige al ranking de amigos
+	 * Operacion observadora: Muestra el ranking en funcion de la busqueda seleccionada
+	 * @param busqueda: Opcion de busqueda
+	 * @return Te redirige al ranking
 	 */
 	@RequestMapping(value = "/verRanking", method = RequestMethod.GET)
 	public String verRanking(String busqueda, HttpSession session) {
@@ -958,15 +963,13 @@ public class UserController {
     #######################################################################*/
 		
 	/**
-	 * Devuelve una foto de usuario
+	 * Operacion observadora: Descarga una foto de la bd
 	 * @param id: Identificador del usuario al que le pertenece la fotp
 	 * @return la imagen o error.
 	 */
-	@RequestMapping(value="/fotoPerfil/{id}", 
-			method = RequestMethod.GET, 
-			produces = MediaType.IMAGE_JPEG_VALUE)
-	public void fotoUsuario(@PathVariable("id") String id, 
-			HttpServletResponse response) {
+	@RequestMapping(value="/fotoPerfil/{id}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
+	public void fotoUsuario(@PathVariable("id") String id,HttpServletResponse response) {
+		
 	    File f = localData.getFile("user", id);
 	    try (InputStream in = f.exists() ? 
 		    	new BufferedInputStream(new FileInputStream(f)) :
@@ -980,16 +983,14 @@ public class UserController {
 	}
 	
 	/**
-	 * Descarga una imagen de usuario via Ajax
+	 * Opracion observadora: Carga una imagen de usuario via Ajax en la bd
 	 * @param id: Id del usuario 
-	 * @param foto: Foto a descargar
-	 * @return respuesta de si ha salido bien la descarga o no.
+	 * @param photo: Foto a cargar
+	 * @return Te redirige al perfil cargando mensaje de log en la sesion
 	 */	
 	@RequestMapping(value="/fotoPerfil/{id}", method=RequestMethod.POST)
-    public String cargarArchivo(
-    		@RequestParam("photo") MultipartFile photo,
-    		   @PathVariable("id") String id,
-    		   					   HttpSession session){
+    public String cargarArchivo(@RequestParam("photo") MultipartFile photo,@PathVariable("id") String id,
+    		   					HttpSession session){
 
         if (photo.isEmpty()) { 
         	session.setAttribute(CargaAtributos.mensaje,"No has elegido ninguna foto a subir.");
@@ -1009,9 +1010,9 @@ public class UserController {
 	}
 	
 	/**
-	 * Busca si un usuario tiene un amigo en concreto. Si elimina esta a true, ademas lo elimina.
+	 * Operacion auxiliar: Busca si un usuario tiene un amigo en concreto. Si elimina esta a true, ademas lo elimina
 	 * @param u2: Usuario a buscar 
-	 * @param elimina: Foto a descargar
+	 * @param elimina: Modo eliminacion
 	 * @return true si lo encontro, false en caso contrario.
 	 */	
 	private boolean usuarioTieneAmigo(User u2,boolean elimina) {
@@ -1027,9 +1028,9 @@ public class UserController {
 	}
 	
 	/**
-	 * Busca si un usuario tiene un item en concreto. Si elimina esta a true, ademas lo elimina.
-	 * @param u2: Usuario a buscar 
-	 * @param elimina: Foto a descargar
+	 * Operacion auxiliar: Busca si un usuario tiene un item en concreto. Si elimina esta a true, ademas lo elimina
+	 * @param i: Item a buscar 
+	 * @param elimina: Modo eliminacion
 	 * @return true si lo encontro, false en caso contrario.
 	 */	
 	private boolean usuarioTieneItem(Item i,boolean elimina) {
@@ -1056,7 +1057,7 @@ public class UserController {
 	}
 	
 	/**
-	 * Operacion observadora: Muestra el ranking entre los amigos del usuario
+	 * Operacion auxiliar: Carga en la sesion una lista de usuarios
 	 * @return void
 	 */
 	@SuppressWarnings("unchecked")
@@ -1070,7 +1071,7 @@ public class UserController {
 	}
 
 	/**
-	 * Operacion observadora: Muestra el ranking entre los amigos del usuario
+	 * Operacion auxiliar: Carga en la sesion una lista de usuarios
 	 * @return void
 	 */
 	private void verRankingAmigos(HttpSession session) {
@@ -1078,7 +1079,7 @@ public class UserController {
 	}
 
 	/**
-	 * Operacion observadora: Muestra el ranking entre los usuarios
+	 * Operacion auxiliar: Carga en la sesion una lista de usuarios
 	 * @return void
 	 */
 	private void verRankingGlobal(HttpSession session) {
@@ -1089,6 +1090,11 @@ public class UserController {
 		session.setAttribute("ranking",ordena(usuarios));
 	}
 	
+	/**
+	 * Operacion auxiliar: Ordena una lista de usuarios mayor a menor en funcion de su dinero
+	 * @param usuarios: Lista desordenada
+	 * @return lista de usuarios ordenada
+	 */	
 	private List<User> ordena(List<User> usuarios){
 		Collections.sort(usuarios, new Comparator<User>() {
 			public int compare(User u1, User u2) {

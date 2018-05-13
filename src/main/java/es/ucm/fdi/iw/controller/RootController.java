@@ -29,13 +29,13 @@ public class RootController {
 	
 	@GetMapping("/perfil")
 	public String perfil(HttpSession session) {
-		session.removeAttribute(CargaAtributos.mensaje);
+		session.setAttribute(CargaAtributos.mensaje, null);
 		return "perfil";
 	}
 	
 	@GetMapping("/tienda")
 	public String tienda(HttpSession session) {  
-		session.removeAttribute(CargaAtributos.mensaje);
+		session.setAttribute(CargaAtributos.mensaje, null);
 		CargaAtributos.cargaTienda(session, entityManager);
 		return "tienda";
 	}
@@ -47,31 +47,31 @@ public class RootController {
 		
 	@GetMapping("/crearCuenta")
 	public String crearCuenta(HttpSession session){
-		session.removeAttribute(CargaAtributos.mensaje);
+		session.setAttribute(CargaAtributos.mensaje, null);;
 		return "crearCuenta";
 	}
 			
 	@GetMapping("/ranking")
 	public String ranking(HttpSession session) {
-		session.removeAttribute(CargaAtributos.mensaje);
+		session.setAttribute(CargaAtributos.mensaje, null);
 		return "ranking";
 	}
 		
 	@GetMapping("/reglas")
 	public String reglas(HttpSession session) {
-		session.removeAttribute(CargaAtributos.mensaje);
+		session.setAttribute(CargaAtributos.mensaje, null);
 		return "reglas";
 	}
 	
 	@GetMapping("/saloon")
 	public String saloon(HttpSession session) {
-		session.removeAttribute(CargaAtributos.mensaje);
+		session.setAttribute(CargaAtributos.mensaje, null);
 		return "saloon";
 	}
 	
 	@GetMapping("/partida")
 	public String partida(HttpSession session) {
-		session.removeAttribute(CargaAtributos.mensaje);
+		session.setAttribute(CargaAtributos.mensaje, null);
 		return "partida";
 	}
 		
