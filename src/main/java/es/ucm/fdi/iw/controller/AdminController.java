@@ -33,22 +33,19 @@ public class AdminController {
   
 	/**
 	 * Operacion creadora: Crea un nuevo usuario
-	 * Se pide la contraseña actual del usuario por mayor seguridad
+	 * Igual que la del ususario salvo que en esta se puede elegir si la nueva cuenta es admin o usuario
 	 * @param nombre: Nombre del usuario 
 	 * @param cont: Contraseña del usuario
 	 * @param email: Email del usuario
 	 * @param nacion: Pais del usuario
+	 * @param isAdmin: Si el nuevo usuario es admin
 	 * @return Te redirige a admin y carga en la sesion el mensaje.
 	 */
     @RequestMapping(value = "/crearCuenta", method = RequestMethod.POST)
 	@Transactional
-	public String crearCuenta(
-			@RequestParam(required=true) String nombre, 
-			@RequestParam(required=true) String cont,
-			@RequestParam(required=true) String email,
-			@RequestParam(required=true) Nacionalidades nacion,
-										 HttpSession session,
-										 String isAdmin) {
+	public String crearCuenta(@RequestParam(required=true) String nombre,@RequestParam(required=true) String cont,
+							  @RequestParam(required=true) String email,@RequestParam(required=true) Nacionalidades nacion,
+							  HttpSession session,String isAdmin) {
 		
 		if("".equals(nombre) || "".equals(cont) ||
 		   "".equals(email) || "".equals(nacion.toString())) {
@@ -92,9 +89,9 @@ public class AdminController {
 	}
     
 	/**
-	 * Operacion modificadora: Elimina un item de la lista de propiedades del usuario.
+	 * Operacion modificadora: Elimina un item de la bd
 	 * @param id: Id del item
-	 * @return Te redirige al perfil, cargando en el sesion la respusta(correcta o incorrecta ante la peticion)
+	 * @return Te redirige a la tienda, cargando en el sesion la respusta(correcta o incorrecta ante la peticion)
 	 */
 	@RequestMapping(value = "/borrarItem", method = RequestMethod.POST)
 	@Transactional
@@ -116,15 +113,14 @@ public class AdminController {
 	}
 	
 	/**
-	 * Operacion modificadora: Elimina un item de la lista de propiedades del usuario.
-	 * @param id: Id del item
-	 * @return Te redirige al perfil, cargando en el sesion la respusta(correcta o incorrecta ante la peticion)
+	 * Operacion modificadora: Añadde un item de la bd
+	 * @param precio: Precio del item
+	 * @param nombre: Nombre del item
+	 * @return Te redirige a la tienda, cargando en el sesion la respusta(correcta o incorrecta ante la peticion)
 	 */
 	@RequestMapping(value = "/añadirItem", method = RequestMethod.POST)
 	@Transactional
-	public String añadirItem(
-			 				 @RequestParam(required=true) double precio,
-			 				 @RequestParam(required=true) String nombre,
+	public String añadirItem(@RequestParam(required=true) double precio, @RequestParam(required=true) String nombre,
 			 				 @RequestParam(required=true) String descripcion) {
 				
 	    if(entityManager.createNamedQuery("getItem")

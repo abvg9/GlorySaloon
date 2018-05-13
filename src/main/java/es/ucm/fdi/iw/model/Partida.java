@@ -32,8 +32,6 @@ public class Partida {
 	//experimental
 	private String infoPartida;
 	private double TotalApostado;
-	
-	
 	private ArrayList<ArrayList<Integer>> palosManos;
 	private ArrayList<ArrayList<Integer>> valoresManos;
 	private int turno;
