@@ -9,12 +9,12 @@ public class Francesa extends Baraja{
 	public enum Valores{_2, _3, _4, _5, _6, _7, _8, _9, _10, J, Q, K, A}
 	
 	public Francesa() {
-		totalCartas = 48;
+		totalCartas = 52;
 		cartas = new ArrayList<Carta>(totalCartas);
 		for(int i = 0; i < 13;i++){		
 			for(int j = 0; j < 4;j++){
-				cartas.get(0).palo = Palos.values()[j];
-				cartas.get(0).valor = Valores.values()[i];
+				cartas.get(i).palo = Palos.values()[j];
+				cartas.get(i).valor = Valores.values()[j];
 			}
 		}
 	}

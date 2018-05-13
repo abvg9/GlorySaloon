@@ -18,10 +18,25 @@ public final class CargaAtributos {
 	public static final String imagen = "imagen";
 	public static final String user = "user";
 	public static final String tema = "tema";
-	public static final String saloon = "saloon";
-	public static final String juego = "juego";
-	public static final String jugadores = "jugadores";
+
 	public static User u;
+	
+	//Antes de la partida
+	public static final String saloon = "saloon";
+	public static final String jugadores = "jugadores";
+	public static final String juego = "juego";
+	
+	//Durante la partida(experimental)
+	public static final String infoPartida = "inforPartida";
+	public static final String partida = "partida";
+	public static final String cantidadApostada = "cantidadApostada";
+	public static final String movimiento = "movimiento";
+	public static final String totalApostado = "totalApostado";
+		
+	public static final String manos = "manos";
+	public static final String turno = "turno";
+	public static final String ganadores = "ganadores";
+
 	
 	@SuppressWarnings("unchecked")
 	public static void cargaForo(HttpSession session,EntityManager entityManager, Temas tema) {

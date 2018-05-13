@@ -6,7 +6,7 @@ import es.ucm.fdi.iw.games.logica.Jugador;
 
 public abstract class Reglas {
 	
-	protected abstract ArrayList<Jugador> mejorJugada(ArrayList<Jugador> jugadores);
+	public abstract ArrayList<Jugador> mejorJugada(ArrayList<Jugador> jugadores);
 	protected abstract int comparaJugada(ArrayList<Carta> mano1,ArrayList<Carta> mano2);
 	
 }

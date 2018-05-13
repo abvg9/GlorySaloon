@@ -6,15 +6,11 @@ import es.ucm.fdi.iw.games.barajas.Carta;
 
 public abstract class Jugador {
 
-	protected int cartasJugador;
 	protected ArrayList<Carta> mano;
 	protected double dinero;
 	protected String nombre;
 	protected double apostado;
 	protected int turno;
-	
-	public int getCartasJugador(){return this.cartasJugador;}
-	public void setCartasJugador(int cartasJugador){this.cartasJugador = cartasJugador;}
 	
 	public ArrayList<Carta> getMano(){return this.mano;}
 	public void setMano(ArrayList<Carta> mano){this.mano = mano;}
