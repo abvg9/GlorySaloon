@@ -1,5 +1,6 @@
 package es.ucm.fdi.iw.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -26,9 +27,16 @@ public class Partida {
 	private int MaxJugadores;
 	private Juegos juego;
 	private String pass;
-	private double apostado;
-	private int turno;
 	private boolean abierta;
+	
+	//experimental
+	private String infoPartida;
+	private double TotalApostado;
+	
+	
+	private ArrayList<ArrayList<Integer>> palosManos;
+	private ArrayList<ArrayList<Integer>> valoresManos;
+	private int turno;
 
 	@OneToMany(targetEntity=User.class)
 	public List<User> getJugadores() {
@@ -75,11 +83,11 @@ public class Partida {
 
 	@DecimalMin("0.00")
 	public double getApostado() {
-		return apostado;
+		return TotalApostado;
 	}
 
-	public void setApostado(double apostado) {
-		this.apostado = apostado;
+	public void setApostado(double TotalApostado) {
+		this.TotalApostado = TotalApostado;
 	}
 	
 	@Min(0)
@@ -106,7 +114,29 @@ public class Partida {
 	public void setAbierta(boolean abierta) {
 		this.abierta = abierta;
 	}
-	
 
+	public ArrayList<ArrayList<Integer>> getPalosManos() {
+		return palosManos;
+	}
+
+	public void setPalosManos(ArrayList<ArrayList<Integer>> palosManos) {
+		this.palosManos = palosManos;
+	}
+
+	public ArrayList<ArrayList<Integer>> getValoresManos() {
+		return valoresManos;
+	}
+
+	public void setValoresManos(ArrayList<ArrayList<Integer>> valoresManos) {
+		this.valoresManos = valoresManos;
+	}
+
+	public String getInfoPartida() {
+		return infoPartida;
+	}
+
+	public void setInfoPartida(String infoPartida) {
+		this.infoPartida = infoPartida;
+	}
 
 }

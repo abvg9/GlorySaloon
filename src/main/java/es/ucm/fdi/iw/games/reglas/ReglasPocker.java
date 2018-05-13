@@ -1,8 +1,6 @@
 package es.ucm.fdi.iw.games.reglas;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import es.ucm.fdi.iw.games.barajas.Carta;
 import es.ucm.fdi.iw.games.barajas.Francesa;
 import es.ucm.fdi.iw.games.barajas.Francesa.Palos;
@@ -29,7 +27,7 @@ public final class ReglasPocker extends Reglas {
 	private Jugadas mejorJugada;
 	
 	@Override
-	protected ArrayList<Jugador> mejorJugada(ArrayList<Jugador> jugadores) {
+	public ArrayList<Jugador> mejorJugada(ArrayList<Jugador> jugadores) {
 		
 		ArrayList<JugadorJugada> juju = new ArrayList<JugadorJugada>();
 		mejorJugada = Jugadas.cartaAlta;

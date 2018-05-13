@@ -32,9 +32,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import es.ucm.fdi.iw.common.enums.Juegos;
+import es.ucm.fdi.iw.common.enums.Movimientos;
 import es.ucm.fdi.iw.common.enums.Nacionalidades;
 import es.ucm.fdi.iw.common.enums.Temas;
 import es.ucm.fdi.iw.common.utils.CargaAtributos;
+import es.ucm.fdi.iw.games.barajas.Carta;
+import es.ucm.fdi.iw.games.logica.Jugador;
 import es.ucm.fdi.iw.LocalData;
 import es.ucm.fdi.iw.model.ComentarioForo;
 import es.ucm.fdi.iw.model.Item;
@@ -91,7 +94,7 @@ public class UserController {
 			@RequestParam(required=true) String email,
 			@RequestParam(required=true) Nacionalidades nacion,
 										 HttpSession session) {
-		
+
 		if("".equals(nombre) || "".equals(cont) ||
 		   "".equals(email) || "".equals(nacion.toString())) {
 
@@ -434,13 +437,21 @@ public class UserController {
      *  2º Unirse a una partida
      *  3º Ver y buscar partidas(por juego, por amigos o por nombre)
      *  
-     *  ----------------------------
-     *  --- Dentro de la partida ---
-     *  ----------------------------
+     *  -----------------------------------------------
+     *  --- Dentro de la partida(sin haber empezao) ---
+     *  -----------------------------------------------
      *  
-     *  4º Salirse de la partida(queda por actualizar las estadisticas y dinero del usuario que sale)
+     *  4º Salirse de la partida
      *  5º Pasar turno(realizando movimiento)
-     *  6º Empezar partida.
+     *  6º Empezar partida
+     *  
+     *  -----------------------------------------------
+     *  --- Dentro de la partida(habiendo empezado) ---
+     *  -----------------------------------------------
+     *  7º Apostar
+     *  8º Pasar turno
+     *  9º Pedir carta
+     *  (salir->4º)
      *  
      */
 	
@@ -477,6 +488,8 @@ public class UserController {
 				p.setMaxJugadores(maxJugadores);
 				p.setNombre(nombrePar);
 				p.setJugadores(new ArrayList<User>(maxJugadores));
+				p.setValoresManos(new ArrayList<ArrayList<Integer>>(maxJugadores));
+				p.setPalosManos(new ArrayList<ArrayList<Integer>>(maxJugadores));
 				if("".equals(cont)) {
 					p.setPass("no");
 				}else {
@@ -578,52 +591,6 @@ public class UserController {
 	}
 	
 	/**
-	 * Operacion modicadora: Saca a un usuario de la partida en la que esta actualmente
-	 * Si la partida tiene menos de dos jugadores, esta se cerrara y sacara al otro usuario de dentro.
-	 * @return Redirige a sallon
-	 */
-	@RequestMapping(value = "/salirDeLaPartida", method = RequestMethod.POST)
-	@Transactional
-	public String salirDeLaPartida() {
-		
-		Partida p = CargaAtributos.u.getPartida();
-		//modificar estadisticas usuario(si ya ha jugado)
-		p.getJugadores().remove(CargaAtributos.u);
-		CargaAtributos.u.setPartida(null);
-		
-		if(p.getJugadores().size() < 2) {		
-			User u2 = p.getJugadores().get(0);
-			u2.setPartida(null);
-			p.getJugadores().remove(0);
-			entityManager.merge(u2);
-			entityManager.remove(entityManager.merge(p));
-			//enviar mensaje de que la partida acabo
-			return "saloon";
-		}
-
-		entityManager.merge(CargaAtributos.u);	
-		entityManager.remove(entityManager.merge(p));
-		return "saloon";
-	}
-	
-	/**
-	 * Operacion modicadora: Pasa de turno.
-	 * @param id_partida: Id de la partida
-	 * @return Void.
-	 */
-	@RequestMapping(value = "/pasarTurno", method = RequestMethod.POST)
-	@Transactional
-	public String pasarTurno(long id_partida) {
-		
-		Partida p = entityManager.find(Partida.class, id_partida);
-		//ejecutar movimiento y pasar turno
-		
-		p.setTurno(p.getTurno()%p.getJugadores().size());			
-		entityManager.persist(p);
-		return "partida";
-	}
-	
-	/**
 	 * Operacion modicadora: Pasa de turno.
 	 * @param id_partida: Id de la partida
 	 * @return Void.
@@ -648,12 +615,26 @@ public class UserController {
 		}
 		
 		if(i == p.getMaxJugadores()) {
-			session.setAttribute(CargaAtributos.juego, p.getJuego());
-			session.setAttribute(CargaAtributos.jugadores, p.getJugadores());
+						
 			CargaAtributos.u.setListo(false);
 			p.setAbierta(false);
 			entityManager.persist(entityManager.merge(CargaAtributos.u));
 			entityManager.persist(p);
+			
+			List<Jugador> jugadores = new ArrayList<Jugador>(p.getMaxJugadores());
+			
+			for(int j = 0; j < jugadores.size();j++) {
+				jugadores.get(j).setTurno(j);
+				jugadores.get(j).setApostado(0.0);
+				jugadores.get(j).setNombre(p.getJugadores().get(j).getLogin());
+				jugadores.get(j).setDinero(p.getJugadores().get(j).getDinero());
+				jugadores.get(j).setMano(new ArrayList<Carta>());
+			}
+			
+			session.setAttribute(CargaAtributos.jugadores,jugadores);
+			session.setAttribute(CargaAtributos.partida, p);
+			session.setAttribute(CargaAtributos.juego, p.getJuego());
+			
 		}else {
 			session.setAttribute(CargaAtributos.mensaje, "Faltan jugadores por confirmar ("+a+"/"+p.getMaxJugadores()+")."
 					+ "Dales unos segundos para que esten listos.");
@@ -661,6 +642,160 @@ public class UserController {
 		}
 
 		
+		return "partida";
+	}
+
+	/**
+	 * Operacion modicadora: Pasa de turno.
+	 * @param id_partida: Id de la partida
+	 * @return Void.
+	 */
+	@RequestMapping(value = "/apostar", method = RequestMethod.POST)
+	@Transactional
+	public String apostar(Double apostado,HttpSession session) {
+		
+		if(apostado <= CargaAtributos.u.getDinero() && apostado > 0) {
+			
+			//variables para jsp
+			session.setAttribute(CargaAtributos.infoPartida, CargaAtributos.u.getLogin() + " apostó "+apostado+".");
+			
+			//variables para el juego
+			session.setAttribute(CargaAtributos.cantidadApostada, apostado);
+			session.setAttribute(CargaAtributos.movimiento, Movimientos.apostar);
+			session.setAttribute(CargaAtributos.totalApostado, apostado+ (Integer)session.getAttribute(CargaAtributos.totalApostado));
+			
+			//modificamos variables locales
+			CargaAtributos.u.getPartida().setApostado(CargaAtributos.u.getPartida().getApostado() + apostado);
+			CargaAtributos.u.getPartida().setInfoPartida((String)session.getAttribute(CargaAtributos.infoPartida));
+			CargaAtributos.u.setDinero(CargaAtributos.u.getDinero()-apostado);
+			
+			//modificamos variables bd
+			entityManager.merge(CargaAtributos.u.getPartida());
+			entityManager.merge(CargaAtributos.u);
+			
+		}else {
+			session.setAttribute(CargaAtributos.mensaje, "No puedes apostar esa cantidad");
+		}
+		
+		return "partida";
+	}
+	
+	/**
+	 * Operacion modicadora: Pasa de turno.
+	 * @param id_partida: Id de la partida
+	 * @return Void.
+	 */
+	@RequestMapping(value = "/pasarTurno", method = RequestMethod.POST)
+	@Transactional
+	public String pasarTurno(HttpSession session) {
+
+		//variables para jsp
+		session.setAttribute(CargaAtributos.infoPartida, CargaAtributos.u.getLogin() + " se plantó.");
+		
+		//variables para el juego
+		session.setAttribute(CargaAtributos.movimiento, Movimientos.plantarse);
+		
+		//modificamos variables locales
+		
+		//modificamos variables bd
+		CargaAtributos.u.getPartida().setInfoPartida((String)session.getAttribute(CargaAtributos.infoPartida));
+		entityManager.merge(CargaAtributos.u.getPartida());
+		
+		return "partida";
+	}
+	
+	/**
+	 * Operacion modicadora: Pasa de turno.
+	 * @param id_partida: Id de la partida
+	 * @return Void.
+	 */
+	@RequestMapping(value = "/pedirCarta", method = RequestMethod.POST)
+	@Transactional
+	public String pedirCarta(HttpSession session) {
+
+		//variables para jsp
+		session.setAttribute(CargaAtributos.infoPartida, CargaAtributos.u.getLogin() + " pidio carta.");
+		
+		//variables para el juego
+		session.setAttribute(CargaAtributos.movimiento, Movimientos.pedirCartas);
+		
+		//modificamos variables locales
+		
+		//modificamos variables bd
+		CargaAtributos.u.getPartida().setInfoPartida((String)session.getAttribute(CargaAtributos.infoPartida));
+		entityManager.merge(CargaAtributos.u.getPartida());
+		
+		return "partida";
+	}
+	
+	/**
+	 * Operacion modicadora: Saca a un usuario de la partida en la que esta actualmente
+	 * Si la partida tiene menos de dos jugadores, esta se cerrara y sacara al otro usuario de dentro.
+	 * @return Redirige a sallon
+	 */
+	@RequestMapping(value = "/salirDeLaPartida", method = RequestMethod.POST)
+	@Transactional
+	public String salirDeLaPartida(HttpSession session) {
+			
+		//modificar estadisticas usuario(si ya ha jugado)
+		CargaAtributos.u.getPartida().getJugadores().remove(CargaAtributos.u);
+		CargaAtributos.u.setPartida(null);
+		
+		if(CargaAtributos.u.getPartida().getJugadores().size() < 2) {		
+			User u2 = CargaAtributos.u.getPartida().getJugadores().get(0);
+			u2.setPartida(null);
+			CargaAtributos.u.getPartida().getJugadores().remove(0);
+			entityManager.merge(u2);
+			session.setAttribute(CargaAtributos.mensaje,"La partida acabo.");
+		}
+
+		entityManager.merge(CargaAtributos.u);	
+		entityManager.remove(entityManager.merge(CargaAtributos.u.getPartida()));
+		return "saloon";
+	}
+	
+	/**
+	 * Operacion modicadora: Pasa de turno.
+	 * @param id_partida: Id de la partida
+	 * @return Void.
+	 */
+	@RequestMapping(value = "/actualizaManos", method = RequestMethod.POST)
+	@Transactional
+	public String actualizaManos(ArrayList<ArrayList<Carta>> manos) {
+		
+		for(int i = 0; i < manos.size();i++) {
+			for(int j = 0; j < manos.get(i).size();j++) {			
+				CargaAtributos.u.getPartida().getValoresManos().get(i).set(j, manos.get(i).get(j).getValor().ordinal());
+				CargaAtributos.u.getPartida().getPalosManos().get(i).set(j, manos.get(i).get(j).getPalo().ordinal());
+			}
+		}			
+		entityManager.merge(CargaAtributos.u.getPartida());
+		return "partida";
+	}
+	
+	@RequestMapping(value = "/actualizaMovimiento", method = RequestMethod.POST)
+	@Transactional
+	public String actualizaMovimiento(ArrayList<ArrayList<Carta>> manos) {
+		
+		for(int i = 0; i < manos.size();i++) {
+			for(int j = 0; j < manos.get(i).size();j++) {			
+				CargaAtributos.u.getPartida().getValoresManos().get(i).set(j, manos.get(i).get(j).getValor().ordinal());
+				CargaAtributos.u.getPartida().getPalosManos().get(i).set(j, manos.get(i).get(j).getPalo().ordinal());
+			}
+		}			
+		entityManager.merge(CargaAtributos.u.getPartida());
+		return "partida";
+	}
+	
+	@RequestMapping(value = "/actualizaInfoPartida", method = RequestMethod.GET)
+	@Transactional
+	public String actualizaInfoPartida(HttpSession session) {
+		
+		Partida p = (Partida)entityManager.createNamedQuery("getPartidaPorNombre")
+								 .setParameter("nombreParam", CargaAtributos.u.getPartida().getNombre()).getSingleResult();
+		
+		session.setAttribute(CargaAtributos.infoPartida,p.getInfoPartida());
+		session.setAttribute(CargaAtributos.turno,p.getTurno());
 		return "partida";
 	}
 	
