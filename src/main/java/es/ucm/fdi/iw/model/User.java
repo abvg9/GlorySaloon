@@ -17,7 +17,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Min;
-
 import es.ucm.fdi.iw.common.enums.Nacionalidades;
 
 @Entity
@@ -118,7 +117,7 @@ public class User {
 	@JoinTable(name = "user_amigos", joinColumns = {
 			@JoinColumn(name = "amigo_A", referencedColumnName = "id", nullable = false) }, inverseJoinColumns = {
 					@JoinColumn(name = "amigo_B", referencedColumnName = "id", nullable = false) })
-	@ManyToMany(targetEntity = User.class, fetch = FetchType.EAGER,cascade = CascadeType.REMOVE)
+	@ManyToMany(targetEntity = User.class, fetch = FetchType.EAGER)
 	public List<User> getAmigos() {
 		return amigos;
 	}
@@ -127,7 +126,7 @@ public class User {
 		this.amigos = amigos;
 	}
 
-	@OneToMany(targetEntity = ComentarioForo.class,cascade = CascadeType.ALL)
+	@OneToMany(targetEntity = ComentarioForo.class, fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
 	@JoinColumn(name = "usuario_id")
 	public List<ComentarioForo> getComentarios() {
 		return comentarios;
@@ -137,7 +136,7 @@ public class User {
 		this.comentarios = comentarios;
 	}
 
-	@ManyToOne(targetEntity = Partida.class,cascade = CascadeType.ALL)
+	@ManyToOne(targetEntity = Partida.class)
 	public Partida getPartida() {
 		return partida;
 	}

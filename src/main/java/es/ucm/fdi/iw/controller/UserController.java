@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
@@ -32,12 +33,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import es.ucm.fdi.iw.common.enums.Juegos;
-import es.ucm.fdi.iw.common.enums.Movimientos;
 import es.ucm.fdi.iw.common.enums.Nacionalidades;
 import es.ucm.fdi.iw.common.enums.Temas;
 import es.ucm.fdi.iw.common.utils.CargaAtributos;
-import es.ucm.fdi.iw.games.barajas.Carta;
-import es.ucm.fdi.iw.games.logica.Jugador;
 import es.ucm.fdi.iw.LocalData;
 import es.ucm.fdi.iw.model.ComentarioForo;
 import es.ucm.fdi.iw.model.Item;
@@ -62,7 +60,6 @@ public class UserController {
 	@ModelAttribute
     public void addAttributes(Model model,HttpSession session) {	  	
         model.addAttribute("s", "/static");
-        session.setAttribute(CargaAtributos.user, CargaAtributos.u);
     }
         	
     /*#######################################################################
@@ -167,30 +164,33 @@ public class UserController {
 	@Transactional
 	public String modificarPerfil(String nombre,String contNueva,@RequestParam(required=true) String contActual,
 								  String email,Nacionalidades nacion,HttpSession session){
-				
-		if(passwordEncoder.matches(contActual, CargaAtributos.u.getPassword())) {
+		
+		User u = (User)session.getAttribute(CargaAtributos.user);
+		if(passwordEncoder.matches(contActual, u.getPassword())) {
 			
 			int modificacion = 0;
 
-			if(!"".equals(nombre) && !CargaAtributos.u.getLogin().equals(nombre))
-			{CargaAtributos.u.setLogin(nombre); modificacion++;}
+			if(!"".equals(nombre) && !u.getLogin().equals(nombre))
+			{u.setLogin(nombre); modificacion++;}
 			
-			if(!"".equals(email) && !CargaAtributos.u.getEmail().equals(email))
-			{CargaAtributos.u.setEmail(email); modificacion++;}
+			if(!"".equals(email) && !u.getEmail().equals(email))
+			{u.setEmail(email); modificacion++;}
 					
 			if(!"".equals(contNueva) && !passwordEncoder.matches(contNueva, contActual))
-			{CargaAtributos.u.setPassword(passwordEncoder.encode(contNueva)); modificacion++;}
+			{u.setPassword(passwordEncoder.encode(contNueva)); modificacion++;}
 			
-			if(!"".equals(nacion.toString()) && !CargaAtributos.u.getNacion().equals(nacion))
-			{CargaAtributos.u.setNacion(nacion); modificacion++;}
+			if(!"".equals(nacion.toString()) && !u.getNacion().equals(nacion))
+			{u.setNacion(nacion); modificacion++;}
 
 			if(modificacion > 0) {
 				
 				if(modificacion == 1) {session.setAttribute(CargaAtributos.mensaje,"Modificacion realizada correctamente.");}
 				else {session.setAttribute(CargaAtributos.mensaje,"Modificaciones realizadas correctamente.");}
-				log.info(CargaAtributos.u.getLogin() + " modifico parametros de su perfil.");
-				entityManager.merge(CargaAtributos.u);
-							
+				
+				log.info(u.getLogin() + " modifico parametros de su perfil.");
+				entityManager.merge(u);
+				session.setAttribute(CargaAtributos.user,u);	
+				
 				return "perfil";
 			}
 			
@@ -215,8 +215,9 @@ public class UserController {
 	@RequestMapping(value = "/añadirAmigo", method = RequestMethod.POST)
 	@Transactional
 	public String añadirAmigo(@RequestParam(required=true) String nombreA, HttpSession session) {
-		
-		if(nombreA.equals(CargaAtributos.u.getLogin())) {
+			
+		User u = (User)session.getAttribute(CargaAtributos.user);
+		if(nombreA.equals(u.getLogin())) {
 			session.setAttribute(CargaAtributos.mensaje,"No te puedes añadir a ti mismo como amigo.");
 			return "perfil";
 		}
@@ -226,12 +227,12 @@ public class UserController {
 					   .setParameter("loginParam", nombreA)
 			           .getSingleResult();
 								
-			if(usuarioTieneAmigo(u2,false)){
+			if(usuarioTieneAmigo(u2,false,u)){
 				
-				CargaAtributos.u.getAmigos().add(u2);
-				entityManager.merge(CargaAtributos.u);
+				u.getAmigos().add(u2);
+				entityManager.merge(u);
 				session.setAttribute(CargaAtributos.mensaje,nombreA+" añadido a amigos.");
-				session.setAttribute(CargaAtributos.user,CargaAtributos.u);
+				session.setAttribute(CargaAtributos.user,u);
 				
 			}else {
 				session.setAttribute(CargaAtributos.mensaje,nombreA+" ya esta en tu lista de amigos.");
@@ -254,17 +255,18 @@ public class UserController {
 	@RequestMapping(value = "/pefilAmigo", method = RequestMethod.GET)
 	public String pefilAmigo(@RequestParam(required=true) String nombre,HttpSession session) {
 		
+		User u = (User)session.getAttribute(CargaAtributos.user);
 		try {
 			User u2 = (User)entityManager.createNamedQuery("getUsuario")
 			           .setParameter("loginParam", nombre)
 			           .getSingleResult();
 			
-			if(usuarioTieneAmigo(u2,false)) {
+			if(usuarioTieneAmigo(u2,false,u)) {
 				session.setAttribute(CargaAtributos.mensaje,"Perfil privado, debes añadirlo a amigos para poder verlo.");
 				return "perfil";
 			}
 
-			if(!nombre.equals(CargaAtributos.u.getLogin())){
+			if(!nombre.equals(u.getLogin())){
 				
 				User perfil = (User)entityManager.createNamedQuery("getUsuario")
 				               .setParameter("loginParam", nombre)
@@ -293,36 +295,40 @@ public class UserController {
 		
 		User u = null;
 		boolean iguales = false;
+		User us = (User)session.getAttribute(CargaAtributos.user);
 		
-		if(nombre != null){
+		//un admin esta intentado borrar una cuenta que no es la suya
+		if(nombre != null && !nombre.equals(us.getLogin())){
 			
-			if(nombre.equals(CargaAtributos.u.getLogin())) {
-				u = CargaAtributos.u;
-				iguales = true;	
-			}else {
-				
-				if("".equals(nombre)){
-					session.setAttribute(CargaAtributos.mensaje,"Debes rellenar el campo.");
-					return "perfil";
-				}
-				
-				try {
-					u = (User)entityManager.createNamedQuery("getUsuario")
-					     .setParameter("loginParam", nombre)
-					     .getSingleResult();
-				
-				}catch(NoResultException e) {
-					log.error(e);
-					session.setAttribute(CargaAtributos.mensaje,nombre + " no existe.");
-					return "perfil";
-				}
+			try {
+				u = (User)entityManager.createNamedQuery("getUsuario")
+				     .setParameter("loginParam", nombre)
+				     .getSingleResult();
+			
+			}catch(NoResultException e) {
+				log.error(e);
+				session.setAttribute(CargaAtributos.mensaje,nombre + " no existe.");
+				return "perfil";
 			}
-			
-		}else {
-			u = CargaAtributos.u;
-			iguales = true;	
-		}
 
+		}else {
+			//un usuario(sea admin o usuario) esta intentado borrar su cuenta
+			u = us;
+			iguales = true;
+		}
+		u.setAmigos(null);
+		u.setComentarios(null);
+		
+		Item it;
+		for(int i = 0; i < u.getPropiedades().size();i++) {
+			
+			it = u.getPropiedades().get(i);
+			
+			usuarioTieneItem(it, true, u);
+			entityManager.merge(it);
+		}
+		
+		u.setPropiedades(null);
 		
 		entityManager.remove(entityManager.merge(u));
 		//borrar imagen usuario
@@ -331,12 +337,8 @@ public class UserController {
 		log.info(u.getLogin() + " elimino su cuenta.");
 		
 		if(iguales) {
-			session.removeAttribute(CargaAtributos.user);
-			session.removeAttribute(CargaAtributos.mensaje);
-			session.removeAttribute(CargaAtributos.tema);
-			session.removeAttribute(CargaAtributos.imagen);
+			eliminaVariablesSession(session);
 			//session.invalidate();
-			CargaAtributos.u = null;
 		}
 	
 		if(iguales) return "login";
@@ -353,15 +355,16 @@ public class UserController {
 	@Transactional
 	public String eliminarAmigo(@RequestParam(required=true) String nombreAmigo,HttpSession session) {
 		
+		User u = (User)session.getAttribute(CargaAtributos.user);
 		try {
 			User u2 = (User)entityManager.createNamedQuery("getUsuario")
 			           .setParameter("loginParam", nombreAmigo)
 			           .getSingleResult();
 			
-			if(!usuarioTieneAmigo(u2,true)) {
+			if(!usuarioTieneAmigo(u2,true,u)) {
 				session.setAttribute(CargaAtributos.mensaje,nombreAmigo + " eliminado.");
-				session.setAttribute(CargaAtributos.user, CargaAtributos.u);
-				entityManager.merge(CargaAtributos.u);
+				session.setAttribute(CargaAtributos.user,u);
+				entityManager.merge(u);
 				
 			}else {
 				session.setAttribute(CargaAtributos.mensaje,nombreAmigo + " no esta en tu lista de amigos.");
@@ -382,13 +385,15 @@ public class UserController {
 	@RequestMapping(value = "/borrarItem", method = RequestMethod.POST)
 	public String borrarItem(@RequestParam(required=true) long id,HttpSession session) {
 		
+		User u = (User)session.getAttribute(CargaAtributos.user);
 		try {
 			Item i = (Item)entityManager.find(Item.class,id);
 			
-			if(usuarioTieneItem(i,true)){
+			if(usuarioTieneItem(i,true,u)){
 		
-				entityManager.merge(CargaAtributos.u);
+				entityManager.merge(u);
 				entityManager.merge(i);
+				session.setAttribute(CargaAtributos.user,u);
 				
 			}else {
 				session.setAttribute(CargaAtributos.mensaje,"No tienes ese item");
@@ -411,51 +416,25 @@ public class UserController {
 	@RequestMapping(value = "/logout", method = RequestMethod.POST)
 	public String logout(HttpSession session) {
 
-		session.removeAttribute(CargaAtributos.user);
-		session.removeAttribute(CargaAtributos.tema);
-		session.removeAttribute(CargaAtributos.imagen);
-		session.removeAttribute(CargaAtributos.mensaje);
-		session.removeAttribute(CargaAtributos.foro);
-		session.removeAttribute(CargaAtributos.tienda);
-
+		eliminaVariablesSession(session);
 		//session.invalidate();
-		CargaAtributos.u=null;
 		return "login";
 	}
 	
     /*#######################################################################
     #########################################################################
     ###                                                                   ###
-    ###                            PARTIDAS                               ###
+    ###                            SALOON                                 ###
     ###                                                                   ###
     #########################################################################
     #######################################################################*/
 	
     /** Operaciones:
-     *  ---------------------------
-     *  --- Fuera de la partida ---
-     *  ---------------------------
      *  
      *  1º Crear partida
      *  2º Unirse a una partida
      *  3º Ver y buscar partidas(por juego, por amigos o por nombre)
-     *  
-     *  -----------------------------------------------
-     *  --- Dentro de la partida(sin haber empezao) ---
-     *  -----------------------------------------------
-     *  
-     *  4º Salirse de la partida
-     *  5º Pasar turno(realizando movimiento)
-     *  6º Empezar partida
-     *  
-     *  -----------------------------------------------
-     *  --- Dentro de la partida(habiendo empezado) ---
-     *  -----------------------------------------------
-     *  7º Apostar
-     *  8º Pasar turno
-     *  9º Pedir carta
-     *  (salir->4º)
-     *  
+     *  4º Salir de la partida
      */
 	
 	/**
@@ -468,52 +447,48 @@ public class UserController {
 	 */
 	@RequestMapping(value = "/crearPartida", method = RequestMethod.POST)
 	@Transactional
-	public  String crearPartida(String cont,
-								 HttpSession session,
-                @RequestParam(required=true) Juegos juego,
-			    @RequestParam(required=true) int maxJugadores, 
-			    @RequestParam(required=true) String nombrePar) {
-				
-		if(CargaAtributos.u.getPartida() == null) {
+	public  String crearPartida(String cont,HttpSession session,@RequestParam(required=true) Juegos juego,
+			    				@RequestParam(required=true) int maxJugadores, @RequestParam(required=true) String nombrePar) {
+		
+		User u = (User)session.getAttribute(CargaAtributos.user);
+		
+		if(u.getPartida() == null) {
 			
 			if(maxJugadores < 2 || maxJugadores > 7) {
 				session.setAttribute(CargaAtributos.mensaje, "Las partidas deben ser de como minimo 2 jugadores y como maximo 7.");
 				return "saloon";
 			}
 
-			if(entityManager.createNamedQuery("getPartidaPorNombre")
-			                .setParameter("nombreParam", nombrePar)
-			                .getResultList().isEmpty()) {
+			if(entityManager.createNamedQuery("getPartidaPorNombre").setParameter("nombreParam", nombrePar)
+			                													.getResultList().isEmpty()) {
 				Partida p = new Partida();
-				p.setAbierta(true);
-				p.setApostado(0);
-				p.setJuego(juego);
-				p.setMaxJugadores(maxJugadores);
 				p.setNombre(nombrePar);
 				p.setJugadores(new ArrayList<User>(maxJugadores));
-				p.setValoresManos(new ArrayList<ArrayList<Integer>>(maxJugadores));
-				p.setPalosManos(new ArrayList<ArrayList<Integer>>(maxJugadores));
+				p.setMaxJugadores(maxJugadores);
+				p.setJuego(juego);
 				if("".equals(cont)) {
 					p.setPass("no");
 				}else {
 					p.setPass(passwordEncoder.encode(cont));
 				}
-				CargaAtributos.u.setListo(false);
+				p.setAbierta(true);
 				
-				p.getJugadores().add(CargaAtributos.u);
-				CargaAtributos.u.setPartida(p);
+				u.setListo(false);
+				u.setPartida(p);
+				p.getJugadores().add(u);
 				entityManager.persist(p);
-				entityManager.persist(entityManager.merge(CargaAtributos.u));
+				entityManager.persist(entityManager.merge(u));
+				session.setAttribute(CargaAtributos.user,u);
 				session.setAttribute(CargaAtributos.mensaje, "Estas dentro de la partida");
-				return "saloon";
 				
+			}else {
+				session.setAttribute(CargaAtributos.mensaje, "Ese nombre de partida ya esta cogido :(");
 			}
 			
-			session.setAttribute(CargaAtributos.mensaje, "Ese nombre de partida ya esta cogido :(");
-			return "saloon";
+		}else {
+			session.setAttribute(CargaAtributos.mensaje, "Ya estas dentro de una partida.");
 		}
-		
-		session.setAttribute(CargaAtributos.mensaje, "Ya estas dentro de una partida.");
+
 		return "saloon";
 	}
 	
@@ -526,37 +501,33 @@ public class UserController {
 	 */
 	@RequestMapping(value = "/unirsePartida", method = RequestMethod.POST)
 	@Transactional
-	public String unirsePartida(
-			     @RequestParam(required=true) long id_p,
-										      String pass,
-										      HttpSession session) {
+	public String unirsePartida(@RequestParam(required=true) long id_p,String pass,HttpSession session) {
 		
 		Partida p = entityManager.find(Partida.class, id_p);
+		User u = (User)session.getAttribute(CargaAtributos.user);
 		
-		if(CargaAtributos.u.getPartida() != null) {
+		if(u.getPartida() == null) {
 			
-			if(p.getMaxJugadores() > p.getJugadores().size()+1 && p.isAbierta()) {
+			if(p.getMaxJugadores() > p.getJugadores().size() && p.isAbierta()) {
 				
-				if("no".equals(p.getPass()) || passwordEncoder.matches(pass, p.getPass())) {
-					CargaAtributos.u.setPartida(p);
-					p.getJugadores().add(CargaAtributos.u);
+				if(pass != null && "no".equals(p.getPass()) || passwordEncoder.matches(pass, p.getPass())) {
+					
+					u.setPartida(p);
+					p.getJugadores().add(u);
+					entityManager.persist(entityManager.merge(u));
 					entityManager.persist(p);
-					entityManager.persist(CargaAtributos.u);
+					session.setAttribute(CargaAtributos.user,u);
 					session.setAttribute(CargaAtributos.mensaje, "Estas dentro de la partida");
 				}else {
 					session.setAttribute(CargaAtributos.mensaje, "Contraseña incorrecta.");
-					return "saloon";
 				}
 					
 			}else {
 				session.setAttribute(CargaAtributos.mensaje, "No hay hueco en la partida.");
-				return "saloon";
 			}	
 		}else {
 			session.setAttribute(CargaAtributos.mensaje, "Ya estas dentro de una partida.");
-			return "saloon";
 		}
-		
 		return "saloon";
 	}
 
@@ -568,33 +539,44 @@ public class UserController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/verSaloon", method = RequestMethod.GET)
-	public String verPartidas(HttpSession session,Juegos juego,String nombrePar) {
+	public String verPartidas(HttpSession session,Juegos juego,String nombrePar,Model model, HttpServletRequest request) {
 		
 		session.setAttribute(CargaAtributos.mensaje, null);
 		List<Partida> partidas = new ArrayList<Partida>();	
+		User u = (User)session.getAttribute(CargaAtributos.user);
 		
 		if(!"".equals(nombrePar)) {
 			
 			partidas = (List<Partida>)entityManager.createNamedQuery("getPartidaPorNombre")
 			           .setParameter("nombreParam", nombrePar)
-			           .getResultList();	           
-			session.setAttribute(CargaAtributos.saloon,partidas);
+			           .getResultList();
+			
+			if(!partidas.isEmpty()) {
+				session.setAttribute(CargaAtributos.saloon,partidas);
+			}else {
+				session.setAttribute(CargaAtributos.mensaje, "Esa partida no existe.");
+			}
+			
+			CargaAtributos.socket(model, request, "user/verSaloon", CargaAtributos.chatSocket);
 			return "saloon";
+			
 		}else if(juego != Juegos.Amigos){
 			partidas = (List<Partida>)entityManager.createNamedQuery("getPartidaPorJuego")
 			           .setParameter("juegoParam", juego)
 			           .getResultList();	           
 			session.setAttribute(CargaAtributos.saloon,partidas);
+			CargaAtributos.socket(model, request, "user/verSaloon", CargaAtributos.chatSocket);
 			return "saloon";
 		}
 
-		for(int i = 0; i < CargaAtributos.u.getAmigos().size(); i++) {
-			partidas.add(CargaAtributos.u.getAmigos().get(0).getPartida());
+		for(int i = 0; i < u.getAmigos().size(); i++) {
+			partidas.add(u.getAmigos().get(0).getPartida());
 		}            
-		session.setAttribute(CargaAtributos.saloon,partidas);
+		session.setAttribute(CargaAtributos.saloon,partidas);		
+		CargaAtributos.socket(model, request, "user/verSaloon", CargaAtributos.chatSocket);
 		return "saloon";
 	}
-	
+		
 	/**
 	 * Operacion modicadora: Pasa de turno.
 	 * @param id_partida: Id de la partida
@@ -602,15 +584,16 @@ public class UserController {
 	 */
 	@RequestMapping(value = "/empezarPartida", method = RequestMethod.POST)
 	@Transactional
-	public String empezarPartida(long id_p,HttpSession session) {
-		//si todos le han dado a empezar[partida.usuario[i].isListo()]
-		Partida p = entityManager.find(Partida.class, id_p);
+	public synchronized String empezarPartida(HttpSession session) {
+		
+		User u = (User)session.getAttribute(CargaAtributos.user);
+		Partida p = entityManager.find(Partida.class, u.getPartida().getId());
 		int i = 0;
 		int a = 0;
 		
-		if(!CargaAtributos.u.isListo()) {
-			CargaAtributos.u.setListo(true);
-			entityManager.persist(entityManager.merge(CargaAtributos.u));
+		if(!u.isListo()) {
+			u.setListo(true);
+			entityManager.persist(entityManager.merge(u));
 		}
 
 		while(i < p.getJugadores().size() && p.getJugadores().get(i).isListo()){
@@ -621,188 +604,63 @@ public class UserController {
 		
 		if(i == p.getMaxJugadores()) {
 						
-			CargaAtributos.u.setListo(false);
 			p.setAbierta(false);
-			entityManager.persist(entityManager.merge(CargaAtributos.u));
 			entityManager.persist(p);
-			
-			List<Jugador> jugadores = new ArrayList<Jugador>(p.getMaxJugadores());
-			
-			for(int j = 0; j < jugadores.size();j++) {
-				jugadores.get(j).setTurno(j);
-				jugadores.get(j).setApostado(0.0);
-				jugadores.get(j).setNombre(p.getJugadores().get(j).getLogin());
-				jugadores.get(j).setDinero(p.getJugadores().get(j).getDinero());
-				jugadores.get(j).setMano(new ArrayList<Carta>());
+		
+		}else {
+			String jugadores ="";
+			for(i = 0; i < p.getJugadores().size();i++) {
+				jugadores += p.getJugadores().get(i).getLogin();
+				if(p.getJugadores().get(i).isListo()) {
+					jugadores += " esta listo.";
+				}else {
+					jugadores += " no esta listo.";
+				}
 			}
 			
-			session.setAttribute(CargaAtributos.jugadores,jugadores);
-			session.setAttribute(CargaAtributos.partida, p);
-			session.setAttribute(CargaAtributos.juego, p.getJuego());
-			
-		}else {
 			session.setAttribute(CargaAtributos.mensaje, "Faltan jugadores por confirmar ("+a+"/"+p.getMaxJugadores()+")."
-					+ "Dales unos segundos para que esten listos.");
+					+ "Dales unos segundos para que esten listos. "+jugadores);
+			
+			session.setAttribute(CargaAtributos.user,u);
 			return "saloon";
 		}
 
-		
+		session.setAttribute(CargaAtributos.user,u);
 		return "partida";
 	}
 
 	/**
-	 * Operacion modicadora: Pasa de turno.
-	 * @param id_partida: Id de la partida
-	 * @return Void.
-	 */
-	@RequestMapping(value = "/apostar", method = RequestMethod.POST)
-	@Transactional
-	public String apostar(Double apostado,HttpSession session) {
-		
-		if(apostado <= CargaAtributos.u.getDinero() && apostado > 0) {
-			
-			//variables para jsp
-			session.setAttribute(CargaAtributos.infoPartida, CargaAtributos.u.getLogin() + " apostó "+apostado+".");
-			
-			//variables para el juego
-			session.setAttribute(CargaAtributos.cantidadApostada, apostado);
-			session.setAttribute(CargaAtributos.movimiento, Movimientos.apostar);
-			session.setAttribute(CargaAtributos.totalApostado, apostado+ (Integer)session.getAttribute(CargaAtributos.totalApostado));
-			
-			//modificamos variables locales
-			CargaAtributos.u.getPartida().setApostado(CargaAtributos.u.getPartida().getApostado() + apostado);
-			CargaAtributos.u.getPartida().setInfoPartida((String)session.getAttribute(CargaAtributos.infoPartida));
-			CargaAtributos.u.setDinero(CargaAtributos.u.getDinero()-apostado);
-			
-			//modificamos variables bd
-			entityManager.merge(CargaAtributos.u.getPartida());
-			entityManager.merge(CargaAtributos.u);
-			
-		}else {
-			session.setAttribute(CargaAtributos.mensaje, "No puedes apostar esa cantidad");
-		}
-		
-		return "partida";
-	}
-	
-	/**
-	 * Operacion modicadora: Pasa de turno.
-	 * @param id_partida: Id de la partida
-	 * @return Void.
-	 */
-	@RequestMapping(value = "/pasarTurno", method = RequestMethod.POST)
-	@Transactional
-	public String pasarTurno(HttpSession session) {
-
-		//variables para jsp
-		session.setAttribute(CargaAtributos.infoPartida, CargaAtributos.u.getLogin() + " se plantó.");
-		
-		//variables para el juego
-		session.setAttribute(CargaAtributos.movimiento, Movimientos.plantarse);
-		
-		//modificamos variables locales
-		
-		//modificamos variables bd
-		CargaAtributos.u.getPartida().setInfoPartida((String)session.getAttribute(CargaAtributos.infoPartida));
-		entityManager.merge(CargaAtributos.u.getPartida());
-		
-		return "partida";
-	}
-	
-	/**
-	 * Operacion modicadora: Pasa de turno.
-	 * @param id_partida: Id de la partida
-	 * @return Void.
-	 */
-	@RequestMapping(value = "/pedirCarta", method = RequestMethod.POST)
-	@Transactional
-	public String pedirCarta(HttpSession session) {
-
-		//variables para jsp
-		session.setAttribute(CargaAtributos.infoPartida, CargaAtributos.u.getLogin() + " pidio carta.");
-		
-		//variables para el juego
-		session.setAttribute(CargaAtributos.movimiento, Movimientos.pedirCartas);
-		
-		//modificamos variables locales
-		
-		//modificamos variables bd
-		CargaAtributos.u.getPartida().setInfoPartida((String)session.getAttribute(CargaAtributos.infoPartida));
-		entityManager.merge(CargaAtributos.u.getPartida());
-		
-		return "partida";
-	}
-	
-	/**
-	 * Operacion modicadora: Saca a un usuario de la partida en la que esta actualmente
-	 * Si la partida tiene menos de dos jugadores, esta se cerrara y sacara al otro usuario de dentro.
+	 * Operacion modicadora: Saca a un usuario de la partida en la que esta actualmente(esta eperando, aun no ha jugado).
+	 * Si la partida tiene menos de dos jugadores, esta se cerrara y sacara al otro usuario.
 	 * @return Redirige a sallon
 	 */
 	@RequestMapping(value = "/salirDeLaPartida", method = RequestMethod.POST)
 	@Transactional
 	public String salirDeLaPartida(HttpSession session) {
-			
-		//modificar estadisticas usuario(si ya ha jugado)		
-		if(CargaAtributos.u.getPartida().getJugadores().size() < 2) {	
-			
-			User u2 = CargaAtributos.u.getPartida().getJugadores().get(0);
-			u2.setPartida(null);
-			CargaAtributos.u.getPartida().getJugadores().remove(0);
-			entityManager.merge(u2);
-			entityManager.remove(entityManager.merge(CargaAtributos.u.getPartida()));
-			session.setAttribute(CargaAtributos.mensaje,"La partida acabo.");
+					
+		User u = (User)session.getAttribute(CargaAtributos.user);
+		Partida p = entityManager.find(Partida.class, u.getPartida().getId());
+		
+		u.setPartida(null);
+		
+		int i = 0;
+		while(i < p.getJugadores().size() && p.getJugadores().get(i).getLogin() != u.getLogin()) {
+			i++;
 		}
-
-		CargaAtributos.u.getPartida().getJugadores().remove(CargaAtributos.u);
-		CargaAtributos.u.setPartida(null);
-		entityManager.merge(CargaAtributos.u);
+		p.getJugadores().remove(i);
+		
+		entityManager.merge(u);
+		if(p.getJugadores().size() > 0) {
+			entityManager.merge(p);
+		}else {
+			entityManager.remove(p);
+		}
+		session.setAttribute(CargaAtributos.user,u);
+		session.setAttribute(CargaAtributos.mensaje,"Saliste de la partida");
+		
 		return "saloon";
 	}
 	
-	/**
-	 * Operacion modicadora: Pasa de turno.
-	 * @param id_partida: Id de la partida
-	 * @return Void.
-	 */
-	@RequestMapping(value = "/actualizaManos", method = RequestMethod.POST)
-	@Transactional
-	public String actualizaManos(ArrayList<ArrayList<Carta>> manos) {
-		
-		for(int i = 0; i < manos.size();i++) {
-			for(int j = 0; j < manos.get(i).size();j++) {			
-				CargaAtributos.u.getPartida().getValoresManos().get(i).set(j, manos.get(i).get(j).getValor().ordinal());
-				CargaAtributos.u.getPartida().getPalosManos().get(i).set(j, manos.get(i).get(j).getPalo().ordinal());
-			}
-		}			
-		entityManager.merge(CargaAtributos.u.getPartida());
-		return "partida";
-	}
-	
-	@RequestMapping(value = "/actualizaMovimiento", method = RequestMethod.POST)
-	@Transactional
-	public String actualizaMovimiento(ArrayList<ArrayList<Carta>> manos) {
-		
-		for(int i = 0; i < manos.size();i++) {
-			for(int j = 0; j < manos.get(i).size();j++) {			
-				CargaAtributos.u.getPartida().getValoresManos().get(i).set(j, manos.get(i).get(j).getValor().ordinal());
-				CargaAtributos.u.getPartida().getPalosManos().get(i).set(j, manos.get(i).get(j).getPalo().ordinal());
-			}
-		}			
-		entityManager.merge(CargaAtributos.u.getPartida());
-		return "partida";
-	}
-	
-	@RequestMapping(value = "/actualizaInfoPartida", method = RequestMethod.GET)
-	@Transactional
-	public String actualizaInfoPartida(HttpSession session) {
-		
-		Partida p = (Partida)entityManager.createNamedQuery("getPartidaPorNombre")
-								 .setParameter("nombreParam", CargaAtributos.u.getPartida().getNombre()).getSingleResult();
-		
-		session.setAttribute(CargaAtributos.infoPartida,p.getInfoPartida());
-		session.setAttribute(CargaAtributos.turno,p.getTurno());
-		return "partida";
-	}
 	
     /*#######################################################################
     #########################################################################
@@ -828,16 +686,18 @@ public class UserController {
 		
 		try {
 			Item i = entityManager.find(Item.class, id_it);
+			User u = (User)session.getAttribute(CargaAtributos.user);
 			
-			if(usuarioTieneItem(i,false)) {
+			if(usuarioTieneItem(i,false,u)) {
 				
-				if(CargaAtributos.u.getDinero() >= i.getPrecio()) {
+				if(u.getDinero() >= i.getPrecio()) {
 					
-					CargaAtributos.u.setDinero(CargaAtributos.u.getDinero() - i.getPrecio());
-					CargaAtributos.u.getPropiedades().add(i);
-					i.getPropietarios().add(CargaAtributos.u);
-					entityManager.merge(CargaAtributos.u);
+					u.setDinero(u.getDinero() - i.getPrecio());
+					u.getPropiedades().add(i);
+					i.getPropietarios().add(u);
+					entityManager.merge(u);
 					entityManager.merge(i);
+					session.setAttribute(CargaAtributos.user,u);
 					session.setAttribute(CargaAtributos.mensaje, "Compra realizada :)");
 						
 				}else {
@@ -851,7 +711,7 @@ public class UserController {
 			log.error(e);
 			session.setAttribute(CargaAtributos.mensaje,"El item no existe");
 		}
-		CargaAtributos.cargaTienda(session, entityManager);
+		CargaAtributos.tienda(session, entityManager);
 		return "tienda";
 	}
 
@@ -863,12 +723,13 @@ public class UserController {
     #########################################################################
     #######################################################################*/
 	
-    /** Operaciones:
+    
+	/** Operaciones:
      *  
      *  1º Comentar en foro
      *  2º Borrar comentario
      */
-	
+		
 	/**
 	 * Operacion modicadora: Usuario comenta en el foro en un tema en concreto
 	 * @param comentario: Mensaje del comentario
@@ -881,13 +742,16 @@ public class UserController {
 						   HttpSession session) {
 		
 		ComentarioForo c = new ComentarioForo();
-
+		User u = (User)session.getAttribute(CargaAtributos.user);
+		
 		c.setComentario(comentario);
 		c.setTema(tema);
-		c.setUsuario(CargaAtributos.u);
+		c.setUsuario(u);
 		c.setFecha(new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date()));
 		entityManager.persist(entityManager.merge(c));
-		CargaAtributos.cargaForo(session, entityManager,tema);
+		
+		session.setAttribute(CargaAtributos.user,u);
+		CargaAtributos.foro(session, entityManager,tema);
 		session.setAttribute(CargaAtributos.tema,tema);
 		return "foro";
 	}
@@ -902,9 +766,10 @@ public class UserController {
 	public String borrarComentario(@RequestParam(required=true) long id_c, HttpSession session) {
 		
 		ComentarioForo c = entityManager.find(ComentarioForo.class, id_c);
-		entityManager.remove(entityManager.merge(c));
-		CargaAtributos.cargaForo(session, entityManager,c.getTema());
+		entityManager.remove(c);
+		CargaAtributos.foro(session, entityManager,c.getTema());
 		session.setAttribute(CargaAtributos.tema,c.getTema());
+
 		return "foro";
 	}
 	
@@ -915,12 +780,14 @@ public class UserController {
 	 */
 	@RequestMapping(value = "/foro", method = RequestMethod.GET)
 	public String foro(Temas tema, HttpSession session) {
+		
 		session.setAttribute(CargaAtributos.mensaje, null);
-		CargaAtributos.cargaForo(session, entityManager, tema);
+		CargaAtributos.foro(session, entityManager, tema);
 		session.setAttribute(CargaAtributos.tema,tema);
 		return "foro";
+		
 	}
-	
+		
 	/*#######################################################################
     #########################################################################
     ###                                                                   ###
@@ -929,13 +796,14 @@ public class UserController {
     #########################################################################
     #######################################################################*/
 	
-    /** Operaciones:
+    
+	/** Operaciones:
      *  
      *  1º Ver ranking por amigos,
      *  2º Por pais o
      *  3º Por global
      */
-	
+		
 	/**
 	 * Operacion observadora: Muestra el ranking en funcion de la busqueda seleccionada
 	 * @param busqueda: Opcion de busqueda
@@ -962,11 +830,12 @@ public class UserController {
     #########################################################################
     #######################################################################*/
 		
+	
 	/**
 	 * Operacion observadora: Descarga una foto de la bd
 	 * @param id: Identificador del usuario al que le pertenece la fotp
 	 * @return la imagen o error.
-	 */
+	 */	
 	@RequestMapping(value="/fotoPerfil/{id}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
 	public void fotoUsuario(@PathVariable("id") String id,HttpServletResponse response) {
 		
@@ -1015,15 +884,15 @@ public class UserController {
 	 * @param elimina: Modo eliminacion
 	 * @return true si lo encontro, false en caso contrario.
 	 */	
-	private boolean usuarioTieneAmigo(User u2,boolean elimina) {
+	private boolean usuarioTieneAmigo(User u2,boolean elimina,User u) {
 
 		int i = 0;
-		while(CargaAtributos.u.getAmigos().size() > i && 
-			  !CargaAtributos.u.getAmigos().get(i).getLogin().equals(u2.getLogin())) {i++;}
+		while(u.getAmigos().size() > i && 
+			  !u.getAmigos().get(i).getLogin().equals(u2.getLogin())) {i++;}
 		
-		if(elimina) CargaAtributos.u.getAmigos().remove(i);
+		if(elimina) u.getAmigos().remove(i);
 		
-		return i == CargaAtributos.u.getAmigos().size();
+		return i == u.getAmigos().size();
 			
 	}
 	
@@ -1033,38 +902,39 @@ public class UserController {
 	 * @param elimina: Modo eliminacion
 	 * @return true si lo encontro, false en caso contrario.
 	 */	
-	private boolean usuarioTieneItem(Item i,boolean elimina) {
+	private boolean usuarioTieneItem(Item i,boolean elimina,User u) {
 
 		int inI = 0;
 		int inU = 0;
 		
-		while(CargaAtributos.u.getPropiedades().size() > inI && 
-			  !CargaAtributos.u.getPropiedades().get(inI).getNombre().equals(i.getNombre())) {inI++;}
+		while(u.getPropiedades().size() > inI && 
+			  !u.getPropiedades().get(inI).getNombre().equals(i.getNombre())) {inI++;}
 		
-		if(inI != CargaAtributos.u.getPropiedades().size()) {
+		if(inI != u.getPropiedades().size()) {
 			while(i.getPropietarios().size() > inI && 
-				  i.getPropietarios().get(inU).getLogin().equals(CargaAtributos.u.getPropiedades().get(inI).getNombre()))
+				  i.getPropietarios().get(inU).getLogin().equals(u.getPropiedades().get(inI).getNombre()))
 			{inU++;}
 		}
 		
 		if(elimina) {
-			CargaAtributos.u.getPropiedades().remove(inI);
+			u.getPropiedades().remove(inI);
 			i.getPropietarios().remove(inU);
 		}
 		
-		return inI == CargaAtributos.u.getPropiedades().size();
+		return inI == u.getPropiedades().size();
 			
 	}
-	
+		
 	/**
 	 * Operacion auxiliar: Carga en la sesion una lista de usuarios
 	 * @return void
 	 */
 	@SuppressWarnings("unchecked")
 	private void verRankingPais(HttpSession session) {
-			
+		
+		User u = (User)session.getAttribute(CargaAtributos.user);
 		List<User> usuarios = (List<User>)entityManager.createNamedQuery("getUsuarioNacion")
-                       .setParameter("nacionParam", CargaAtributos.u.getNacion())
+                       .setParameter("nacionParam", u.getNacion())
                        .getResultList();
 		
 		session.setAttribute("ranking",ordena(usuarios));
@@ -1075,7 +945,8 @@ public class UserController {
 	 * @return void
 	 */
 	private void verRankingAmigos(HttpSession session) {
-		session.setAttribute("ranking",ordena(CargaAtributos.u.getAmigos()));
+		User u = (User)session.getAttribute(CargaAtributos.user);
+		session.setAttribute("ranking",ordena(u.getAmigos()));
 	}
 
 	/**
@@ -1107,5 +978,13 @@ public class UserController {
 		});
 		return usuarios;
 	}
-
+	
+	private void eliminaVariablesSession(HttpSession session) {
+		session.removeAttribute(CargaAtributos.user);
+		session.removeAttribute(CargaAtributos.tema);
+		session.removeAttribute(CargaAtributos.imagen);
+		session.removeAttribute(CargaAtributos.mensaje);
+		session.removeAttribute(CargaAtributos.foro);
+		session.removeAttribute(CargaAtributos.tienda);
+	}
 }

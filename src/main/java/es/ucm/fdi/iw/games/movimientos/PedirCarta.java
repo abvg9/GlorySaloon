@@ -1,20 +1,32 @@
 package es.ucm.fdi.iw.games.movimientos;
 
-import javax.servlet.http.HttpSession;
+import java.io.IOException;
 
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
+
+import es.ucm.fdi.iw.games.barajas.Baraja;
+import es.ucm.fdi.iw.games.barajas.Carta;
 import es.ucm.fdi.iw.games.logica.Jugador;
 
 public class PedirCarta extends Movimiento {
 
-	public PedirCarta(HttpSession session, Jugador jugador) {
-		super(session, jugador);
-		// TODO Auto-generated constructor stub
+
+	public PedirCarta(Jugador jugador,Baraja baraja) {
+		super(jugador, baraja);
 	}
 
 	@Override
-	public Jugador ejecutar() {
-		// TODO Auto-generated method stub
-		return null;
+	public Movimiento ejecutar(WebSocketSession session) throws IOException {
+		
+		Carta c = baraja.daUnaCarta();
+		
+		jugador.getMano().add(c);
+		
+		String mensaje = "server carta ["+c.getPalo().toString()+"]["+c.getValor().toString()+"]";
+		session.sendMessage(new TextMessage(mensaje));
+		
+		return this;
 	}
 
 

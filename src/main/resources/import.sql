@@ -7,5 +7,3 @@ INSERT INTO user(listo,id,Dganado,dinero,Dperdido,email,enabled,login,nacion,pas
 INSERT INTO item(id,precio,nombre,descripcion) VALUES (1, 10.0, 'pistola', 'es fea');
 INSERT INTO item(id,precio,nombre,descripcion) VALUES (2, 5.0, 'pomelo', 'esta buena');
 INSERT INTO item(id,precio,nombre,descripcion) VALUES (3, 3.0, 'naranja', 'creo que es radiactiva');
-
-

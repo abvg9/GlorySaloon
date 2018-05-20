@@ -4,7 +4,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import org.springframework.ui.Model;
 import es.ucm.fdi.iw.common.enums.Temas;
 import es.ucm.fdi.iw.model.ComentarioForo;
 import es.ucm.fdi.iw.model.Item;
@@ -18,28 +20,14 @@ public final class CargaAtributos {
 	public static final String imagen = "imagen";
 	public static final String user = "user";
 	public static final String tema = "tema";
-
-	public static User u;
-	
-	//Antes de la partida
 	public static final String saloon = "saloon";
-	public static final String jugadores = "jugadores";
-	public static final String juego = "juego";
+	public static final String chatSocket = "chatsocket";
+	public static final String partidaSocket = "partidaSocket";
+	private static final String endpoint = "endpoint";
 	
-	//Durante la partida(experimental)
-	public static final String infoPartida = "inforPartida";
-	public static final String partida = "partida";
-	public static final String cantidadApostada = "cantidadApostada";
-	public static final String movimiento = "movimiento";
-	public static final String totalApostado = "totalApostado";
-		
-	public static final String manos = "manos";
-	public static final String turno = "turno";
-	public static final String ganadores = "ganadores";
-
 	
 	@SuppressWarnings("unchecked")
-	public static void cargaForo(HttpSession session,EntityManager entityManager, Temas tema) {
+	public static void foro(HttpSession session,EntityManager entityManager, Temas tema) {
 		List<ComentarioForo> comentarios;
 		comentarios = (List<ComentarioForo>)entityManager.createNamedQuery("getForo")
 			           .setParameter("temaParam", tema)
@@ -53,7 +41,7 @@ public final class CargaAtributos {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static void cargaTienda(HttpSession session,EntityManager entityManager) {
+	public static void tienda(HttpSession session,EntityManager entityManager) {
 
 		List<Item> tnd = (List<Item>)entityManager.createNamedQuery("getTienda")
 			                 .getResultList();
@@ -61,12 +49,36 @@ public final class CargaAtributos {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static void cargaJugadores(HttpSession session,EntityManager entityManager) {
+	public static void jugadores(HttpSession session,EntityManager entityManager) {
 
 		List<Item> tnd = (List<Item>)entityManager.createNamedQuery("getTienda")
 			                 .getResultList();
 		session.setAttribute(tienda, tnd);
 	}
 	
+	public static void socket(Model model,HttpServletRequest request,String replace, String by) {
+
+		model.addAttribute(endpoint, request.getRequestURL().toString()
+				.replaceFirst("[^:]*", "ws")
+				.replace(replace, by));
+	}
+	
+	public static boolean cargaUsuario(String username, String password, EntityManager entityManager, HttpSession session) {
+		
+		if(username != null && password != null) {
+			
+			if(!"".equals(username) && !"".equals(password)){
+				try {
+					User u = (User)entityManager.createNamedQuery("getUsuario").setParameter("loginParam", username).getSingleResult();
+					session.setAttribute(CargaAtributos.user, u);
+					return true;
+				} catch (Exception e) {
+					session.setAttribute(CargaAtributos.mensaje,"Nombre y/o contraseña incorrectos.");
+		    	}
+			}
+			
+		}
+		return false;
+	}
 
 }

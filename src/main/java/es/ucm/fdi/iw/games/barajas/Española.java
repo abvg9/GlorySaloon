@@ -9,9 +9,11 @@ public class Española extends Baraja {
 	
 	public Española() {
 		totalCartas = 48;
+		cartasDadas = 0;
 		cartas = new ArrayList<Carta>(totalCartas);
 		for(int i = 0; i < 12;i++){		
-			for(int j = 0; j < 4;j++){
+			for(int j = 0; j < 4;j++){			
+				cartas.set(i,new CartaGenerica());
 				cartas.get(i).palo = Palos.values()[j];
 				cartas.get(i).valor = Valores.values()[j];
 			}
