@@ -26,13 +26,13 @@
 		<td>${f.usuario.login}</td>
 		<td>${f.fecha}</td>
 		<td>${f.comentario}</td>
-		<td>${f.tema}</td>
+		
 	</tr>
 	<form action="/user/borrarComentario" method="post">
 		<c:if test="${f.usuario.id == user.id or fn:contains(user.roles, 'ADMIN')}">
 			<input hidden="submit" name="id_c" value="${f.id}" />
-			<input hidden="hidden" name="tema" value="${tema}" />
-			
+			<input hidden="submit" name="tema" value="${f.tema}" />
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 			<div class="form-actions">
 				<button type="submit" class="btn">Borrar comentario</button>
 			</div>

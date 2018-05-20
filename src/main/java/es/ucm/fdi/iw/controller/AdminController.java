@@ -47,6 +47,8 @@ public class AdminController {
 							  @RequestParam(required=true) String email,@RequestParam(required=true) Nacionalidades nacion,
 							  HttpSession session,String isAdmin) {
 		
+    	User us = (User)session.getAttribute(CargaAtributos.user);
+    	
 		if("".equals(nombre) || "".equals(cont) ||
 		   "".equals(email) || "".equals(nacion.toString())) {
 			
@@ -79,7 +81,7 @@ public class AdminController {
 				
 			entityManager.persist(u);
 			session.setAttribute(CargaAtributos.mensaje,"La cuenta se creo correctamente :)");
-			log.info("Admin " +CargaAtributos.u.getLogin()+
+			log.info("Admin " +us.getLogin()+
 			"creo una cuenta al usuario "+nombre);
 			
 						 

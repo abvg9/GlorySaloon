@@ -29,11 +29,10 @@ public final class ReglasBlackJack extends Reglas {
 		for(int i = 0; i < jugadores.size();i++) {
 			
 			if(comparaJugada(jugGanador.getMano(),jugadores.get(i).getMano()) == 1) {
-				ganadores.add(jugadores.get(i));
+				ganadores.add(jugadores.get(i));	
 			}
 			
 		}
-		
 		
 		return ganadores;
 	}

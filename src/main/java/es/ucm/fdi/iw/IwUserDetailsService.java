@@ -3,7 +3,10 @@ package es.ucm.fdi.iw;
 import java.util.ArrayList;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,34 +14,36 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import es.ucm.fdi.iw.common.utils.CargaAtributos;
 import es.ucm.fdi.iw.model.User;
 
-public class IwUserDetailsService implements UserDetailsService {
+public class IwUserDetailsService implements UserDetailsService{
 
 	private static Logger log = Logger.getLogger(IwUserDetailsService.class);
-	
+
     private EntityManager entityManager;
-       
+    
     @PersistenceContext
     public void setEntityManager(EntityManager em){
         this.entityManager = em;
     }
+    
+    @Autowired
+    private HttpServletRequest request;
 
     public UserDetails loadUserByUsername(String username){
     	try {
-	        CargaAtributos.u = (User)entityManager.createQuery("from User where login = :login", User.class)
-	                                  .setParameter("login", username)
-	                                  .getSingleResult();
-	                
+    		User u = (User)entityManager.createQuery("from User where login = :login", User.class)
+	                            .setParameter("login", username)
+	                            .getSingleResult();
 	        // build UserDetails object
 	        ArrayList<SimpleGrantedAuthority> roles = new ArrayList<>();
-	        for (String r : CargaAtributos.u.getRoles().split("[,]")) {
+	        for (String r : u.getRoles().split("[,]")) {
 	        	roles.add(new SimpleGrantedAuthority("ROLE_" + r));
 		        log.info("Roles for " + username + " include " + roles.get(roles.size()-1));
 	        }
-
+	        request.getSession().setAttribute(CargaAtributos.user, u);
 	        return new org.springframework.security.core.userdetails.User(
-	        		CargaAtributos.u.getLogin(), CargaAtributos.u.getPassword(), roles); 
+	        		u.getLogin(), u.getPassword(), roles); 
 	    } catch (Exception e) {
-    		log.info("No such user: " + username);
+    		log.info("No existe ningun usuario llamado: " + username);
     		return null;
     	}
     }

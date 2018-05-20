@@ -19,10 +19,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
-				.antMatchers("/static/**", "/login", "/logout", "/crearCuenta", "/403").permitAll()
-				.mvcMatchers("/static/**", "/login", "/logout", "/crearCuenta", "/403").permitAll()
+        		.antMatchers("/static/**", "/logout", "/403").permitAll()
 				.mvcMatchers("/admin").hasRole("ADMIN")
         		.antMatchers("/admin/**").hasRole("ADMIN")
+				.anyRequest().authenticated()
 				.and()
 			.formLogin()
 				.permitAll()
@@ -33,11 +33,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.logoutSuccessUrl("/login")
 	            .permitAll();
 	}
-
+	
 	@Bean
 	public IwUserDetailsService springDataUserDetailsService() {
 		return new IwUserDetailsService();
 	}
+	
+/* 
+	Si eliminas el "Bean" anterior, esto funciona sin BD ni nada:
+
+	@Autowired
+	public void configureGlobal(AuthenticationManagerBuilder auth) 
+			throws Exception {
+		auth.inMemoryAuthentication()
+				.withUser("user").password("password").roles("USER")
+				.and()
+				.withUser("paco").password("password").roles("USER", "ADMIN")
+				.and()
+				.withUser("juan").password("password").roles("USER", "ADMIN");
+	}
+*/
 	
 	@Autowired
 	private Environment env;

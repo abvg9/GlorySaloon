@@ -26,4 +26,5 @@ public abstract class Jugador {
 
 	public int getTurno(){return this.turno;}
 	public void setTurno(int turno){this.turno = turno;}
+		
 }

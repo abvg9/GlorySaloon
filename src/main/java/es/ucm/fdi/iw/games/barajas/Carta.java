@@ -10,5 +10,5 @@ public abstract class Carta {
 	
 	public Enum<?> getValor(){return this.valor;}
 	public void setValor(Enum<?> valor){this.valor = valor;}
-	
+		
 }
