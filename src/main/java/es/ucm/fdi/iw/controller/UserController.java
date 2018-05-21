@@ -176,7 +176,7 @@ public class UserController {
 			if(!"".equals(email) && !u.getEmail().equals(email))
 			{u.setEmail(email); modificacion++;}
 					
-			if(!"".equals(contNueva) && !passwordEncoder.matches(contNueva, contActual))
+			if(!"".equals(contNueva) && contNueva != contActual)
 			{u.setPassword(passwordEncoder.encode(contNueva)); modificacion++;}
 			
 			if(!"".equals(nacion.toString()) && !u.getNacion().equals(nacion))
@@ -187,8 +187,9 @@ public class UserController {
 				if(modificacion == 1) {session.setAttribute(CargaAtributos.mensaje,"Modificacion realizada correctamente.");}
 				else {session.setAttribute(CargaAtributos.mensaje,"Modificaciones realizadas correctamente.");}
 				
-				log.info(u.getLogin() + " modifico parametros de su perfil.");
+				log.info(u.getLogin() + " modificó parametros de su perfil.");
 				entityManager.merge(u);
+				entityManager.flush();
 				session.setAttribute(CargaAtributos.user,u);	
 				
 				return "perfil";
@@ -503,30 +504,36 @@ public class UserController {
 	@Transactional
 	public String unirsePartida(@RequestParam(required=true) long id_p,String pass,HttpSession session) {
 		
+		
 		Partida p = entityManager.find(Partida.class, id_p);
 		User u = (User)session.getAttribute(CargaAtributos.user);
 		
-		if(u.getPartida() == null) {
+		if(p != null) {
 			
-			if(p.getMaxJugadores() > p.getJugadores().size() && p.isAbierta()) {
+			if(u.getPartida() == null) {
 				
-				if(pass != null && "no".equals(p.getPass()) || passwordEncoder.matches(pass, p.getPass())) {
+				if(p.getMaxJugadores() > p.getJugadores().size() && p.isAbierta()) {
 					
-					u.setPartida(p);
-					p.getJugadores().add(u);
-					entityManager.persist(entityManager.merge(u));
-					entityManager.persist(p);
-					session.setAttribute(CargaAtributos.user,u);
-					session.setAttribute(CargaAtributos.mensaje, "Estas dentro de la partida");
+					if(pass != null && "no".equals(p.getPass()) || passwordEncoder.matches(pass, p.getPass())) {
+						
+						u.setPartida(p);
+						p.getJugadores().add(u);
+						entityManager.persist(entityManager.merge(u));
+						entityManager.persist(p);
+						session.setAttribute(CargaAtributos.user,u);
+						session.setAttribute(CargaAtributos.mensaje, "Estas dentro de la partida");
+					}else {
+						session.setAttribute(CargaAtributos.mensaje, "Contraseña incorrecta.");
+					}
+						
 				}else {
-					session.setAttribute(CargaAtributos.mensaje, "Contraseña incorrecta.");
-				}
-					
+					session.setAttribute(CargaAtributos.mensaje, "No hay hueco en la partida.");
+				}	
 			}else {
-				session.setAttribute(CargaAtributos.mensaje, "No hay hueco en la partida.");
-			}	
+				session.setAttribute(CargaAtributos.mensaje, "Ya estas dentro de una partida.");
+			}
 		}else {
-			session.setAttribute(CargaAtributos.mensaje, "Ya estas dentro de una partida.");
+			session.setAttribute(CargaAtributos.mensaje, "Esa partida ya no existe.");
 		}
 		return "saloon";
 	}

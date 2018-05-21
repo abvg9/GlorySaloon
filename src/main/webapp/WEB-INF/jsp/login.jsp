@@ -17,21 +17,22 @@
 			<br />
 			<form action="/login" method="post">
 				<fieldset>
-					<!-- <legend>Please Login</legend> -->
 					<div class="rightAl">
 						<label for="username">Usuario</label> <input type="text" id="username" name="username" /><br>
 						<br> <label for="password">Contraseña</label> <input type="password" id="password" name="password" />
 					</div>
-					<input type="hidden" name="${_csrf.parameterName}"
-						value="${_csrf.token}" /> <br>
+					<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" /> <br>
 					<div class="form-actions">
-						<button type="submit" class="btn rightAlBtn">Entrar</button>
+						<button type="submit" 
+								class="btn rightAlBtn">
+								Entrar
+						</button>
 					</div>
 				</fieldset>
 				
-					<div>
+				<div>
 					¿Todavía no estás registrado? Regístrate <a href="/crearCuenta">aquí</a>
-					</div>
+				</div>
 			</form>
 			<br>
 			<br>
@@ -46,8 +47,22 @@
 	<br>
 	<br>
 	<br>
-
-
 </div>
+<script type="text/javascript">
+	
+	function guarda(){
+		debugger;
+		var pass = document.getElementById("password").value;
+		debugger;
+		var session = request.getSession();
+		debugger;
+		session.setAttribute("pass", pass);
+		debugger;
+		console.log(session);
+		debugger;
+		console.log(pass);
+		debugger;
+	}
+</script>
 
 <%@ include file="../jspf/footer.jspf"%>
