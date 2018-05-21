@@ -16,7 +16,7 @@ public class RootController {
 	
 	@Autowired
 	private EntityManager entityManager;
-	
+		
     @ModelAttribute
     public void addAttributes(Model model,HttpSession session) {	  	
         model.addAttribute("s", "/static");
@@ -24,7 +24,7 @@ public class RootController {
     }
 
 	@GetMapping({"/", "/index"})
-	public String root() {
+	public String root(HttpSession session) {
 		return "home";
 	}
 	

@@ -44,6 +44,7 @@ public class IwUserDetailsService implements UserDetailsService{
 	        		u.getLogin(), u.getPassword(), roles); 
 	    } catch (Exception e) {
     		log.info("No existe ningun usuario llamado: " + username);
+    		request.getSession().setAttribute(CargaAtributos.mensaje, "No existe ningun usuario llamado: " + username);
     		return null;
     	}
     }
