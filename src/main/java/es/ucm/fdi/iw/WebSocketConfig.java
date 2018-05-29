@@ -8,8 +8,8 @@ import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 import es.ucm.fdi.iw.common.utils.CargaAtributos;
-import es.ucm.fdi.iw.controller.SocketHandler.ChatSocketHandler;
-import es.ucm.fdi.iw.controller.SocketHandler.PartidaBJSocketHandler;
+import es.ucm.fdi.iw.controller.ChatSocketHandler;
+import es.ucm.fdi.iw.games.PartidaBJSocketHandler;
 
 @Configuration
 @EnableWebSocket

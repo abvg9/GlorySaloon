@@ -22,7 +22,7 @@ public final class CargaAtributos {
 	public static final String tema = "tema";
 	public static final String saloon = "saloon";
 	public static final String chatSocket = "chatsocket";
-	public static final String partidaSocket = "partidaSocket";
+	public static final String partidaSocket = "partidasocket";
 	private static final String endpoint = "endpoint";
 	
 	
@@ -57,7 +57,6 @@ public final class CargaAtributos {
 	}
 	
 	public static void socket(Model model,HttpServletRequest request,String replace, String by) {
-
 		model.addAttribute(endpoint, request.getRequestURL().toString()
 				.replaceFirst("[^:]*", "ws")
 				.replace(replace, by));

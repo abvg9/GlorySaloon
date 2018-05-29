@@ -47,7 +47,7 @@
 		<tr>
 			<td>${u.login}</td>
 			<c:if test="${not empty u.partida}">
-			Esta jugando en ${u.partida.nombre}
+				Esta jugando en ${u.partida.nombre}
 			</c:if>		
 		</tr>
 	</c:forEach>

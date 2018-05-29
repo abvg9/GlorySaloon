@@ -59,7 +59,7 @@
 	}
 	</script>
 	
-	<form id= "formEmpezar" action="/user/empezarPartida" method="post">
+	<form action="/user/empezarPartida" id=formEmpezar method="post"> 
 		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
 	</form>
 	
