@@ -48,21 +48,5 @@
 	<br>
 	<br>
 </div>
-<script type="text/javascript">
-	
-	function guarda(){
-		debugger;
-		var pass = document.getElementById("password").value;
-		debugger;
-		var session = request.getSession();
-		debugger;
-		session.setAttribute("pass", pass);
-		debugger;
-		console.log(session);
-		debugger;
-		console.log(pass);
-		debugger;
-	}
-</script>
 
 <%@ include file="../jspf/footer.jspf"%>

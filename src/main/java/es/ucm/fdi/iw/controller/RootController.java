@@ -67,15 +67,14 @@ public class RootController {
 	@GetMapping("/saloon")
 	public String saloon(HttpSession session,Model model, HttpServletRequest request) {
 		session.setAttribute(CargaAtributos.mensaje, null);
-		CargaAtributos.socket(model, request, "saloon", "chatsocket");
+		CargaAtributos.socket(model, request, "saloon", CargaAtributos.chatSocket);
 		return "saloon";
 	}
 	
-	@GetMapping("/partida/{id}")
+	@GetMapping("/partidaBlackJack")
 	public String partida(HttpSession session, HttpServletRequest request,Model model) {
 		session.setAttribute(CargaAtributos.mensaje, null);
-		CargaAtributos.socket(model, request, "partida", "partidasocket");
-		return "partida";
+		CargaAtributos.socket(model, request, "partidaBlackJack", CargaAtributos.partidaSocket);
+		return "partidaBlackJack";
 	}	
-	
 }

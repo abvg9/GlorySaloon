@@ -1,4 +1,4 @@
-package es.ucm.fdi.iw.controller.SocketHandler;
+package es.ucm.fdi.iw.controller;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;

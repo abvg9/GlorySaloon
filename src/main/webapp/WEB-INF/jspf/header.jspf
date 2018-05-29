@@ -62,7 +62,7 @@
 						<li><a href="/ranking">Ranking</a></li>
 					</c:if>
 					<c:if test="${not empty user and not empty user.partida}">
-						<li><a href="/partida">Partida: "${user.partida.nombre}"</a></li>
+						<li><a href="partidaBlackJack">Partida: "${user.partida.nombre}"</a></li>
 					</c:if>
 				</ul>
 			</div>

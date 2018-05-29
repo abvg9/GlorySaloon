@@ -108,7 +108,7 @@ public class UserController {
 			u.setPassword(passwordEncoder.encode(cont));
 			u.setRoles("USER");
 			u.setEnabled(a);
-			u.setDinero(0);
+			u.setDinero(1000.0);
 			u.setEmail(email);
 			u.setNacion(nacion);	
 			u.setPganadas(0);
@@ -502,7 +502,7 @@ public class UserController {
 	 */
 	@RequestMapping(value = "/unirsePartida", method = RequestMethod.POST)
 	@Transactional
-	public String unirsePartida(@RequestParam(required=true) long id_p,String pass,HttpSession session) {
+	public synchronized String unirsePartida(@RequestParam(required=true) long id_p,String pass,HttpSession session) {
 		
 		
 		Partida p = entityManager.find(Partida.class, id_p);
@@ -514,14 +514,20 @@ public class UserController {
 				
 				if(p.getMaxJugadores() > p.getJugadores().size() && p.isAbierta()) {
 					
-					if(pass != null && "no".equals(p.getPass()) || passwordEncoder.matches(pass, p.getPass())) {
+					if(pass == null && "no".equals(p.getPass()) || passwordEncoder.matches(pass, p.getPass())) {
+						
+						String darDin = "";
+						if(u.getDinero() <= 0) {
+							u.setDinero(100);
+							darDin = " No tenias dinero, te hemos dado 100 monedas para que juegues :).";
+						}
 						
 						u.setPartida(p);
 						p.getJugadores().add(u);
 						entityManager.persist(entityManager.merge(u));
 						entityManager.persist(p);
 						session.setAttribute(CargaAtributos.user,u);
-						session.setAttribute(CargaAtributos.mensaje, "Estas dentro de la partida");
+						session.setAttribute(CargaAtributos.mensaje, "Estas dentro de la partida."+darDin);
 					}else {
 						session.setAttribute(CargaAtributos.mensaje, "Contraseña incorrecta.");
 					}
@@ -591,7 +597,7 @@ public class UserController {
 	 */
 	@RequestMapping(value = "/empezarPartida", method = RequestMethod.POST)
 	@Transactional
-	public synchronized String empezarPartida(HttpSession session) {
+	public String empezarPartida(HttpSession session) {
 		
 		User u = (User)session.getAttribute(CargaAtributos.user);
 		Partida p = entityManager.find(Partida.class, u.getPartida().getId());
@@ -612,7 +618,9 @@ public class UserController {
 		if(i == p.getMaxJugadores()) {
 						
 			p.setAbierta(false);
+			u.setPartida(p);
 			entityManager.persist(p);
+			entityManager.persist(entityManager.merge(u));
 		
 		}else {
 			String jugadores ="";
@@ -631,9 +639,9 @@ public class UserController {
 			session.setAttribute(CargaAtributos.user,u);
 			return "saloon";
 		}
-
+		
 		session.setAttribute(CargaAtributos.user,u);
-		return "partida";
+		return "redirect:/partidaBlackJack";
 	}
 
 	/**
@@ -665,7 +673,7 @@ public class UserController {
 		session.setAttribute(CargaAtributos.user,u);
 		session.setAttribute(CargaAtributos.mensaje,"Saliste de la partida");
 		
-		return "saloon";
+		return "redirect:/saloon";
 	}
 	
 	
