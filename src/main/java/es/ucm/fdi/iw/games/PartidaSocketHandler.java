@@ -3,26 +3,25 @@ package es.ucm.fdi.iw.games;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-import es.ucm.fdi.iw.model.User;
 
 public abstract class PartidaSocketHandler extends TextWebSocketHandler {
 
-	@Autowired
-	EntityManager entityManager;
 	Logger log;	
 	ArrayList<Partida> partidas;
 	int cartasIniciales;
+	boolean hayJugadores;
+	private int tiempoDeEspera;
 	
 	PartidaSocketHandler(int cartasIniciales){
 		this.log = Logger.getLogger(PartidaSocketHandler.class);
 		this.partidas  = new ArrayList<Partida>();
 		this.cartasIniciales = cartasIniciales;
+		this.hayJugadores = true;
+		this.tiempoDeEspera = 100;
 	}
 		
 	void broadcast(String message,List<WebSocketSession> jugadores) {
@@ -52,51 +51,48 @@ public abstract class PartidaSocketHandler extends TextWebSocketHandler {
 		}
     	
     }
-	
-	private User encuentraUsuario(WebSocketSession session) {
-		return (User)entityManager.createNamedQuery("getUsuario")
-				   .setParameter("loginParam", session.getPrincipal().getName())
-		           .getSingleResult();
-	}
-	
-	Object[] buscaIndicesPyJ(WebSocketSession session) {
 		
-		Object[] dev = new Object[3];
+	int[] buscaIndicesPyJ(String nombre) {
 		
-		dev[0] = encuentraUsuario(session);
-		dev[1] = buscaPartida(((User) dev[0]).getPartida().getNombre());
-		if((int)dev[1] != -1) {
-			dev[2] = partidas.get((int)dev[1]).juego.getJugador(((User) dev[0]).getLogin());
-		}else {
-			dev[2] = -1;
+		if(partidas.size() > 0) {
+			int indicePartida = -1;
+			int indiceJugador = 0;
+			do {
+				indicePartida++;		
+				indiceJugador = partidas.get(indicePartida).buscaJugador(nombre);
+							
+			}while(indicePartida < partidas.size() && indiceJugador == -1);
+			
+			if(indiceJugador != -1) {
+				return new int[]{indicePartida, indiceJugador};
+			}
 		}
-
-		return dev;
+		
+		return new int[]{-1, -1};
+		
 	}
 	
 	int buscaPartida(String nombre) {
-		
-		int i = 0;
-		while(i < partidas.size() && partidas.get(i).getNombrePartida() != nombre) {	
+		int i = 0;	
+		while(i < partidas.size() && !partidas.get(i).getNombre().equals(nombre)) {
 			i++;
 		}
-
-		if(i !=  partidas.size()) {
+		
+		if(i!=partidas.size())
 			return i;
-		}
 		
 		return -1;
 	}
-	
+		
 	void avisaTurno(int indicePartida) {
-		int indiceJugador = partidas.get(indicePartida).juego.getTurno();	
-		mensajePrivado("turno ",partidas.get(indicePartida).jugadoresSk.get(indiceJugador));
+		int indiceJugador = partidas.get(indicePartida).getJuego().getTurno();	
+		mensajePrivado("turno ",partidas.get(indicePartida).getJugadoresSk().get(indiceJugador));
 	}
 	
 	void entregaCartasATodos(int indicePartida,int cartasIniciales) {
 		
 		partidas.get(indicePartida).reparteAtodos(cartasIniciales);
-		for(int indiceJugador = 0; indiceJugador < partidas.get(indicePartida).juego.getJugadores().size();indiceJugador++) {
+		for(int indiceJugador = 0; indiceJugador < partidas.get(indicePartida).getJuego().getJugadores().size();indiceJugador++) {
 			entregaCartasAUno(indicePartida,indiceJugador);
 		}
 	}
@@ -105,19 +101,23 @@ public abstract class PartidaSocketHandler extends TextWebSocketHandler {
 		
 		String mensaje = "";
 		
-		for(int m = 0; m < partidas.get(indicePartida).juego.getJugadores().get(indiceJugador).getMano().size();m++) {
+		for(int m = 0; m < partidas.get(indicePartida).getJuego().getJugadores().get(indiceJugador).getMano().size();m++) {
 			
-			mensaje +=partidas.get(indicePartida).juego.getJugadores().get(indiceJugador).getMano().get(m).getPalo().toString()+" ";
+			mensaje +=partidas.get(indicePartida).getJuego().getJugadores().get(indiceJugador).getMano().get(m).getPalo().toString()+" ";
 			
-			mensaje +=partidas.get(indicePartida).juego.getJugadores().get(indiceJugador).getMano().get(m).getValor().toString()+" ";
+			mensaje +=partidas.get(indicePartida).getJuego().getJugadores().get(indiceJugador).getMano().get(m).getValor().toString()+" ";
 		}
 		
-		mensajePrivado("mano "+mensaje,partidas.get(indicePartida).jugadoresSk.get(indiceJugador));
+		mensajePrivado("mano "+mensaje,partidas.get(indicePartida).getJugadoresSk().get(indiceJugador));
 	}
 	
-	boolean salio(int indicePartida) {
-		if(!partidas.get(indicePartida).salio()) {
-			avisaTurno(indicePartida);
+	boolean salioYtermino(int indicePartida, int indiceJugador) {
+		
+		if(!partidas.get(indicePartida).salioYtermino(indiceJugador)) {
+			if(partidas.get(indicePartida).getJuego().getTurno() == indiceJugador) {
+				partidas.get(indicePartida).getJuego().avanzaTurno();
+				avisaTurno(indicePartida);
+			}
 			return false;
 		}
 		return true;
@@ -132,15 +132,17 @@ public abstract class PartidaSocketHandler extends TextWebSocketHandler {
 	    	return true;
 		}else {
 			
-			String mensaje = ganadores.toString().substring(1, ganadores.toString().length()-1);
-			broadcast("acabo " + mensaje.replace(",", ""),partidas.get(indicePartida).jugadoresSk);
+			String mensaje = ganadores.toString().substring(1, ganadores.toString().length()-1).replace(",", "");
+			broadcast("acabo " + mensaje,partidas.get(indicePartida).getJugadoresSk());
 
 			try {
-				TimeUnit.SECONDS.sleep(10);
-				partidas.get(indicePartida).reiniciaPartida();
-				broadcast("empezo ",partidas.get(indicePartida).jugadoresSk);
-				entregaCartasATodos(indicePartida, cartasIniciales);
-				avisaTurno(indicePartida);
+				TimeUnit.SECONDS.sleep(tiempoDeEspera);
+				if(hayJugadores) {
+					partidas.get(indicePartida).reiniciaPartida();
+					broadcast("empezo ",partidas.get(indicePartida).getJugadoresSk());
+					entregaCartasATodos(indicePartida, cartasIniciales);
+					avisaTurno(indicePartida);
+				}
 				
 			} catch (InterruptedException e) {
 				e.printStackTrace();

@@ -10,7 +10,6 @@ import org.springframework.ui.Model;
 import es.ucm.fdi.iw.common.enums.Temas;
 import es.ucm.fdi.iw.model.ComentarioForo;
 import es.ucm.fdi.iw.model.Item;
-import es.ucm.fdi.iw.model.User;
 
 public final class CargaAtributos {
 	
@@ -61,23 +60,5 @@ public final class CargaAtributos {
 				.replaceFirst("[^:]*", "ws")
 				.replace(replace, by));
 	}
-	
-	public static boolean cargaUsuario(String username, String password, EntityManager entityManager, HttpSession session) {
 		
-		if(username != null && password != null) {
-			
-			if(!"".equals(username) && !"".equals(password)){
-				try {
-					User u = (User)entityManager.createNamedQuery("getUsuario").setParameter("loginParam", username).getSingleResult();
-					session.setAttribute(CargaAtributos.user, u);
-					return true;
-				} catch (Exception e) {
-					session.setAttribute(CargaAtributos.mensaje,"Nombre y/o contraseña incorrectos.");
-		    	}
-			}
-			
-		}
-		return false;
-	}
-
 }

@@ -15,7 +15,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Min;
 import es.ucm.fdi.iw.common.enums.Nacionalidades;
 
@@ -31,7 +30,7 @@ public class User {
 	private String password;
 	private String roles;
 	private byte enabled;
-	private double dinero;
+	private int dinero;
 	private String email;
 	private Nacionalidades nacion;
 	private List<User> amigos;
@@ -39,8 +38,8 @@ public class User {
 	private int Pganadas;
 	private int Pperdidas;
 	private int Pjugadas;
-	private double Dperdido;
-	private double Dganado;
+	private int Dperdido;
+	private int Dganado;
 	private Partida partida;
 	private List<Item> propiedades;
 	private boolean listo;
@@ -88,12 +87,12 @@ public class User {
 		this.enabled = enabled;
 	}
 
-	@DecimalMin("0.00")
-	public double getDinero() {
+	@Min(0)
+	public int getDinero() {
 		return dinero;
 	}
 
-	public void setDinero(double dinero) {
+	public void setDinero(int dinero) {
 		this.dinero = dinero;
 	}
 
@@ -136,7 +135,7 @@ public class User {
 		this.comentarios = comentarios;
 	}
 
-	@ManyToOne(targetEntity = Partida.class)
+	@ManyToOne(targetEntity = Partida.class, cascade = CascadeType.ALL)
 	public Partida getPartida() {
 		return partida;
 	}
@@ -172,21 +171,21 @@ public class User {
 		Pperdidas = pperdidas;
 	}
 
-	@DecimalMin("0.00")
-	public double getDperdido() {
+	@Min(0)
+	public int getDperdido() {
 		return Dperdido;
 	}
 
-	public void setDperdido(double dperdido) {
+	public void setDperdido(int dperdido) {
 		Dperdido = dperdido;
 	}
 
-	@DecimalMin("0.00")
-	public double getDganado() {
+	@Min(0)
+	public int getDganado() {
 		return Dganado;
 	}
 
-	public void setDganado(double dganado) {
+	public void setDganado(int dganado) {
 		Dganado = dganado;
 	}
 

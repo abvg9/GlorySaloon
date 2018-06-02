@@ -122,7 +122,7 @@ public class AdminController {
 	 */
 	@RequestMapping(value = "/añadirItem", method = RequestMethod.POST)
 	@Transactional
-	public String añadirItem(@RequestParam(required=true) double precio, @RequestParam(required=true) String nombre,
+	public String añadirItem(@RequestParam(required=true) int precio, @RequestParam(required=true) String nombre,
 			 				 @RequestParam(required=true) String descripcion) {
 				
 	    if(entityManager.createNamedQuery("getItem")
