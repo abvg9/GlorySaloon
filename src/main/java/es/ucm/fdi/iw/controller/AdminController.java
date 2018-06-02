@@ -35,7 +35,7 @@ public class AdminController {
 	 * Operacion creadora: Crea un nuevo usuario
 	 * Igual que la del ususario salvo que en esta se puede elegir si la nueva cuenta es admin o usuario
 	 * @param nombre: Nombre del usuario 
-	 * @param cont: Contraseña del usuario
+	 * @param cont: Contrasena del usuario
 	 * @param email: Email del usuario
 	 * @param nacion: Pais del usuario
 	 * @param isAdmin: Si el nuevo usuario es admin
@@ -103,7 +103,7 @@ public class AdminController {
 		if( i != null) {
 			
 			if(i.getPropietarios().isEmpty()) {
-				log.info("Item añadido a la BD");
+				log.info("Item anadido a la BD");
 				entityManager.remove(i);
 			}else {
 				log.error("No puedes borrar items si algun usuario los posee");
@@ -115,14 +115,14 @@ public class AdminController {
 	}
 	
 	/**
-	 * Operacion modificadora: Añadde un item de la bd
+	 * Operacion modificadora: Anadde un item de la bd
 	 * @param precio: Precio del item
 	 * @param nombre: Nombre del item
 	 * @return Te redirige a la tienda, cargando en el sesion la respusta(correcta o incorrecta ante la peticion)
 	 */
-	@RequestMapping(value = "/añadirItem", method = RequestMethod.POST)
+	@RequestMapping(value = "/anadirItem", method = RequestMethod.POST)
 	@Transactional
-	public String añadirItem(@RequestParam(required=true) int precio, @RequestParam(required=true) String nombre,
+	public String anadirItem(@RequestParam(required=true) int precio, @RequestParam(required=true) String nombre,
 			 				 @RequestParam(required=true) String descripcion) {
 				
 	    if(entityManager.createNamedQuery("getItem")
@@ -135,7 +135,7 @@ public class AdminController {
 	    	i.setDescripcion(descripcion);
 	    	i.setPropietarios(new ArrayList<User>());	
 			entityManager.persist(i);
-			log.info("Item añadido a la BD");
+			log.info("Item anadido a la BD");
 			
 		}
 				

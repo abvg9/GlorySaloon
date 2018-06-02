@@ -88,7 +88,7 @@ public class PartidaBJSocketHandler extends PartidaSocketHandler {
 					log.info("Se creo una partida");		
 				}else {
 					
-					partidas.get(indicePartida).añadeJugador(jugador, session);
+					partidas.get(indicePartida).anadeJugador(jugador, session);
 					broadcast(mensaje[0] + " se unió a la partida." ,partidas.get(indicePartida).getJugadoresSk());
 					
 					if(partidas.get(indicePartida).getJuego().getJugadores().size() == Integer.valueOf(mensaje[3])) {

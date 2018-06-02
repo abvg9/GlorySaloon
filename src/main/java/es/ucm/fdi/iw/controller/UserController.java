@@ -76,7 +76,7 @@ public class UserController {
      	   
 	/**
 	 * Operacion creadora: Crea un nuevo usuario
-	 * Se pide la contraseña actual del usuario por mayor seguridad
+	 * Se pide la contrasena actual del usuario por mayor seguridad
 	 * @param nombre: Nombre del usuario 
 	 * @param cont: Contraseña del usuario
 	 * @param email: Email del usuario
