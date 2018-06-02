@@ -43,7 +43,7 @@ public class Partida {
 		this.nombrePartida = nombrePartida;
 	}
 	
-	void añadeJugador(Jugador jugador, WebSocketSession session) {
+	void anadeJugador(Jugador jugador, WebSocketSession session) {
 		juego.getJugadores().add(jugador);
 		jugadoresSk.add(session);
 	}
