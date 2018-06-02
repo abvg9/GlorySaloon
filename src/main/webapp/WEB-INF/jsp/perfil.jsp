@@ -67,12 +67,12 @@
 	<form action="/user/modificarPerfil" method="post"
 		enctype="multipart/form-data">
 		<label for="nombre">Nombre<input name="nombre" /></label> <label
-			for="cont">Nueva contraseña<input type="password"
-			name="contNueva" /></label> <label for="cont">Contraseña actual<input
+			for="cont">Nueva contrasena<input type="password"
+			name="contNueva" /></label> <label for="cont">Contrasena actual<input
 			type="password" name="contActual" /></label> <label for="email">Nuevo
 			email<input name="email" />
 		</label> <label for="nacion">Nueva nacionalidad <select name="nacion">
-				<option value="España">España</option>
+				<option value="Espana">Espana</option>
 				<option value="Francia">Francia</option>
 				<option value="Italia">Italia</option>
 				<option value="Marruecos">Marruecos</option>
@@ -95,12 +95,12 @@
 		</div>
 	</form>
 
-	<strong>Introduce el nombre del amigo que deseas añadir.</strong>
-	<form action="/user/añadirAmigo" method="post">
+	<strong>Introduce el nombre del amigo que deseas anadir.</strong>
+	<form action="/user/anadirAmigo" method="post">
 		<label for="nombre">Nombre del amigo<input name="nombreA" /></label> <input
 			type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
 		<div class="form-actions">
-			<button type="submit" class="btn">Añadir amigos</button>
+			<button type="submit" class="btn">Anadir amigos</button>
 		</div>
 	</form>
 	<hr />
@@ -157,12 +157,12 @@
 	<strong>Crear cuenta</strong>
 	<form action="/admin/crearCuenta" method="post">
 		<label for="nombre">Nombre<input name="nombre"/></label>
-		<label for="cont">Contraseña<input type="password" name="cont"/></label>
+		<label for="cont">Contrasena<input type="password" name="cont"/></label>
 		<label for="email">email<input name="email"/></label>
 		<label for="isAdmin">is admin?<input type="checkbox" name="isAdmin"></label>
 		<label for="nacion" >nacion
 		<select name="nacion">
-  			<option value="España" >España </option>
+  			<option value="Espana" >Espana </option>
   			<option value="Francia">Francia</option>
   			<option value="Italia">Italia</option>
   			<option value="Marruecos">Marruecos</option>

@@ -354,9 +354,9 @@
 
 			<h3>Origen e historia</h3>
 
-			<p>El mus es un juego de naipes de baraja española sobre cuyo
+			<p>El mus es un juego de naipes de baraja espanola sobre cuyo
 				origen vasco no hay grandes discusiones entre autores. Existe ya una
-				primera referencia documental que se remonta al año 1745 en el
+				primera referencia documental que se remonta al ano 1745 en el
 				diccionario trilingüe (Euskera-Castelleno-Latín), donde lo cita el
 				filólogo vasco y jesuita Don Manuel de Larramendi.</p>
 
@@ -373,9 +373,9 @@
 				suma de puntos como se detalla en el apartado correspondiente. Es
 				costumbre, según regiones, y previo acuerdo de los contrincantes,
 				indicarse entre los jugadores de una misma pareja las cartas que
-				tiene cada uno mediante gestos faciales: jugar con señas.</p>
+				tiene cada uno mediante gestos faciales: jugar con senas.</p>
 
-			<p>Si se juega con señas, están sólo y estrictamente permitidas
+			<p>Si se juega con senas, están sólo y estrictamente permitidas
 				aquellas reconocidas por todos los jugadores, de modo que los
 				jugadores contrarios tengan posibilidad de entenderlas si es que las
 				vieran. En el mus a 8 reyes existen dos peculiaridades respecto a la
@@ -387,7 +387,7 @@
 				ases. Por tratarse de una opción estrechamente relacionada con el
 				hecho de jugar cara a cara con otras personas, en la versión del
 				juego que aquí se ofrece se ha descartado la posibilidad de jugar
-				con señas.</p>
+				con senas.</p>
 			<h3>Objetivo del juego</h3>
 			<p>En el mus vence la pareja que antes llegue a ganar tres juegos
 				de 30 ó 40 tantos cada uno (cabría decirse que se juega al mejor de
@@ -404,10 +404,10 @@
 				piedras generalmente) que irá acumulando uno de los jugadores de
 				cada pareja. Cada vez que el jugador que lleva los tantos sume 5 de
 				ellos, tendrá que volver a depositarlos en el platillo central del
-				que salieron y sustituirlos por uno que sumará su compañero por
+				que salieron y sustituirlos por uno que sumará su companero por
 				valor de 5.</p>
 			<p>Así pues como resultado, un miembro de la pareja tendrá a su
-				lado tantos por valor de 5 o amarrecos y su compañero tantos por
+				lado tantos por valor de 5 o amarrecos y su companero tantos por
 				valor de uno. Por lo tanto un juego finalizará cuando una pareja
 				haya conseguido sumar 8 amarrecos.</p>
 
@@ -492,15 +492,15 @@
 				sucesivos se hace al final de la mano, esto es, precisamente, cuando
 				han finalizado los cuatro lances.</p>
 
-			<h4>Pequeña</h4>
+			<h4>Pequena</h4>
 
 			<p>Pasado el lance de grande los jugadores deberán pronunciarse
-				sobre su intención de realizar apuestas a pequeña o chica, que es
+				sobre su intención de realizar apuestas a pequena o chica, que es
 				exactamente el mismo concepto que la jugada de grande pero
 				invirtiendo el orden en la valoración de las cartas (As, dos, tres,
 				...). Vencería el jugador que tuviera la carta más baja.</p>
 			<h4>Pares</h4>
-			<p>Tras la jugada de pequeña se pasa a la de pares. En ella antes
+			<p>Tras la jugada de pequena se pasa a la de pares. En ella antes
 				de realizar ninguna apuesta, los jugadores, uno a uno, y empezando
 				por quien es mano, irán anunciando verazmente si tuvieran una o más
 				cartas del mismo número con expresiones tales como par sí, pares sí

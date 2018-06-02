@@ -13,11 +13,11 @@
 
 	<form action="/user/crearCuenta" method="post">
 		<label for="nombre">Nombre<input name="nombre"/></label>
-		<label for="cont">Contraseña<input type="password" name="cont"/></label>
+		<label for="cont">Contrasena<input type="password" name="cont"/></label>
 		<label for="email">email<input name="email"/></label>
 		<label for="nacion" >nacion
 		<select name="nacion">
-  			<option value="España" >España </option>
+  			<option value="Espana" >Espana </option>
   			<option value="Francia">Francia</option>
   			<option value="Italia">Italia</option>
   			<option value="Marruecos">Marruecos</option>

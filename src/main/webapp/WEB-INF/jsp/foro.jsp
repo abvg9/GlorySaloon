@@ -42,7 +42,7 @@
 </c:if>
 
 <c:if test="${not empty tema}">
-	<strong>Añade un comentario.</strong>
+	<strong>Anade un comentario.</strong>
 	<form action="/user/comentar" method="post">
 		<label for="comentario">Comentario<input name="comentario" /></label>
 		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>

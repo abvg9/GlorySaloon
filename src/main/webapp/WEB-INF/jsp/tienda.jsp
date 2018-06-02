@@ -43,7 +43,7 @@
 		</form>
 		
 		<strong>Crear item.</strong>
-		<form action="/admin/añadirItem" method="post">
+		<form action="/admin/anadirItem" method="post">
 			<label for="nombre">Nombre<input name="nombre" /></label>
 			<label for="precio">Precio<input name="precio" /></label> 
 			<label for="descripcion">Descripcion<input name="descripcion" /></label>

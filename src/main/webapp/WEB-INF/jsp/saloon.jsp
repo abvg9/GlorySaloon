@@ -28,11 +28,11 @@
 		        	<input hidden="submit" name="id_p" value="${p.id}" />
 		        	<c:choose>
 					    <c:when test="${p.pass == 'no'}">
-					        Sin contraseña 
+					        Sin contrasena 
 					    </c:when>    
 					    <c:otherwise>
-					        Con contraseña	        
-					        <label for="pass">Contraseña <input type="password" name="pass" /> </label>
+					        Con contrasena	        
+					        <label for="pass">Contrasena <input type="password" name="pass" /> </label>
 					    </c:otherwise>
 					</c:choose>
 					<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
@@ -106,7 +106,7 @@
 	<form action="/user/crearPartida" method="post">
 	
 		<label for="nombrePar">Nombre<input name="nombrePar" /></label>
-		Contraseña(si la dejas en blaco, todo el mundo podra entrar)<label for="cont" > <input type="password" name="cont" /></label>
+		Contrasena(si la dejas en blaco, todo el mundo podra entrar)<label for="cont" > <input type="password" name="cont" /></label>
 		<label for="maxJugadores">Maximo de jugadores<input name="maxJugadores" /></label>
 		<select name="juego">
 			<option value="BlackJack">BlackJack</option>
