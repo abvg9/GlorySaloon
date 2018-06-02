@@ -27,8 +27,6 @@
 	<div class="botHome">
 		<a href="/foro"><img class="imgHome" src="${s}/img/Foro.jpg"></a>
 	</div>
-
-	<!--<%@ include file="../jspf/authinfo.jspf"%>	-->
 </div>
 
 <%@ include file="../jspf/footer.jspf"%>
