@@ -114,8 +114,8 @@ public class User {
 	}
 
 	@JoinTable(name = "user_amigos", joinColumns = {
-			@JoinColumn(name = "amigo_A", referencedColumnName = "id", nullable = false) }, inverseJoinColumns = {
-					@JoinColumn(name = "amigo_B", referencedColumnName = "id", nullable = false) })
+		@JoinColumn(name = "amigo_A", referencedColumnName = "id", nullable = false) }, inverseJoinColumns = {
+		@JoinColumn(name = "amigo_B", referencedColumnName = "id", nullable = false) })
 	@ManyToMany(targetEntity = User.class, fetch = FetchType.EAGER)
 	public List<User> getAmigos() {
 		return amigos;
@@ -143,7 +143,10 @@ public class User {
 	public void setPartida(Partida partida) {
 		this.partida = partida;
 	}
-
+	
+	@JoinTable(name = "user_item", joinColumns = {
+		@JoinColumn(name = "user") }, inverseJoinColumns = {
+		@JoinColumn(name = "item") })
 	@ManyToMany(targetEntity = Item.class, fetch = FetchType.EAGER)
 	public List<Item> getPropiedades() {
 		return propiedades;

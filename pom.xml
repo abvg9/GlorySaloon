@@ -6,10 +6,8 @@
 	<groupId>es.ucm.fdi</groupId>
 	<artifactId>ejemplo</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
 
-	<name>iwbase</name>
-	<description>Demo project for Spring Boot</description>
+	<name>GlorySaloon</name>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -95,4 +93,6 @@
 	</build>
 
 
+	<description>Pagina web sobre juegos de azar.</description>
+	<packaging>pom</packaging>
 </project>

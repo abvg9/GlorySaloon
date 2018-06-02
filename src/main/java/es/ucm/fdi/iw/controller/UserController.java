@@ -384,6 +384,7 @@ public class UserController {
 	 * @return Te redirige al perfil, cargando en el sesion la respusta(correcta o incorrecta ante la peticion)
 	 */
 	@RequestMapping(value = "/borrarItem", method = RequestMethod.POST)
+	@Transactional
 	public String borrarItem(@RequestParam(required=true) long id,HttpSession session) {
 		
 		User u = (User)session.getAttribute(CargaAtributos.user);
@@ -393,7 +394,7 @@ public class UserController {
 			if(usuarioTieneItem(i,true,u)){
 		
 				entityManager.merge(u);
-				entityManager.merge(i);
+				entityManager.flush();
 				session.setAttribute(CargaAtributos.user,u);
 				
 			}else {
@@ -722,9 +723,6 @@ public class UserController {
 		return "redirect:/saloon";
 	}
 	
-
-	
-	
     /*#######################################################################
     #########################################################################
     ###                                                                   ###
@@ -751,15 +749,14 @@ public class UserController {
 			Item i = entityManager.find(Item.class, id_it);
 			User u = (User)session.getAttribute(CargaAtributos.user);
 			
-			if(usuarioTieneItem(i,false,u)) {
+			if(!usuarioTieneItem(i,false,u)) {
 				
 				if(u.getDinero() >= i.getPrecio()) {
 					
 					u.setDinero(u.getDinero() - i.getPrecio());
 					u.getPropiedades().add(i);
-					i.getPropietarios().add(u);
 					entityManager.merge(u);
-					entityManager.merge(i);
+					entityManager.flush();
 					session.setAttribute(CargaAtributos.user,u);
 					session.setAttribute(CargaAtributos.mensaje, "Compra realizada :)");
 						
@@ -970,22 +967,22 @@ public class UserController {
 		int inI = 0;
 		int inU = 0;
 		
-		while(u.getPropiedades().size() > inI && 
-			  !u.getPropiedades().get(inI).getNombre().equals(i.getNombre())) {inI++;}
+		while(u.getPropiedades().size() > inI && !u.getPropiedades().get(inI).getNombre().equals(i.getNombre())) 
+			{inI++;}
 		
 		if(inI != u.getPropiedades().size()) {
-			while(i.getPropietarios().size() > inI && 
-				  i.getPropietarios().get(inU).getLogin().equals(u.getPropiedades().get(inI).getNombre()))
-			{inU++;}
+			while(i.getPropietarios().size() > inI && i.getPropietarios().get(inU).getLogin().equals(u.getPropiedades().get(inI).getNombre()))
+				{inU++;}
 		}
 		
-		if(elimina) {
-			u.getPropiedades().remove(inI);
-			i.getPropietarios().remove(inU);
+		if(inI != u.getPropiedades().size()) {
+			if(elimina) {
+				u.getPropiedades().remove(inI);
+			}
+			return true;
 		}
 		
-		return inI == u.getPropiedades().size();
-			
+		return false;			
 	}
 		
 	/**
