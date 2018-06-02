@@ -15,7 +15,6 @@ import es.ucm.fdi.iw.common.enums.Nacionalidades;
 import es.ucm.fdi.iw.common.utils.CargaAtributos;
 import es.ucm.fdi.iw.model.ComentarioForo;
 import es.ucm.fdi.iw.model.Item;
-import es.ucm.fdi.iw.model.Partida;
 import es.ucm.fdi.iw.model.User;
 
 @Controller	
@@ -65,7 +64,7 @@ public class AdminController {
 			u.setPassword(passwordEncoder.encode(cont));
 			u.setRoles("USER");
 			u.setEnabled(a);
-			u.setDinero(0);
+			u.setDinero(1000);
 			u.setEmail(email);
 			u.setNacion(nacion);	
 			u.setPganadas(0);
@@ -77,17 +76,16 @@ public class AdminController {
 			u.setAmigos(new ArrayList<User>());
 			u.setComentarios(new ArrayList<ComentarioForo>());
 			u.setPropiedades(new ArrayList<Item>());
-			u.setPartida(new Partida());
+			u.setPartida(null);
 				
 			entityManager.persist(u);
 			session.setAttribute(CargaAtributos.mensaje,"La cuenta se creo correctamente :)");
-			log.info("Admin " +us.getLogin()+
-			"creo una cuenta al usuario "+nombre);
+			log.info("Admin " +us.getLogin()+"creo una cuenta al usuario "+nombre);
 			
 						 
 		}
 		session.setAttribute(CargaAtributos.mensaje,"Nombre y/o email ya cogidos :(");
-		return "perfil";
+		return "redirect:/perfil";
 	}
     
 	/**

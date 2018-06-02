@@ -119,7 +119,7 @@ public class UserController {
 			u.setAmigos(new ArrayList<User>());
 			u.setComentarios(new ArrayList<ComentarioForo>());
 			u.setPropiedades(new ArrayList<Item>());
-			u.setPartida(new Partida());
+			u.setPartida(null);
 			u.setListo(false);
 				
 			entityManager.persist(u);
@@ -985,6 +985,7 @@ public class UserController {
 		return false;			
 	}
 		
+	
 	/**
 	 * Operacion auxiliar: Carga en la sesion una lista de usuarios
 	 * @return void
@@ -1000,6 +1001,7 @@ public class UserController {
 		session.setAttribute("ranking",ordena(usuarios));
 	}
 
+	
 	/**
 	 * Operacion auxiliar: Carga en la sesion una lista de usuarios
 	 * @return void
@@ -1009,6 +1011,7 @@ public class UserController {
 		session.setAttribute("ranking",ordena(u.getAmigos()));
 	}
 
+	
 	/**
 	 * Operacion auxiliar: Carga en la sesion una lista de usuarios
 	 * @return void
@@ -1020,6 +1023,7 @@ public class UserController {
         					   .getResultList();	
 		session.setAttribute("ranking",ordena(usuarios));
 	}
+	
 	
 	/**
 	 * Operacion auxiliar: Ordena una lista de usuarios mayor a menor en funcion de su dinero
@@ -1039,6 +1043,7 @@ public class UserController {
 		return usuarios;
 	}
 	
+	
 	private void eliminaVariablesSession(HttpSession session) {
 		session.removeAttribute(CargaAtributos.user);
 		session.removeAttribute(CargaAtributos.tema);
@@ -1047,6 +1052,7 @@ public class UserController {
 		session.removeAttribute(CargaAtributos.foro);
 		session.removeAttribute(CargaAtributos.tienda);
 	}
+	
 	
 	private void elminaJugador(User u) {
 		

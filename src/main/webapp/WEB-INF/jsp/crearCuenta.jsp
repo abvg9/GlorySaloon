@@ -9,8 +9,10 @@
 	<h1>Crear cuenta</h1>
 	<p class="lead">Rellena todos los campos</p>
 
-	<hr/>
-
+    <c:if test="${not empty mensaje}">
+    	<strong>${mensaje}</strong>
+    </c:if>
+    
 	<form action="/user/crearCuenta" method="post">
 		<label for="nombre">Nombre<input name="nombre"/></label>
 		<label for="cont">Contrasena<input type="password" name="cont"/></label>
@@ -26,18 +28,10 @@
 		</label>
 		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             
-            <div class="form-actions">
-                <button type="submit" class="btn">Crear usuario</button>
-            </div>
-            
-            <c:if test="${not empty mensaje}">
-            	<strong>${mensaje}</strong>
-    		</c:if>
-    		
-	</form>
-	<hr/>
-
-	<!--<%@ include file="../jspf/authinfo.jspf"%>	-->	
+        <div class="form-actions">
+        	<button type="submit" class="btn">Crear usuario</button>
+        </div>	
+	</form>	
 </div>
 
 <%@ include file="../jspf/footer.jspf"%>
