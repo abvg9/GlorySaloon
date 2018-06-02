@@ -11,12 +11,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import es.ucm.fdi.iw.common.utils.CargaAtributos;
 
 @Controller	
-//@RequestMapping("root")
 public class RootController {
 	
 	@Autowired
 	private EntityManager entityManager;
-		
+	
     @ModelAttribute
     public void addAttributes(Model model,HttpSession session) {	  	
         model.addAttribute("s", "/static");
@@ -65,7 +64,7 @@ public class RootController {
 	}
 	
 	@GetMapping("/saloon")
-	public String saloon(HttpSession session,Model model, HttpServletRequest request) {
+	public synchronized String saloon(HttpSession session,Model model, HttpServletRequest request) {
 		session.setAttribute(CargaAtributos.mensaje, null);
 		CargaAtributos.socket(model, request, "saloon", CargaAtributos.chatSocket);
 		return "saloon";

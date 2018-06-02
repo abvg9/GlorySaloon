@@ -6,11 +6,11 @@ import java.util.ArrayList;
 public class Jugador {
 
 	private ArrayList<Carta> mano;
-	private double dinero;
+	private int dinero;
 	private String nombre;
-	private double apostado;
+	private int apostado;
 	
-	public Jugador(ArrayList<Carta> mano, double dinero, String nombre, double apostado) {
+	public Jugador(ArrayList<Carta> mano, int dinero, String nombre, int apostado) {
 		this.mano = mano;
 		this.dinero = dinero;
 		this.nombre = nombre;
@@ -25,11 +25,11 @@ public class Jugador {
 		this.mano = mano;
 	}
 	
-	public double getDinero(){
+	public int getDinero(){
 		return dinero;
 	}
 	
-	public void setDinero(double dinero){
+	public void setDinero(int dinero){
 		this.dinero = dinero;
 	}
 	
@@ -41,11 +41,11 @@ public class Jugador {
 		this.nombre = nombre;
 	}
 	
-	public double getApostado(){
+	public int getApostado(){
 		return this.apostado;
 	}
 	
-	public void setApostado(Double apostado){
+	public void setApostado(int apostado){
 		this.apostado = apostado;
 	}		
 }

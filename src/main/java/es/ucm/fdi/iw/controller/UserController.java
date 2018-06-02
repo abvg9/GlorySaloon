@@ -108,7 +108,7 @@ public class UserController {
 			u.setPassword(passwordEncoder.encode(cont));
 			u.setRoles("USER");
 			u.setEnabled(a);
-			u.setDinero(1000.0);
+			u.setDinero(1000);
 			u.setEmail(email);
 			u.setNacion(nacion);	
 			u.setPganadas(0);
@@ -436,6 +436,7 @@ public class UserController {
      *  2º Unirse a una partida
      *  3º Ver y buscar partidas(por juego, por amigos o por nombre)
      *  4º Salir de la partida
+     *  5º Salir del juego
      */
 	
 	/**
@@ -652,7 +653,7 @@ public class UserController {
 	@RequestMapping(value = "/salirDeLaPartida", method = RequestMethod.POST)
 	@Transactional
 	public String salirDeLaPartida(HttpSession session) {
-					
+		
 		User u = (User)session.getAttribute(CargaAtributos.user);
 		Partida p = entityManager.find(Partida.class, u.getPartida().getId());
 		
@@ -675,6 +676,53 @@ public class UserController {
 		
 		return "redirect:/saloon";
 	}
+	
+	@RequestMapping(value = "/salirDelJuego", method = RequestMethod.POST)
+	@Transactional
+	public String salirDelJuego(HttpSession session, @RequestParam(required=true) String dineroFinal) {
+		
+		int dinero = Integer.valueOf(dineroFinal);
+		User u = (User)session.getAttribute(CargaAtributos.user);
+		
+		Partida p = (Partida)entityManager.createNamedQuery("getPartidaPorNombre")
+						    .setParameter("nombreParam", u.getPartida().getNombre())
+                            .getSingleResult();
+		u.setPartida(p);
+		int ganado = dinero - u.getDinero();
+		
+		if(ganado != 0) {
+			
+			if(ganado > 0) {
+				u.setPganadas(u.getPganadas()+1);
+				u.setDganado(ganado);
+			}else {
+				u.setPperdidas(u.getPperdidas()+1);
+				u.setDperdido(Math.abs(ganado));
+			}
+		}
+		
+		log.info(u.getLogin()+" salió de la partida."+ u.getPartida().getNombre());
+		elminaJugador(u);
+		
+    	if(u.getPartida().getJugadores().size() == 0) {
+    		entityManager.remove(u.getPartida());
+    	}else {
+    		entityManager.merge(u.getPartida());
+    	}
+    	
+		u.setPartida(null);
+		u.setPjugadas(u.getPjugadas()+1);
+		u.setDinero(dinero);
+
+		entityManager.merge(u);
+		entityManager.flush();
+
+    	session.setAttribute(CargaAtributos.user,u);
+		
+		return "redirect:/saloon";
+	}
+	
+
 	
 	
     /*#######################################################################
@@ -1001,5 +1049,14 @@ public class UserController {
 		session.removeAttribute(CargaAtributos.mensaje);
 		session.removeAttribute(CargaAtributos.foro);
 		session.removeAttribute(CargaAtributos.tienda);
+	}
+	
+	private void elminaJugador(User u) {
+		
+		int i = 0;
+		while(u.getPartida().getJugadores().size() > i && 
+			  !u.getPartida().getJugadores().get(i).getLogin().equals(u.getLogin())) {i++;}
+		
+		u.getPartida().getJugadores().remove(i);
 	}
 }

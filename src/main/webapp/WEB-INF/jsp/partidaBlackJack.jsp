@@ -15,7 +15,9 @@ Mano
 <textarea id="cartas" cols="30" rows="6" disabled></textarea>
 
 Jugadores
-<textarea id="jugadores" cols="30" rows="6" disabled></textarea>
+<textarea id="jugadores" cols="30" rows="6" disabled>
+<c:forEach items="${user.partida.jugadores}" var="j">${j.login} ${j.dinero} &#10</c:forEach>
+</textarea>
 
 Total Apostado
 <textarea id="bote" cols="10" rows="1" disabled></textarea>
@@ -34,13 +36,6 @@ Total Apostado
 	Pedir carta
 </button>	
 
-<button type="submit"
-	class ="btn"
- 	name="salir"
- 	id = btn_salir>
- 	Salir
-</button>	
-
 <label for="apostado">Apuesta<input id= "apostado" name="apostado" /></label>
 <button type="submit"
 	class ="btn"
@@ -49,11 +44,28 @@ Total Apostado
 	Apostar
 </button>	
 
+<form id= "salirJuego" action="/user/salirDelJuego" method="post" >
+
+	<input id="dineroFinal" hidden="submit" name="dineroFinal"/>
+	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+	<div class="form-actions">
+		<button type="submit"class ="btn"name="salir"id = btn_salir>Salir</button>	
+	</div>
+</form>
+
 <script type="text/javascript">
 window.onload = function() {
 	
 	//VARIABLES GLOBALES
 	
+	//=>utilidades
+	var socket = new WebSocket("${endpoint}");
+	var bote = $("#bote");
+	bote.val("0");
+	var jugadores = $("#jugadores");
+	var apostado = $("#apostado");
+	var mensaje = $("#recibido");
+		
 	//=>botones
 	var btn_pasar = $("#btn_pasar");
 	var btn_pedir = $("#btn_pedir");
@@ -64,22 +76,16 @@ window.onload = function() {
 	btn_pedir.prop("disabled",true);
 	btn_salir.prop("disabled",true);
 	btn_apostar.prop("disabled",true);
-	
-	//=>utilidades
-	var socket = new WebSocket("${endpoint}");
-	var bote = $("#bote");
-	bote.val("0");
-	var jugadores = $("#jugadores");
-	var apostado = $("#apostado");
-	var mensaje = $("#recibido");
-	
+		
 	//=>jugadores
 	var jug = new Array();
-	cargaJugadores();
+	incializaJug();
 	
 	//=>dinero
 	var dinero = ${user.dinero};
-
+	var dineroFinal = $("#dineroFinal");
+	dineroFinal.val(dinero);
+	
 	socket.onmessage = function(e) {
 		
 		let length;
@@ -94,6 +100,7 @@ window.onload = function() {
 	    		break;
 	    		
 	    	case "acabo": 
+	    		
 	    		let ganadores = "";
 	    		bote.val("0");
 	    		mostrarMensaje("La partida ha acabado");
@@ -103,7 +110,7 @@ window.onload = function() {
 
 				let index = mens.length;
 	    		length = mens[index-1];
-	    		length = parseFloat(length);
+	    		length = parseInt(length);
 	    		if(length == 1){
 	    			mostrarMensaje("El ganador es:");
 	    		}else if(length != jug.length){
@@ -112,11 +119,28 @@ window.onload = function() {
 	    			mostrarMensaje("Habeis empatado:");
 	    		}
 	    		let j = 1;
-	    		debugger;
+
 				for(let i = 0; i < length;i++){
-					mostrarMensaje(mens[j] + " " + mens[j+1]);
+					debugger;
+					
+					if(mensaje[j+1] != "0"){
+						mostrarMensaje(mens[j] + " " + mens[j+1]);	
+					}else{
+						mostrarMensaje(mens[j] + " 100");
+					}
+					if(mens[j] == "${user.login}"){
+						dinero += parseInt(mens[j+2]);
+						dineroFinal.val(dinero);
+						//si se queda sin dinero, le damos 100 moneditas y avisamos al servidor
+						if(dinero == 0){
+							dinero = 100;
+							mostrarMensaje("Te has quedado sin dinero, toma 100 monedas :)");
+							socket.send("${user.login} sinblanca "+100);
+						}
+						
+					}
 					actualizaJugador(mens[j],+mens[j+2]);
-					j = j+3;
+					j = j+3;				
 				}
 
 	    		btn_salir.prop("disabled",false);
@@ -134,7 +158,7 @@ window.onload = function() {
 		    
 	    	case "salio":
 		    	mostrarMensaje(mens[1] + " salió de la partida");	
-		    	actualizaJugador(mens[0],true);
+		    	actualizaJugador(mens[1],"a");
 		    	break;
 		    	
 	    	case "empezo":
@@ -160,7 +184,7 @@ window.onload = function() {
 	    		
 	    	default:
 	    		if(mens[1] == "apostó"){
-	    			let bt = parseFloat(bote.val()) + parseFloat(mens[2]);
+	    			let bt = parseInt(bote.val()) + parseInt(mens[2]);
 	    			bote.val(bt.toString());
 	    			actualizaJugador(mens[0],-mens[2]);
 	    		}
@@ -170,19 +194,19 @@ window.onload = function() {
 		
 	}
 	
-	function cargaJugadores(){
+	function incializaJug(){
+		let jugaux = jugadores.val();
+		jugaux = jugaux.substring(0, jugaux.length-3).replace(/\n/ig, '').split(" ");
+		let length = jugaux.length;
 		
-		<% 
-		User user = (User)session.getAttribute("user");
-		for(int i = 0; i < user.getPartida().getJugadores().size();i++){ %>
+		for(let i = 0;i < length;i+=2){
 			jug.push({
-				nombre: '<%=user.getPartida().getJugadores().get(i).getLogin()%>' ,
-				dinero: '<%=user.getPartida().getJugadores().get(i).getDinero()%>'
+				nombre: jugaux[i],
+				dinero: jugaux[i+1]
 			});
-	  <%}%>
-	  	injectaJugadores();
+		}		
 	}
-	
+		
 	function actualizaJugador(jugador,din){
 		let i = 0;
 		let length = jug.length;
@@ -190,10 +214,10 @@ window.onload = function() {
 			i++;
 		}
 		if(!isNaN(din)){
-			jug[i].dinero = parseFloat(jug[i].dinero) + din;
+			jug[i].dinero = parseInt(jug[i].dinero) + din;
 		}else{
-			//reparar esto jug[i].pop o algo asi
-			jug[i].slice(0,i-1).concat(jug[i].slice(i+1,lenght));
+			delete jug[i];
+			limpiaArray(jug);
 		}
 		injectaJugadores();
 	}
@@ -202,7 +226,7 @@ window.onload = function() {
 		let length = jug.length;
 		jugadores.val("");
 		for(let i = 0; i < length;i++){
-			jugadores.val(jugadores.val() + jug[i].nombre +" " + jug[i].dinero + '\n');
+			jugadores.val(jugadores.val() +jug[i].nombre+" "+jug[i].dinero+ '\n');
 		}
 	}
 	
@@ -222,19 +246,20 @@ window.onload = function() {
 	
 	btn_salir.on("click", function(){
 		socket.send("${user.login} salió de la partida");
-		window.location.href = "/saloon";
+		socket.close();
 	});
 	
 	btn_apostar.on("click", function(){
+
 		if(!isNaN(apostado.val())){
 			
-			let dinapos = parseFloat(apostado.val());
-			dinapos = dinapos.toFixed(1);
+			let dinapos = parseInt(apostado.val());
 			if(dinapos <= 0 || dinapos > dinero){
 				alert("No puedes apostar esa cantidad");
 			}else{
 				dinero = dinero - dinapos;
-				let bt = parseFloat(bote.val()) + parseFloat(dinapos);
+				dineroFinal.val(dinero);
+				let bt = parseInt(bote.val()) + parseInt(dinapos);
     			bote.val(bt.toString());
 				
 				socket.send("${user.login} apostó "+ dinapos.toString());
@@ -252,11 +277,22 @@ window.onload = function() {
 
 	});
 	
-	window.onbeforeunload = function() {
-		return "Si usted sale de la partida antes de que finalize la ronda será penalizado. ¿Está seguro de continuar? ";
+	function limpiaArray(actual) {
+		let nuevoArray = new Array();
+		for (let i = 0; i < actual.length; i++) {
+			if (actual[i]) {
+				nuevoArray.push(actual[i]);
+			}
+		}
+		return nuevoArray;
 	}
 	
+	//=>envio de info al servidor(dinero maxJugadores tipoDeJuego nombrePartida)
+	socket.onopen = function(){
+		socket.send("${user.login} entro ${user.dinero} ${user.partida.maxJugadores} ${user.partida.juego} ${user.partida.nombre}");
+	}
 }
+
 </script>
 
 <%@ include file="../jspf/footer.jspf"%>

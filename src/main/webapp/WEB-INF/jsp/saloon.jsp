@@ -125,7 +125,6 @@
 		Buscara por el campo que rellenes mas arriba. El de abajo, si esta rellenado, lo ignorará.
 		<label for="nombrePar">Nombre<input name="nombrePar" /></label>
 		<select name="juego">
-			<option value="BlackJack">BlackJack</option>
 			<option value="Pocker">Pocker</option>
 			<option value="Amigos">Amigos</option>
 		</select>

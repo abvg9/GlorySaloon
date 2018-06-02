@@ -12,7 +12,7 @@ public class Juego{
 	private Baraja baraja;
 	private Reglas reglas;
 	private ArrayList<Jugador> jugadores;
-	private double totalApostado;
+	private int totalApostado;
 	private int turno;
 	private int maxJugadores;
 
@@ -40,13 +40,13 @@ public class Juego{
 		
 	public int getJugador(String nombre) {
 		
-		int i = 0;	
-		while(i < jugadores.size() && !jugadores.get(i).getNombre().equals(nombre)) {
-			i++;
+		int indiceJugador = 0;	
+		while(indiceJugador < jugadores.size() && !jugadores.get(indiceJugador).getNombre().equals(nombre)) {
+			indiceJugador++;
 		}
 		
-		if(i!=jugadores.size())
-			return i;
+		if(indiceJugador!=jugadores.size())
+			return indiceJugador;
 		
 		return -1;
 	}
@@ -63,11 +63,11 @@ public class Juego{
 		return this.reglas;
 	}
 	
-	public double getTotalApostado() {
+	public int getTotalApostado() {
 		return this.totalApostado;
 	}
 	
-	public void setTotalApostado(double totalApostado) {
+	public void setTotalApostado(int totalApostado) {
 		this.totalApostado = totalApostado;
 	}
 	
@@ -83,28 +83,55 @@ public class Juego{
 		this.maxJugadores = maxJugadores;
 	}
 	
-	boolean partidaAcabada() {
+	private boolean partidaAcabada() {
+		return jugadores.size() == 1;
+	}
+	
+	boolean rondaAcabada() {
 		return jugadores.size() == turno+1;
+	}
+	
+	void donaAjugador(int indiceJugador,int cantidad) {
+		jugadores.get(indiceJugador).setDinero(cantidad);
 	}
 	
 	void avanzaTurno() {
 		turno++;
 	}
-	
+		
+	boolean salioYtermino(int indideJugador) {
+		jugadores.remove(indideJugador);
+		return partidaAcabada();
+	}
+		
 	void repartirBotin(ArrayList<String> ganadores){
 			
-		double porcentaje;
-		double ganado;
+		int porcentaje;
+		int ganado;
+		int numGan = Integer.parseInt(ganadores.get(ganadores.size()-1));
+		int j = 1;
 		
-		if(Integer.parseInt(ganadores.get(ganadores.size()-1)) > 1) {
-			int j = 1;
+		if(numGan == jugadores.size()) {
+			
+			for(int indiceJugador = 0; indiceJugador < jugadores.size();indiceJugador++) {
+				
+				if(ganadores.contains(jugadores.get(indiceJugador).getNombre())) {
+					
+					ganado = jugadores.get(indiceJugador).getApostado();
+					jugadores.get(indiceJugador).setDinero(jugadores.get(indiceJugador).getDinero() + ganado);
+					ganadores.add(indiceJugador+2*j, String.valueOf(ganado));
+					
+				}
+				j++;
+			}
+		}else if(numGan > 1) {
+			
 			for(int indiceJugador = 0; indiceJugador < jugadores.size();indiceJugador++) {
 				
 				if(ganadores.contains(jugadores.get(indiceJugador).getNombre())) {
 					
 					porcentaje = (jugadores.get(indiceJugador).getApostado()*100)/totalApostado;
 					ganado = (totalApostado*porcentaje)/100;
-					
 					jugadores.get(indiceJugador).setDinero(jugadores.get(indiceJugador).getDinero() + ganado);
 					ganadores.add(indiceJugador+2*j, String.valueOf(ganado));
 					
@@ -148,7 +175,7 @@ public class Juego{
 		turno = 0;
 		for(int i = 0; i < jugadores.size();i++) {
 			jugadores.get(i).setMano(new ArrayList<Carta>());
-			jugadores.get(i).setApostado(0.0);
+			jugadores.get(i).setApostado(0);
 		}
 	}
 
