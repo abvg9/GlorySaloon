@@ -19,7 +19,7 @@
 				<fieldset>
 					<div class="rightAl">
 						<label for="username">Usuario</label> <input type="text" id="username" name="username" /><br>
-						<br> <label for="password">Contraseña</label> <input type="password" id="password" name="password" />
+						<br> <label for="password">Contrasena</label> <input type="password" id="password" name="password" />
 					</div>
 					<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" /> <br>
 					<div class="form-actions">

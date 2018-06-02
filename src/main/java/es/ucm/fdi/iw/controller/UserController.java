@@ -78,7 +78,7 @@ public class UserController {
 	 * Operacion creadora: Crea un nuevo usuario
 	 * Se pide la contrasena actual del usuario por mayor seguridad
 	 * @param nombre: Nombre del usuario 
-	 * @param cont: Contraseña del usuario
+	 * @param cont: Contrasena del usuario
 	 * @param email: Email del usuario
 	 * @param nacion: Pais del usuario
 	 * @return Si todo a salido bien, te redirige a login, si no, carga en sesion un mensaje de error y te redirige a crearCuenta.
@@ -142,7 +142,7 @@ public class UserController {
     
     /** Operaciones:
      *  1º Modifcar => login, password, email, nacion, imagen
-     *  2º Añadir amigo
+     *  2º Anadir amigo
      *  3º Ver perfil(tanto el suyo como el de amigos
      *  4º Eliminar cuenta
      *  5º Eliminar amigo
@@ -152,10 +152,10 @@ public class UserController {
       
 	/**
 	 * Operacion modificadora: Cambia los datos personales del usuario. Solo modifica aquellos campos que sean rellenados.
-	 * Se pide la contraseña actual del usuario por mayor seguridad
+	 * Se pide la contrasena actual del usuario por mayor seguridad
 	 * @param nombre: Nuevo nombre del usuario 
-	 * @param contNueva: Nueva contraseña del usuario
-	 * @param contActual: Nueva contraseña actual del usuario
+	 * @param contNueva: Nueva contrasena del usuario
+	 * @param contActual: Nueva contrasena actual del usuario
 	 * @param email: Nuevo email del usuario
 	 * @param nacion: Nuevo pais del usuario
 	 * @return Te redirige al perfil, cargando en el sesion la respusta(correcta o incorrecta ante la peticion)
@@ -200,26 +200,26 @@ public class UserController {
 			return "perfil";
 		}
 		
-		session.setAttribute(CargaAtributos.mensaje,"Contraseña incorrecta. Es obligatorio que rellenes el campo 'Contraseña actual'");
+		session.setAttribute(CargaAtributos.mensaje,"Contrasena incorrecta. Es obligatorio que rellenes el campo 'Contrasena actual'");
 		session.setAttribute(CargaAtributos.imagen,"/user/fotoPerfil/");
 		return "perfil";
 			
 	}
 
 	/**
-	 * Operacion modificadora: Añade un nuevo amigo a la lista de amigos del usuario. 
+	 * Operacion modificadora: Anade un nuevo amigo a la lista de amigos del usuario. 
 	 * Revisa si el amigo existe en la BD y si no lo tenia anteriormente.
-	 * Esta operacion no añade en la lista del amigo el usuario en cuestion.
+	 * Esta operacion no anade en la lista del amigo el usuario en cuestion.
 	 * @param nombreA: Nombre del amigo
 	 * @return Te redirige al perfil, cargando en el sesion la respusta(correcta o incorrecta ante la peticion)
 	 */
-	@RequestMapping(value = "/añadirAmigo", method = RequestMethod.POST)
+	@RequestMapping(value = "/anadirAmigo", method = RequestMethod.POST)
 	@Transactional
-	public String añadirAmigo(@RequestParam(required=true) String nombreA, HttpSession session) {
+	public String anadirAmigo(@RequestParam(required=true) String nombreA, HttpSession session) {
 			
 		User u = (User)session.getAttribute(CargaAtributos.user);
 		if(nombreA.equals(u.getLogin())) {
-			session.setAttribute(CargaAtributos.mensaje,"No te puedes añadir a ti mismo como amigo.");
+			session.setAttribute(CargaAtributos.mensaje,"No te puedes anadir a ti mismo como amigo.");
 			return "perfil";
 		}
 		
@@ -232,7 +232,7 @@ public class UserController {
 				
 				u.getAmigos().add(u2);
 				entityManager.merge(u);
-				session.setAttribute(CargaAtributos.mensaje,nombreA+" añadido a amigos.");
+				session.setAttribute(CargaAtributos.mensaje,nombreA+" anadido a amigos.");
 				session.setAttribute(CargaAtributos.user,u);
 				
 			}else {
@@ -263,7 +263,7 @@ public class UserController {
 			           .getSingleResult();
 			
 			if(usuarioTieneAmigo(u2,false,u)) {
-				session.setAttribute(CargaAtributos.mensaje,"Perfil privado, debes añadirlo a amigos para poder verlo.");
+				session.setAttribute(CargaAtributos.mensaje,"Perfil privado, debes anadirlo a amigos para poder verlo.");
 				return "perfil";
 			}
 
@@ -443,7 +443,7 @@ public class UserController {
 	 * Operacion creadora: Crea una nueva partida
 	 * @param juego: Tipo de juego al que se va a jugar en la partida
 	 * @param maxJugadores: Maximo numero de jugadores
-	 * @param cont: Contraseña de la partida
+	 * @param cont: Contrasena de la partida
 	 * @param nombrePar: Nombre de la partida
 	 * @return Info de si se ha creado correctamente la partida o redirige a la partida
 	 */
@@ -530,7 +530,7 @@ public class UserController {
 						session.setAttribute(CargaAtributos.user,u);
 						session.setAttribute(CargaAtributos.mensaje, "Estas dentro de la partida."+darDin);
 					}else {
-						session.setAttribute(CargaAtributos.mensaje, "Contraseña incorrecta.");
+						session.setAttribute(CargaAtributos.mensaje, "Contrasena incorrecta.");
 					}
 						
 				}else {
