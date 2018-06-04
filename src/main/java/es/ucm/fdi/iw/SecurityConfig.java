@@ -2,6 +2,7 @@ package es.ucm.fdi.iw;
 
 import java.io.File;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+	private static final Logger log = Logger.getLogger(SecurityConfig.class);
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -45,6 +48,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
     @Bean(name="localData")
     public LocalData getLocalData() {
-    	return new LocalData(new File(env.getProperty("es.ucm.fdi.base-path")));
+    	String root = env.getProperty("es.ucm.fdi.base-path");
+    	if (root == null) {
+    		log.warn("Using default; no such key for \"es.ucm.fdi.base-path\"");
+    		root = "/tmp/iw";
+    	}
+    	    	
+    	return new LocalData(new File(root));
     }    
 }
