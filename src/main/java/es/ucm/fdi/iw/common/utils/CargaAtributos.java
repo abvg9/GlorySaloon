@@ -22,8 +22,8 @@ public final class CargaAtributos {
 	public static final String saloon = "saloon";
 	public static final String chatSocket = "chatsocket";
 	public static final String partidaSocket = "partidasocket";
+	public static final String perfil = "perfil";
 	private static final String endpoint = "endpoint";
-	
 	
 	@SuppressWarnings("unchecked")
 	public static void foro(HttpSession session,EntityManager entityManager, Temas tema) {
@@ -46,15 +46,7 @@ public final class CargaAtributos {
 			                 .getResultList();
 		session.setAttribute(tienda, tnd);
 	}
-	
-	@SuppressWarnings("unchecked")
-	public static void jugadores(HttpSession session,EntityManager entityManager) {
-
-		List<Item> tnd = (List<Item>)entityManager.createNamedQuery("getTienda")
-			                 .getResultList();
-		session.setAttribute(tienda, tnd);
-	}
-	
+		
 	public static void socket(Model model,HttpServletRequest request,String replace, String by) {
 		model.addAttribute(endpoint, request.getRequestURL().toString()
 				.replaceFirst("[^:]*", "ws")

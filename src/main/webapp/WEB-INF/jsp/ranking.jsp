@@ -10,16 +10,16 @@
 	</tr>
 </c:forEach>
 
-<strong>Ver ranking</strong>
-<form action="/user/verRanking" method="get">
-	<select name="busqueda">
-		<option value="amigos">Por amigos</option>
-		<option value="pais">Por pais</option>
-		<option value="global">Global</option>
-	</select> <input type="hidden" name="${_csrf.parameterName}"
-		value="${_csrf.token}" />
-	<div class="form-actions">
-		<button type="submit" class="btn">Ver ranking</button>
-	</div>
-</form>
+<div>
+	<strong>Ver ranking</strong>
+	<form action="/user/verRanking" method="get" id = "verRanking">
+		<select name="busqueda">
+			<option value="amigos">Por amigos</option>
+			<option value="pais">Por pais</option>
+			<option value="global">Global</option>
+		</select> 
+		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+		<button type="submit" class="btn" form="verRanking" value="Submit">Ver ranking</button>
+	</form>
+</div>
 <%@ include file="../jspf/footer.jspf"%>

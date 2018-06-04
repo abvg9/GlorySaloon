@@ -13,7 +13,7 @@
     	<strong>${mensaje}</strong>
     </c:if>
     
-	<form action="/user/crearCuenta" method="post">
+	<form action="/user/crearCuenta" method="post" id = "crearCuenta">
 		<label for="nombre">Nombre<input name="nombre"/></label>
 		<label for="cont">Contrasena<input type="password" name="cont"/></label>
 		<label for="email">email<input name="email"/></label>
@@ -26,11 +26,8 @@
   			<option value="Portugal">Portugal</option>
 		</select>
 		</label>
-		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-            
-        <div class="form-actions">
-        	<button type="submit" class="btn">Crear usuario</button>
-        </div>	
+		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>          
+        <button type="submit" class="btn" form="crearCuenta" value="Submit">Crear usuario</button>     
 	</form>	
 </div>
 

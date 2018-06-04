@@ -18,6 +18,7 @@ public class IwUserDetailsService implements UserDetailsService{
 
 	private static Logger log = Logger.getLogger(IwUserDetailsService.class);
 
+	@Autowired
     private EntityManager entityManager;
     
     @PersistenceContext
@@ -33,6 +34,7 @@ public class IwUserDetailsService implements UserDetailsService{
     		User u = (User)entityManager.createQuery("from User where login = :login", User.class)
 	                            .setParameter("login", username)
 	                            .getSingleResult();
+    		
 	        // build UserDetails object
 	        ArrayList<SimpleGrantedAuthority> roles = new ArrayList<>();
 	        for (String r : u.getRoles().split("[,]")) {

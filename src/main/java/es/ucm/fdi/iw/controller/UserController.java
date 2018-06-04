@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -45,7 +47,7 @@ import es.ucm.fdi.iw.model.User;
 @Controller	
 @RequestMapping("user")
 public class UserController {
-	
+		
 	private static Logger log = Logger.getLogger(UserController.class);
 	
 	@Autowired
@@ -116,9 +118,9 @@ public class UserController {
 			u.setPjugadas(0);
 			u.setDperdido(0);
 			u.setDganado(0);
-			u.setAmigos(new ArrayList<User>());
-			u.setComentarios(new ArrayList<ComentarioForo>());
-			u.setPropiedades(new ArrayList<Item>());
+			u.setAmigos(new HashSet<User>());
+			u.setComentarios(new HashSet<ComentarioForo>());
+			u.setPropiedades(new HashSet<Item>());
 			u.setPartida(null);
 			u.setListo(false);
 				
@@ -189,7 +191,6 @@ public class UserController {
 				
 				log.info(u.getLogin() + " modificó parametros de su perfil.");
 				entityManager.merge(u);
-				entityManager.flush();
 				session.setAttribute(CargaAtributos.user,u);	
 				
 				return "perfil";
@@ -227,8 +228,8 @@ public class UserController {
 			User u2 = (User)entityManager.createNamedQuery("getUsuario")
 					   .setParameter("loginParam", nombreA)
 			           .getSingleResult();
-								
-			if(usuarioTieneAmigo(u2,false,u)){
+			
+			if(!usuarioTieneAmigo(u2,false,u)){
 				
 				u.getAmigos().add(u2);
 				entityManager.merge(u);
@@ -262,19 +263,18 @@ public class UserController {
 			           .setParameter("loginParam", nombre)
 			           .getSingleResult();
 			
-			if(usuarioTieneAmigo(u2,false,u)) {
-				session.setAttribute(CargaAtributos.mensaje,"Perfil privado, debes anadirlo a amigos para poder verlo.");
-				return "perfil";
-			}
-
-			if(!nombre.equals(u.getLogin())){
+			if(usuarioTieneAmigo(u2,false,u)){
 				
 				User perfil = (User)entityManager.createNamedQuery("getUsuario")
 				               .setParameter("loginParam", nombre)
 				               .getSingleResult();
-				session.setAttribute("perfil", perfil);
+				session.setAttribute(CargaAtributos.perfil, perfil);
 				session.setAttribute(CargaAtributos.imagen,"/user/fotoPerfil/");
 				return "perfilAmigo";
+			}else {
+				
+				session.setAttribute(CargaAtributos.mensaje,"Perfil privado, debes anadirlo a amigos para poder verlo.");
+				return "perfil";
 			}
 			
 		}catch(NoResultException e) {
@@ -320,15 +320,11 @@ public class UserController {
 		u.setAmigos(null);
 		u.setComentarios(null);
 		
-		Item it;
-		for(int i = 0; i < u.getPropiedades().size();i++) {
-			
-			it = u.getPropiedades().get(i);
-			
+		for (Item it : u.getPropiedades()) {
 			usuarioTieneItem(it, true, u);
 			entityManager.merge(it);
 		}
-		
+				
 		u.setPropiedades(null);
 		
 		entityManager.remove(entityManager.merge(u));
@@ -339,7 +335,6 @@ public class UserController {
 		
 		if(iguales) {
 			eliminaVariablesSession(session);
-			//session.invalidate();
 		}
 	
 		if(iguales) return "login";
@@ -362,7 +357,8 @@ public class UserController {
 			           .setParameter("loginParam", nombreAmigo)
 			           .getSingleResult();
 			
-			if(!usuarioTieneAmigo(u2,true,u)) {
+			if(usuarioTieneAmigo(u2,true,u)) {
+
 				session.setAttribute(CargaAtributos.mensaje,nombreAmigo + " eliminado.");
 				session.setAttribute(CargaAtributos.user,u);
 				entityManager.merge(u);
@@ -390,10 +386,11 @@ public class UserController {
 		User u = (User)session.getAttribute(CargaAtributos.user);
 		try {
 			Item i = (Item)entityManager.find(Item.class,id);
-			
+					
 			if(usuarioTieneItem(i,true,u)){
 		
 				entityManager.merge(u);
+				entityManager.merge(i);
 				entityManager.flush();
 				session.setAttribute(CargaAtributos.user,u);
 				
@@ -419,7 +416,6 @@ public class UserController {
 	public String logout(HttpSession session) {
 
 		eliminaVariablesSession(session);
-		//session.invalidate();
 		return "login";
 	}
 	
@@ -466,7 +462,7 @@ public class UserController {
 			                													.getResultList().isEmpty()) {
 				Partida p = new Partida();
 				p.setNombre(nombrePar);
-				p.setJugadores(new ArrayList<User>(maxJugadores));
+				p.setJugadores(new HashSet<User>());
 				p.setMaxJugadores(maxJugadores);
 				p.setJuego(juego);
 				if("".equals(cont)) {
@@ -480,7 +476,7 @@ public class UserController {
 				u.setPartida(p);
 				p.getJugadores().add(u);
 				entityManager.persist(p);
-				entityManager.persist(entityManager.merge(u));
+				entityManager.merge(u);
 				session.setAttribute(CargaAtributos.user,u);
 				session.setAttribute(CargaAtributos.mensaje, "Estas dentro de la partida");
 				
@@ -504,7 +500,7 @@ public class UserController {
 	 */
 	@RequestMapping(value = "/unirsePartida", method = RequestMethod.POST)
 	@Transactional
-	public synchronized String unirsePartida(@RequestParam(required=true) long id_p,String pass,HttpSession session) {
+	public String unirsePartida(@RequestParam(required=true) long id_p,String pass,HttpSession session) {
 		
 		
 		Partida p = entityManager.find(Partida.class, id_p);
@@ -526,7 +522,7 @@ public class UserController {
 						
 						u.setPartida(p);
 						p.getJugadores().add(u);
-						entityManager.persist(entityManager.merge(u));
+						entityManager.merge(u);
 						entityManager.persist(p);
 						session.setAttribute(CargaAtributos.user,u);
 						session.setAttribute(CargaAtributos.mensaje, "Estas dentro de la partida."+darDin);
@@ -584,9 +580,10 @@ public class UserController {
 			return "saloon";
 		}
 
-		for(int i = 0; i < u.getAmigos().size(); i++) {
-			partidas.add(u.getAmigos().get(0).getPartida());
-		}            
+		for (User u2 : u.getAmigos()) {
+			partidas.add(u2.getPartida());
+		}
+		
 		session.setAttribute(CargaAtributos.saloon,partidas);		
 		CargaAtributos.socket(model, request, "user/verSaloon", CargaAtributos.chatSocket);
 		return "saloon";
@@ -603,38 +600,37 @@ public class UserController {
 		
 		User u = (User)session.getAttribute(CargaAtributos.user);
 		Partida p = entityManager.find(Partida.class, u.getPartida().getId());
-		int i = 0;
 		int a = 0;
 		
 		if(!u.isListo()) {
 			u.setListo(true);
-			entityManager.persist(entityManager.merge(u));
+			entityManager.merge(u);
 		}
 
-		while(i < p.getJugadores().size() && p.getJugadores().get(i).isListo()){
-			if(p.getJugadores().get(i).isListo())
-				a++;
-			i++;
-		}
-		
-		if(i == p.getMaxJugadores()) {
+		Iterator<User> it = p.getJugadores().iterator();
+	    while(it.hasNext() && it.next().isListo()) {
+	    	a++;
+	    }
+			
+		if(!it.hasNext()) {
 						
 			p.setAbierta(false);
 			u.setPartida(p);
 			entityManager.persist(p);
-			entityManager.persist(entityManager.merge(u));
+			entityManager.merge(u);
 		
 		}else {
 			String jugadores ="";
-			for(i = 0; i < p.getJugadores().size();i++) {
-				jugadores += p.getJugadores().get(i).getLogin();
-				if(p.getJugadores().get(i).isListo()) {
+			
+			for (User u2 : p.getJugadores()) {
+				jugadores += u2.getLogin();
+				if(u2.isListo()) {
 					jugadores += " esta listo.";
 				}else {
 					jugadores += " no esta listo.";
 				}
 			}
-			
+		
 			session.setAttribute(CargaAtributos.mensaje, "Faltan jugadores por confirmar ("+a+"/"+p.getMaxJugadores()+")."
 					+ "Dales unos segundos para que esten listos. "+jugadores);
 			
@@ -658,15 +654,10 @@ public class UserController {
 		User u = (User)session.getAttribute(CargaAtributos.user);
 		Partida p = entityManager.find(Partida.class, u.getPartida().getId());
 		
-		u.setPartida(null);
-		
-		int i = 0;
-		while(i < p.getJugadores().size() && p.getJugadores().get(i).getLogin() != u.getLogin()) {
-			i++;
-		}
-		p.getJugadores().remove(i);
-		
+		elminaJugador(u);
+		u.setPartida(null);		
 		entityManager.merge(u);
+		
 		if(p.getJugadores().size() > 0) {
 			entityManager.merge(p);
 		}else {
@@ -703,7 +694,7 @@ public class UserController {
 		}
 		
 		log.info(u.getLogin()+" salió de la partida."+ u.getPartida().getNombre());
-		elminaJugador(u);
+		p.getJugadores().remove(u);
 		
     	if(u.getPartida().getJugadores().size() == 0) {
     		entityManager.remove(u.getPartida());
@@ -716,7 +707,6 @@ public class UserController {
 		u.setDinero(dinero);
 
 		entityManager.merge(u);
-		entityManager.flush();
 
     	session.setAttribute(CargaAtributos.user,u);
 		
@@ -748,15 +738,16 @@ public class UserController {
 		try {
 			Item i = entityManager.find(Item.class, id_it);
 			User u = (User)session.getAttribute(CargaAtributos.user);
-			
+				
 			if(!usuarioTieneItem(i,false,u)) {
 				
 				if(u.getDinero() >= i.getPrecio()) {
 					
 					u.setDinero(u.getDinero() - i.getPrecio());
 					u.getPropiedades().add(i);
+					i.getPropietarios().add(u);
+					entityManager.merge(i);
 					entityManager.merge(u);
-					entityManager.flush();
 					session.setAttribute(CargaAtributos.user,u);
 					session.setAttribute(CargaAtributos.mensaje, "Compra realizada :)");
 						
@@ -808,7 +799,7 @@ public class UserController {
 		c.setTema(tema);
 		c.setUsuario(u);
 		c.setFecha(new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date()));
-		entityManager.persist(entityManager.merge(c));
+		entityManager.merge(c);
 		
 		session.setAttribute(CargaAtributos.user,u);
 		CargaAtributos.foro(session, entityManager,tema);
@@ -937,55 +928,7 @@ public class UserController {
         		
 		return "perfil";
 	}
-	
-	/**
-	 * Operacion auxiliar: Busca si un usuario tiene un amigo en concreto. Si elimina esta a true, ademas lo elimina
-	 * @param u2: Usuario a buscar 
-	 * @param elimina: Modo eliminacion
-	 * @return true si lo encontro, false en caso contrario.
-	 */	
-	private boolean usuarioTieneAmigo(User u2,boolean elimina,User u) {
-
-		int i = 0;
-		while(u.getAmigos().size() > i && 
-			  !u.getAmigos().get(i).getLogin().equals(u2.getLogin())) {i++;}
 		
-		if(elimina) u.getAmigos().remove(i);
-		
-		return i == u.getAmigos().size();
-			
-	}
-	
-	/**
-	 * Operacion auxiliar: Busca si un usuario tiene un item en concreto. Si elimina esta a true, ademas lo elimina
-	 * @param i: Item a buscar 
-	 * @param elimina: Modo eliminacion
-	 * @return true si lo encontro, false en caso contrario.
-	 */	
-	private boolean usuarioTieneItem(Item i,boolean elimina,User u) {
-
-		int inI = 0;
-		int inU = 0;
-		
-		while(u.getPropiedades().size() > inI && !u.getPropiedades().get(inI).getNombre().equals(i.getNombre())) 
-			{inI++;}
-		
-		if(inI != u.getPropiedades().size()) {
-			while(i.getPropietarios().size() > inI && i.getPropietarios().get(inU).getLogin().equals(u.getPropiedades().get(inI).getNombre()))
-				{inU++;}
-		}
-		
-		if(inI != u.getPropiedades().size()) {
-			if(elimina) {
-				u.getPropiedades().remove(inI);
-			}
-			return true;
-		}
-		
-		return false;			
-	}
-		
-	
 	/**
 	 * Operacion auxiliar: Carga en la sesion una lista de usuarios
 	 * @return void
@@ -1001,16 +944,20 @@ public class UserController {
 		session.setAttribute("ranking",ordena(usuarios));
 	}
 
-	
 	/**
 	 * Operacion auxiliar: Carga en la sesion una lista de usuarios
 	 * @return void
 	 */
 	private void verRankingAmigos(HttpSession session) {
 		User u = (User)session.getAttribute(CargaAtributos.user);
-		session.setAttribute("ranking",ordena(u.getAmigos()));
+		List<User> amigos = new ArrayList<User>(u.getAmigos().size());
+		
+		for (User u2 : u.getAmigos()) {
+			amigos.add(u2);			
+		}
+		
+		session.setAttribute("ranking",ordena(amigos));
 	}
-
 	
 	/**
 	 * Operacion auxiliar: Carga en la sesion una lista de usuarios
@@ -1023,27 +970,26 @@ public class UserController {
         					   .getResultList();	
 		session.setAttribute("ranking",ordena(usuarios));
 	}
-	
-	
+		
 	/**
 	 * Operacion auxiliar: Ordena una lista de usuarios mayor a menor en funcion de su dinero
 	 * @param usuarios: Lista desordenada
 	 * @return lista de usuarios ordenada
 	 */	
 	private List<User> ordena(List<User> usuarios){
+
 		Collections.sort(usuarios, new Comparator<User>() {
 			public int compare(User u1, User u2) {
 				
 				if(u1.getDinero() > u2.getDinero())
-					return (int) u1.getDinero();
+					return u1.getDinero();
 				
-				return (int) u2.getDinero();
+				return u2.getDinero();
 			}
 		});
 		return usuarios;
 	}
-	
-	
+		
 	private void eliminaVariablesSession(HttpSession session) {
 		session.removeAttribute(CargaAtributos.user);
 		session.removeAttribute(CargaAtributos.tema);
@@ -1053,13 +999,58 @@ public class UserController {
 		session.removeAttribute(CargaAtributos.tienda);
 	}
 	
-	
 	private void elminaJugador(User u) {
+				
+		Iterator<User> it = u.getPartida().getJugadores().iterator();
+	    while(it.hasNext() && !it.next().getLogin().equals(u.getLogin())){}		
+		it.remove();
+	}
+	
+	/**
+	 * Operacion auxiliar: Busca si un usuario tiene un amigo en concreto. Si elimina esta a true, ademas lo elimina
+	 * @param u2: Usuario a buscar 
+	 * @param elimina: Modo eliminacion
+	 * @return true si lo encontro, false en caso contrario.
+	 */	
+	private boolean usuarioTieneAmigo(User u2,boolean elimina,User u) {
+
+		Iterator<User> it = u.getAmigos().iterator();
+	    while(it.hasNext() && !it.next().getLogin().equals(u2.getLogin())){}
 		
-		int i = 0;
-		while(u.getPartida().getJugadores().size() > i && 
-			  !u.getPartida().getJugadores().get(i).getLogin().equals(u.getLogin())) {i++;}
+		if(elimina) {
+			it.remove();
+		}
 		
-		u.getPartida().getJugadores().remove(i);
+		return it.hasNext();
+			
+	}
+	
+	/**
+	 * Operacion auxiliar: Busca si un usuario tiene un item en concreto. Si elimina esta a true, ademas lo elimina
+	 * @param i: Item a buscar 
+	 * @param elimina: Modo eliminacion
+	 * @return true si lo encontro, false en caso contrario.
+	 */	
+	private boolean usuarioTieneItem(Item i,boolean elimina,User u) {
+
+		Iterator<Item> itPropiedades = u.getPropiedades().iterator();
+			
+	    while(itPropiedades.hasNext() && !itPropiedades.next().getNombre().equals(i.getNombre())){}
+	    
+	    if(itPropiedades.hasNext()) {
+	    	
+	    	Iterator<User> itPropietarios = i.getPropietarios().iterator();
+	    	while(itPropietarios.hasNext() && !itPropietarios.next().getLogin().equals(u.getLogin())){}
+	    	
+	    	if(elimina) {
+	    		itPropiedades.remove();
+	    		itPropietarios.remove();
+	    	}
+	    	
+	    	return true;
+	    }
+	    
+	    return false;
+	    			
 	}
 }

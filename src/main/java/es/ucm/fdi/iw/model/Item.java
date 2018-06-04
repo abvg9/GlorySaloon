@@ -1,13 +1,12 @@
 package es.ucm.fdi.iw.model;
 
-import java.util.List;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -24,7 +23,7 @@ public class Item {
 	private int precio;
 	private String nombre;
 	private String descripcion;
-	private List<User> propietarios;
+	private Set<User> propietarios;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -61,17 +60,14 @@ public class Item {
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
-
-	@JoinTable(name = "user_item", joinColumns = {
-		@JoinColumn(name = "item") }, inverseJoinColumns = {
-		@JoinColumn(name = "user") })
-	@ManyToMany(targetEntity = User.class)
-	public List<User> getPropietarios() {
+	
+	@ManyToMany(targetEntity = User.class,fetch = FetchType.EAGER)
+	public Set<User> getPropietarios() {
 		return propietarios;
 	}
 
-	public void setPropietarios(List<User> propietarios) {
+	public void setPropietarios(Set<User> propietarios) {
 		this.propietarios = propietarios;
 	}
-	
+		
 }

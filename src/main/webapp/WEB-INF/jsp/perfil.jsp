@@ -64,129 +64,126 @@
 
 	<hr />
 	<strong>Modificar perfil</strong>
-	<form action="/user/modificarPerfil" method="post"
-		enctype="multipart/form-data">
-		<label for="nombre">Nombre<input name="nombre" /></label> <label
-			for="cont">Nueva contrasena<input type="password"
-			name="contNueva" /></label> <label for="cont">Contrasena actual<input
-			type="password" name="contActual" /></label> <label for="email">Nuevo
-			email<input name="email" />
-		</label> <label for="nacion">Nueva nacionalidad <select name="nacion">
-				<option value="Espana">Espana</option>
-				<option value="Francia">Francia</option>
-				<option value="Italia">Italia</option>
-				<option value="Marruecos">Marruecos</option>
-				<option value="Portugal">Portugal</option>
-		</select></label> <input type="hidden" name="${_csrf.parameterName}"
-			value="${_csrf.token}" />
-		<div class="form-actions">
-			<button type="submit" class="btn">Modificar perfil</button>
-		</div>
-		
-	</form>
+	<div>
+		<form action="/user/modificarPerfil" method="post"
+			enctype="multipart/form-data" id = "modificarPerfil">
+			<label for="nombre">Nombre<input name="nombre" /></label> <label
+				for="cont">Nueva contrasena<input type="password"
+				name="contNueva" /></label> <label for="cont">Contrasena actual<input
+				type="password" name="contActual" /></label> <label for="email">Nuevo
+				email<input name="email" />
+			</label> <label for="nacion">Nueva nacionalidad <select name="nacion">
+					<option value="Espana">Espana</option>
+					<option value="Francia">Francia</option>
+					<option value="Italia">Italia</option>
+					<option value="Marruecos">Marruecos</option>
+					<option value="Portugal">Portugal</option>
+			</select></label> 
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+			<button type="submit" class="btn" form="modificarPerfil" value="Submit">Modificar perfil</button>
+			
+		</form>
+	</div>
 
-	<form method="POST" enctype="multipart/form-data"
-		action="${imagen}${user.id}">
-		Nueva foto de perfil<input type="file" name="photo"><br />
-		<input hidden="submit" name="id" value="${user.id}" /> 
-		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-		<div class="form-actions">
-			<button type="submit" name="upload" value="ok">Subir foto</button>
-		</div>
-	</form>
+	<div>
+		<form method="post" enctype="multipart/form-data" action="${imagen}${user.id}" id = "SubeFoto">
+			Nueva foto de perfil<input type="file" name="photo"><br />
+			<input hidden="submit" name="id" value="${user.id}" /> 
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+			<button type="submit" name="upload" value="ok" form="SubeFoto">Subir foto</button>
+		</form>
+	</div>
 
-	<strong>Introduce el nombre del amigo que deseas anadir.</strong>
-	<form action="/user/anadirAmigo" method="post">
-		<label for="nombre">Nombre del amigo<input name="nombreA" /></label> <input
-			type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-		<div class="form-actions">
-			<button type="submit" class="btn">Anadir amigos</button>
-		</div>
-	</form>
+	<div>
+		<strong>Introduce el nombre del amigo que deseas anadir.</strong>
+		<form action="/user/anadirAmigo" method="post" id = "anadirAmigo" >
+			<label for="nombre">Nombre del amigo<input name="nombreA" /></label> 
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+			<button type="submit" class="btn" form="anadirAmigo" value="Submit">Anadir amigos</button>
+		</form>
+	</div>
 	<hr />
 
 	<hr />
-	<strong>Introduce el nombre del amigo al que deseas ver el perfil.</strong>
-	<form action="/user/pefilAmigo" method="get">
-		<label for="nombre">Nombre del amigo<input name="nombre" /></label> <input
-		type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-		<div class="form-actions">
-			<button type="submit" class="btn">Ver perfil</button>
-		</div>
-	</form>
+	<div>
+		<strong>Introduce el nombre del amigo al que deseas ver el perfil.</strong>
+		<form action="/user/pefilAmigo" method="get" id = "pefilAmigo">
+			<label for="nombre">Nombre del amigo<input name="nombre" /></label> 
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+			<button type="submit" class="btn" form="pefilAmigo" value="Submit">Ver perfil</button>
+		</form>
+	</div>
 	<hr />
 
 	<hr />
-	<strong>Eliminar cuenta</strong>
-	<form action="/user/eliminarCuenta" method="post">
-		<c:if test="${fn:contains(user.roles, 'ADMIN')}">
-	    	<label for="nombre">Nombre del usuario<input name="nombre" /></label>
-	    </c:if>
-	    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-		<div class="form-actions">
+	<div>
+		<strong>Eliminar cuenta</strong>
+		<form action="/user/eliminarCuenta" method="post">
+			<c:if test="${fn:contains(user.roles, 'ADMIN')}">
+		    	<label for="nombre">Nombre del usuario<input name="nombre" /></label>
+		    </c:if>
+		    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
 			<button type="submit" class="btn">Eliminar cuenta</button>
-		</div>
-	</form>
+		</form>
+	</div>
 	<hr />
 
 	<hr />
-	<strong>Eliminar amigo</strong>
-	<form action="/user/eliminarAmigo" method="post">
-		<label for="nombre">Nombre del amigo<input name="nombreAmigo" /></label>
-		<input type="hidden" name="${_csrf.parameterName}"value="${_csrf.token}" />
-		<div class="form-actions">
+	<div>
+		<strong>Eliminar amigo</strong>
+		<form action="/user/eliminarAmigo" method="post">
+			<label for="nombre">Nombre del amigo<input name="nombreAmigo" /></label>
+			<input type="hidden" name="${_csrf.parameterName}"value="${_csrf.token}" />
 			<button type="submit" class="btn">Eliminar amigo</button>
-		</div>
-	</form>
+		</form>
+	</div>
 	<hr />
 
 	<hr />
-	<strong>Eliminar item de tu inventario</strong>
-	<form action="/user/borrarItem" method="post">
-		<label for="id">Identificador del item<input name="id" /></label>
-		<input type="hidden" name="${_csrf.parameterName}"
-			value="${_csrf.token}" />
-		<div class="form-actions">
+	<div>
+		<strong>Eliminar item de tu inventario</strong>
+		<form action="/user/borrarItem" method="post">
+			<label for="id">Identificador del item<input name="id" /></label>
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 			<button type="submit" class="btn">Eliminar item</button>
-		</div>
-	</form>
+		</form>
+	</div>
 	<hr />
 
 	<c:if test="${fn:contains(user.roles, 'ADMIN')}">
-		<hr/>
-	<strong>Crear cuenta</strong>
-	<form action="/admin/crearCuenta" method="post">
-		<label for="nombre">Nombre<input name="nombre"/></label>
-		<label for="cont">Contrasena<input type="password" name="cont"/></label>
-		<label for="email">email<input name="email"/></label>
-		<label for="isAdmin">is admin?<input type="checkbox" name="isAdmin"></label>
-		<label for="nacion" >nacion
-		<select name="nacion">
-  			<option value="Espana" >Espana </option>
-  			<option value="Francia">Francia</option>
-  			<option value="Italia">Italia</option>
-  			<option value="Marruecos">Marruecos</option>
-  			<option value="Portugal">Portugal</option>
-		</select>
-		</label>
-		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-            
-            <div class="form-actions">
-                <button type="submit" class="btn">Crear usuario</button>
-            </div>  		
-	</form>
-	<hr/>
+		<div>
+			<strong>Crear cuenta</strong>
+			<form action="/admin/crearCuenta" method="post">
+				<label for="nombre">Nombre<input name="nombre"/></label>
+				<label for="cont">Contrasena<input type="password" name="cont"/></label>
+				<label for="email">email<input name="email"/></label>
+				<label for="isAdmin">is admin?<input type="checkbox" name="isAdmin"></label>
+				<label for="nacion" >nacion
+				<select name="nacion">
+		  			<option value="Espana" >Espana </option>
+		  			<option value="Francia">Francia</option>
+		  			<option value="Italia">Italia</option>
+		  			<option value="Marruecos">Marruecos</option>
+		  			<option value="Portugal">Portugal</option>
+				</select>
+				</label>
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+		            
+		        <button type="submit" class="btn">Crear usuario</button>		
+			</form>
+		</div>
 	</c:if>
 
 	<hr />
 	<h1>Logout</h1>
 	<p class="lead">¿Estás seguro que deseas salir?</p>
 
-	<form action="/user/logout" method="post">
-		<input type="hidden" name="${_csrf.parameterName}"
-			value="${_csrf.token}" />
-		<button type="submit">Salir</button>
-	</form>
+	<div>
+		<form action="/user/logout" method="post">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+			<button type="submit">Salir</button>
+		</form>
+	</div>
 	<hr />
 
 </div>

@@ -15,19 +15,20 @@
 		<c:when test="${empty user}">
 			<h1>¡Inicia sesión!</h1>
 			<br />
-			<form action="/login" method="post">
+			<form action="/login" method="post" id = "login">
 				<fieldset>
 					<div class="rightAl">
 						<label for="username">Usuario</label> <input type="text" id="username" name="username" /><br>
 						<br> <label for="password">Contrasena</label> <input type="password" id="password" name="password" />
 					</div>
-					<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" /> <br>
-					<div class="form-actions">
-						<button type="submit" 
-								class="btn rightAlBtn">
-								Entrar
-						</button>
-					</div>
+					<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+					<br>
+
+					<button type="submit" 
+							class="btn rightAlBtn"
+							form="login" value="Submit">
+							Entrar
+					</button>
 				</fieldset>
 				
 				<div>
