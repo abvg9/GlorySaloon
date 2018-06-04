@@ -1,7 +1,6 @@
 package es.ucm.fdi.iw.model;
 
-import java.util.Set;
-
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -13,26 +12,26 @@ import es.ucm.fdi.iw.common.enums.Juegos;
 @Entity
 @NamedQueries({
 @NamedQuery(name="getPartidaPorNombre",
-query="select p from Partida p where p.nombre = :nombreParam"),
+	query="select p from Partida p where p.nombre = :nombreParam"),
 @NamedQuery(name="getPartidaPorJuego",
-query="select p from Partida p where p.juego = :juegoParam")
+	query="select p from Partida p where p.juego = :juegoParam")
 })
 public class Partida {
 	
 	private long id;
 	private String nombre;
-	private Set<User> jugadores;
+	private List<User> jugadores;
 	private int maxJugadores;
 	private Juegos juego;
 	private String pass;
 	private boolean abierta;
 
 	@OneToMany(targetEntity=User.class)
-	public Set<User> getJugadores() {
+	public List<User> getJugadores() {
 		return jugadores;
 	}
 
-	public void setJugadores(Set<User> jugadores) {
+	public void setJugadores(List<User> jugadores) {
 		this.jugadores = jugadores;
 	}
 	

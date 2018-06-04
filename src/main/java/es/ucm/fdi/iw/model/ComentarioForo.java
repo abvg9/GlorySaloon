@@ -12,7 +12,7 @@ import es.ucm.fdi.iw.common.enums.Temas;
 @Entity
 @NamedQueries({
 @NamedQuery(name="getForo",
-query="select f from ComentarioForo f where f.tema = :temaParam")
+	query="select f from ComentarioForo f where f.tema = :temaParam")
 })
 public class ComentarioForo {
 	
