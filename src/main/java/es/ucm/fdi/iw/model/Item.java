@@ -14,8 +14,10 @@ import javax.validation.constraints.Min;
 
 @Entity
 @NamedQueries({
-@NamedQuery(name="getTienda",query="select t from Item t "),
-@NamedQuery(name="getItem",query="select i from Item i where i.nombre = :nombreParam")
+@NamedQuery(name="getTienda",
+	query="select t from Item t "),
+@NamedQuery(name="getItem",
+	query="select i from Item i where i.nombre = :nombreParam")
 })
 public class Item {
 	

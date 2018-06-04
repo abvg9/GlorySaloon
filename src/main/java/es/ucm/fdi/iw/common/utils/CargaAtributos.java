@@ -59,9 +59,9 @@ public final class CargaAtributos {
 	
 	/**
 	 * Actualiza y devuelve el usuario de sesión
-	 * @param em
-	 * @param session
-	 * @return
+	 * @param em: Punto de entrada a la base de datos
+	 * @param session: Sesion del usuario
+	 * @return Devuelve el usuario ya odificado
 	 */
 	public static User userFromSession(EntityManager em, HttpSession session) {
 		User u = (User)session.getAttribute(user);

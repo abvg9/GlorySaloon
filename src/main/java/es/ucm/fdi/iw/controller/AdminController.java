@@ -1,6 +1,5 @@
 package es.ucm.fdi.iw.controller;
 
-import java.util.HashSet;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
@@ -11,9 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+
 import es.ucm.fdi.iw.common.enums.Nacionalidades;
 import es.ucm.fdi.iw.common.utils.CargaAtributos;
-import es.ucm.fdi.iw.model.ComentarioForo;
 import es.ucm.fdi.iw.model.Item;
 import es.ucm.fdi.iw.model.User;
 
@@ -42,9 +41,12 @@ public class AdminController {
 	 */
     @RequestMapping(value = "/crearCuenta", method = RequestMethod.POST)
 	@Transactional
-	public String crearCuenta(@RequestParam(required=true) String nombre,@RequestParam(required=true) String cont,
-							  @RequestParam(required=true) String email,@RequestParam(required=true) Nacionalidades nacion,
-							  HttpSession session,String isAdmin) {
+	public String crearCuenta(@RequestParam String nombre,
+							  @RequestParam String cont,
+							  @RequestParam String email,
+							  @RequestParam Nacionalidades nacion,
+							  HttpSession session,
+							  @RequestParam String isAdmin) {
 		
     	User us = (User)session.getAttribute(CargaAtributos.user);
     	
@@ -58,7 +60,7 @@ public class AdminController {
 		         .setParameter("emailParam", email)
 		         .getResultList().isEmpty()) { 
 			
-			byte a = 0;
+			byte a = 1;
 			User u = new User();
 			u.setLogin(nombre);
 			u.setPassword(passwordEncoder.encode(cont));
@@ -67,22 +69,12 @@ public class AdminController {
 			u.setDinero(1000);
 			u.setEmail(email);
 			u.setNacion(nacion);	
-			u.setPganadas(0);
 			u.setRoles("on".equals(isAdmin) ? "ADMIN,USER" : "USER");
-			u.setPperdidas(0);
-			u.setPjugadas(0);
-			u.setDperdido(0);
-			u.setDganado(0);
-			u.setAmigos(new HashSet<User>());
-			u.setComentarios(new HashSet<ComentarioForo>());
-			u.setPropiedades(new HashSet<Item>());
-			u.setPartida(null);
 				
 			entityManager.persist(u);
 			session.setAttribute(CargaAtributos.mensaje,"La cuenta se creo correctamente :)");
 			log.info("Admin " +us.getLogin()+"creo una cuenta al usuario "+nombre);
-			
-						 
+								 
 		}
 		session.setAttribute(CargaAtributos.mensaje,"Nombre y/o email ya cogidos :(");
 		return "redirect:/perfil";
@@ -95,7 +87,7 @@ public class AdminController {
 	 */
 	@RequestMapping(value = "/borrarItem", method = RequestMethod.POST)
 	@Transactional
-	public String borrarItem(@RequestParam(required=true) long id) {
+	public String borrarItem(@RequestParam long id) {
 		
 		Item i = (Item)entityManager.find(Item.class,id);
 		if( i != null) {
@@ -120,8 +112,8 @@ public class AdminController {
 	 */
 	@RequestMapping(value = "/anadirItem", method = RequestMethod.POST)
 	@Transactional
-	public String anadirItem(@RequestParam(required=true) int precio, @RequestParam(required=true) String nombre,
-			 				 @RequestParam(required=true) String descripcion) {
+	public String anadirItem(@RequestParam int precio, @RequestParam String nombre,
+							 @RequestParam String descripcion) {
 				
 	    if(entityManager.createNamedQuery("getItem")
 		   .setParameter("nombreParam", nombre)
@@ -131,7 +123,6 @@ public class AdminController {
 	    	i.setNombre(nombre);
 	    	i.setPrecio(precio);
 	    	i.setDescripcion(descripcion);
-	    	i.setPropietarios(new HashSet<User>());	
 			entityManager.persist(i);
 			log.info("Item anadido a la BD");
 			

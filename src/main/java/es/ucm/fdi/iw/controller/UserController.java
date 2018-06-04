@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -65,11 +64,9 @@ public class UserController {
 	}
 
 	/*
-	 * #######################################################################
-	 * ######################################################################### ###
-	 * ### ### LOGIN ### ### ###
-	 * #########################################################################
-	 * #######################################################################
+	 * ######################################################################
+	 * ### 					         LOGIN     						      ###
+	 * ######################################################################
 	 */
 
 	/**
@@ -93,19 +90,26 @@ public class UserController {
 	 */
 	@RequestMapping(value = "/crearCuenta", method = RequestMethod.POST)
 	@Transactional
-	public String crearCuenta(@RequestParam(required = true) String nombre, @RequestParam(required = true) String cont,
-			@RequestParam(required = true) String email, @RequestParam(required = true) Nacionalidades nacion,
-			HttpSession session) {
+	public String crearCuenta(@RequestParam String nombre, @RequestParam String cont,
+							  @RequestParam String email, @RequestParam Nacionalidades nacion,
+							  HttpSession session) {
 
-		if ("".equals(nombre) || "".equals(cont) || "".equals(email) || "".equals(nacion.toString())) {
+		if ("".equals(nombre) || 
+			"".equals(cont) || 
+			"".equals(email) || 
+			"".equals(nacion.toString())) {
 
-			session.setAttribute(CargaAtributos.mensaje, "Debes rellenar todos los campos.");
+			session.setAttribute(CargaAtributos.mensaje, 
+					"Debes rellenar todos los campos.");
+			
 			return "crearCuenta";
 
-		} else if (entityManager.createNamedQuery("noRepes").setParameter("loginParam", nombre)
-				.setParameter("emailParam", email).getResultList().isEmpty()) {
+		} else if (entityManager.createNamedQuery("noRepes")
+								.setParameter("loginParam", nombre)
+								.setParameter("emailParam", email)
+								.getResultList().isEmpty()) {
 
-			byte a = 0;
+			byte a = 1;
 			User u = new User();
 			u.setLogin(nombre);
 			u.setPassword(passwordEncoder.encode(cont));
@@ -114,15 +118,6 @@ public class UserController {
 			u.setDinero(1000);
 			u.setEmail(email);
 			u.setNacion(nacion);
-			u.setPganadas(0);
-			u.setPperdidas(0);
-			u.setPjugadas(0);
-			u.setDperdido(0);
-			u.setDganado(0);
-			u.setAmigos(new HashSet<User>());
-			u.setComentarios(new HashSet<ComentarioForo>());
-			u.setPropiedades(new HashSet<Item>());
-			u.setPartida(null);
 			u.setListo(false);
 
 			entityManager.persist(u);
@@ -137,16 +132,18 @@ public class UserController {
 
 	/*
 	 * #######################################################################
-	 * ######################################################################### ###
-	 * ### ### PERFIL USUARIO ### ### ###
-	 * #########################################################################
+	 * ###                        PERFIL USUARIO                           ###
 	 * #######################################################################
 	 */
 
 	/**
-	 * Operaciones: 1º Modifcar => login, password, email, nacion, imagen 2º Anadir
-	 * amigo 3º Ver perfil(tanto el suyo como el de amigos 4º Eliminar cuenta 5º
-	 * Eliminar amigo 6º Eliminar item 7º Logout
+	 * Operaciones: 1º Modifcar => login, password, email, nacion, imagen 
+	 * 				2º Anadir amigo 
+	 * 				3º Ver perfil(tanto el suyo como el de amigos 
+	 * 				4º Eliminar cuenta 
+	 * 				5º Eliminar amigo 
+	 * 				6º Eliminar item 
+	 * 				7º Logout
 	 */
 
 	/**
@@ -169,34 +166,24 @@ public class UserController {
 	 */
 	@RequestMapping(value = "/modificarPerfil", method = RequestMethod.POST)
 	@Transactional
-	public String modificarPerfil(String nombre, String contNueva, @RequestParam(required = true) String contActual,
-			String email, Nacionalidades nacion, HttpSession session) {
+	public String modificarPerfil(String nombre,String contNueva,
+								  @RequestParam String contActual,
+								  String email, Nacionalidades nacion,
+								  HttpSession session) {
 
 		User u = CargaAtributos.userFromSession(entityManager, session);
 		if (passwordEncoder.matches(contActual, u.getPassword())) {
 
 			int modificacion = 0;
+			
+			if(revisaModificacion(nombre, u.getLogin())) u.setLogin(nombre); modificacion++;
+			
+			if(revisaModificacion(email, u.getEmail())) u.setLogin(nombre); modificacion++;
+			
+			if(revisaModificacion(contNueva, u.getPassword())) u.setPassword(passwordEncoder.encode(contNueva)); modificacion++;
+			
+			if(revisaModificacion(nacion.toString(), u.getNacion().toString())) u.setNacion(nacion); modificacion++;
 
-			// FIXME: si lo haces 4 veces, escribete una f. auxiliar
-			if (!"".equals(nombre) && !u.getLogin().equals(nombre)) {
-				u.setLogin(nombre);
-				modificacion++;
-			}
-
-			if (!"".equals(email) && !u.getEmail().equals(email)) {
-				u.setEmail(email);
-				modificacion++;
-			}
-
-			if (!"".equals(contNueva) && contNueva != contActual) {
-				u.setPassword(passwordEncoder.encode(contNueva));
-				modificacion++;
-			}
-
-			if (!"".equals(nacion.toString()) && !u.getNacion().equals(nacion)) {
-				u.setNacion(nacion);
-				modificacion++;
-			}
 
 			if (modificacion > 0) {
 				session.setAttribute(CargaAtributos.mensaje,
@@ -275,10 +262,10 @@ public class UserController {
 	 * @return Te redirige al perfil o al perfil del amigo, cargando en el sesion la
 	 *         respusta(correcta o incorrecta ante la peticion)
 	 */
-	@RequestMapping(value = "/pefilAmigo", method = RequestMethod.GET)
-	public String perfilAmigo(@RequestParam(required = true) String nombre, HttpSession session) {
+	@RequestMapping(value = "/perfilAmigo", method = RequestMethod.GET)
+	public String perfilAmigo(@RequestParam String nombre, HttpSession session) {
 
-		User u = (User) session.getAttribute(CargaAtributos.user);
+		User u = CargaAtributos.userFromSession(entityManager, session);
 		try {
 			User u2 = (User) entityManager.createNamedQuery("getUsuario")
 					.setParameter("loginParam", nombre)
@@ -322,7 +309,6 @@ public class UserController {
 		boolean iguales = false;
 		User us = CargaAtributos.userFromSession(entityManager, session);
 
-
 		// un admin esta intentado borrar una cuenta que no es la suya
 		if (nombre != null && !nombre.equals(us.getLogin())) {
 
@@ -350,7 +336,7 @@ public class UserController {
 
 		u.setPropiedades(null);
 
-		entityManager.remove(entityManager.merge(u));
+		entityManager.remove(u);
 		// borrar imagen usuario
 		File f = localData.getFile("user", String.valueOf(u.getId()));
 		f.delete();
@@ -377,7 +363,7 @@ public class UserController {
 	@Transactional
 	public String eliminarAmigo(@RequestParam(required = true) String nombreAmigo, HttpSession session) {
 
-		User u = (User) session.getAttribute(CargaAtributos.user);
+		User u = CargaAtributos.userFromSession(entityManager, session);
 		try {
 			User u2 = (User) entityManager.createNamedQuery("getUsuario").setParameter("loginParam", nombreAmigo)
 					.getSingleResult();
@@ -410,14 +396,12 @@ public class UserController {
 	@Transactional
 	public String borrarItem(@RequestParam(required = true) long id, HttpSession session) {
 
-		User u = (User) session.getAttribute(CargaAtributos.user);
+		User u = CargaAtributos.userFromSession(entityManager, session);
 		try {
 			Item i = (Item) entityManager.find(Item.class, id);
 
 			if (usuarioTieneItem(i, true, u)) {
 
-				entityManager.merge(u);
-				entityManager.merge(i);
 				entityManager.flush();
 				session.setAttribute(CargaAtributos.user, u);
 
@@ -450,9 +434,7 @@ public class UserController {
 
 	/*
 	 * #######################################################################
-	 * ######################################################################### ###
-	 * ### ### SALOON ### ### ###
-	 * #########################################################################
+	 * ###                          SALOON                                 ###
 	 * #######################################################################
 	 */
 
@@ -479,10 +461,12 @@ public class UserController {
 	 */
 	@RequestMapping(value = "/crearPartida", method = RequestMethod.POST)
 	@Transactional
-	public String crearPartida(String cont, HttpSession session, @RequestParam(required = true) Juegos juego,
-			@RequestParam(required = true) int maxJugadores, @RequestParam(required = true) String nombrePar) {
+	public String crearPartida(String cont, HttpSession session, 
+							   @RequestParam Juegos juego,
+							   @RequestParam int maxJugadores, 
+							   @RequestParam String nombrePar) {
 
-		User u = (User) session.getAttribute(CargaAtributos.user);
+		User u = CargaAtributos.userFromSession(entityManager, session);
 
 		if (u.getPartida() == null) {
 
@@ -496,7 +480,6 @@ public class UserController {
 					.getResultList().isEmpty()) {
 				Partida p = new Partida();
 				p.setNombre(nombrePar);
-				p.setJugadores(new HashSet<User>());
 				p.setMaxJugadores(maxJugadores);
 				p.setJuego(juego);
 				if ("".equals(cont)) {
@@ -510,7 +493,6 @@ public class UserController {
 				u.setPartida(p);
 				p.getJugadores().add(u);
 				entityManager.persist(p);
-				entityManager.merge(u);
 				session.setAttribute(CargaAtributos.user, u);
 				session.setAttribute(CargaAtributos.mensaje, "Estas dentro de la partida");
 
@@ -539,10 +521,10 @@ public class UserController {
 	 */
 	@RequestMapping(value = "/unirsePartida", method = RequestMethod.POST)
 	@Transactional
-	public String unirsePartida(@RequestParam(required = true) long id_p, String pass, HttpSession session) {
+	public String unirsePartida(@RequestParam long id_p, String pass, HttpSession session) {
 
 		Partida p = entityManager.find(Partida.class, id_p);
-		User u = (User) session.getAttribute(CargaAtributos.user);
+		User u = CargaAtributos.userFromSession(entityManager, session);
 
 		if (p != null) {
 
@@ -557,10 +539,8 @@ public class UserController {
 							u.setDinero(100);
 							darDin = " No tenias dinero, te hemos dado 100 monedas para que juegues :).";
 						}
-
 						u.setPartida(p);
 						p.getJugadores().add(u);
-						entityManager.merge(u);
 						entityManager.persist(p);
 						session.setAttribute(CargaAtributos.user, u);
 						session.setAttribute(CargaAtributos.mensaje, "Estas dentro de la partida." + darDin);
@@ -597,7 +577,7 @@ public class UserController {
 
 		session.setAttribute(CargaAtributos.mensaje, null);
 		List<Partida> partidas = new ArrayList<Partida>();
-		User u = (User) session.getAttribute(CargaAtributos.user);
+		User u = CargaAtributos.userFromSession(entityManager, session);
 
 		if (!"".equals(nombrePar)) {
 
@@ -641,13 +621,12 @@ public class UserController {
 	@Transactional
 	public String empezarPartida(HttpSession session) {
 
-		User u = (User) session.getAttribute(CargaAtributos.user);
+		User u = CargaAtributos.userFromSession(entityManager, session);
 		Partida p = entityManager.find(Partida.class, u.getPartida().getId());
 		int a = 0;
 
 		if (!u.isListo()) {
 			u.setListo(true);
-			entityManager.merge(u);
 		}
 
 		Iterator<User> it = p.getJugadores().iterator();
@@ -660,7 +639,6 @@ public class UserController {
 			p.setAbierta(false);
 			u.setPartida(p);
 			entityManager.persist(p);
-			entityManager.merge(u);
 
 		} else {
 			String jugadores = "";
@@ -696,16 +674,13 @@ public class UserController {
 	@Transactional
 	public String salirDeLaPartida(HttpSession session) {
 
-		User u = (User) session.getAttribute(CargaAtributos.user);
+		User u = CargaAtributos.userFromSession(entityManager, session);
 		Partida p = entityManager.find(Partida.class, u.getPartida().getId());
 
 		elminaJugador(u);
 		u.setPartida(null);
-		entityManager.merge(u);
 
-		if (p.getJugadores().size() > 0) {
-			entityManager.merge(p);
-		} else {
+		if (p.getJugadores().size() <= 0) {
 			entityManager.remove(p);
 		}
 		session.setAttribute(CargaAtributos.user, u);
@@ -719,7 +694,7 @@ public class UserController {
 	public String salirDelJuego(HttpSession session, @RequestParam(required = true) String dineroFinal) {
 
 		int dinero = Integer.valueOf(dineroFinal);
-		User u = (User) session.getAttribute(CargaAtributos.user);
+		User u = CargaAtributos.userFromSession(entityManager, session);
 
 		Partida p = (Partida) entityManager.createNamedQuery("getPartidaPorNombre")
 				.setParameter("nombreParam", u.getPartida().getNombre()).getSingleResult();
@@ -741,16 +716,12 @@ public class UserController {
 		p.getJugadores().remove(u);
 
 		if (u.getPartida().getJugadores().size() == 0) {
-			entityManager.remove(u.getPartida());
-		} else {
-			entityManager.merge(u.getPartida());
+			entityManager.remove(p);
 		}
 
 		u.setPartida(null);
 		u.setPjugadas(u.getPjugadas() + 1);
 		u.setDinero(dinero);
-
-		entityManager.merge(u);
 
 		session.setAttribute(CargaAtributos.user, u);
 
@@ -784,8 +755,8 @@ public class UserController {
 
 		try {
 			Item i = entityManager.find(Item.class, id_it);
-			User u = (User) session.getAttribute(CargaAtributos.user);
-
+			User u = CargaAtributos.userFromSession(entityManager, session);
+			
 			if (!usuarioTieneItem(i, false, u)) {
 
 				if (u.getDinero() >= i.getPrecio()) {
@@ -793,8 +764,6 @@ public class UserController {
 					u.setDinero(u.getDinero() - i.getPrecio());
 					u.getPropiedades().add(i);
 					i.getPropietarios().add(u);
-					entityManager.merge(i);
-					entityManager.merge(u);
 					session.setAttribute(CargaAtributos.user, u);
 					session.setAttribute(CargaAtributos.mensaje, "Compra realizada :)");
 
@@ -842,13 +811,12 @@ public class UserController {
 			HttpSession session) {
 
 		ComentarioForo c = new ComentarioForo();
-		User u = (User) session.getAttribute(CargaAtributos.user);
+		User u = CargaAtributos.userFromSession(entityManager, session);
 
 		c.setComentario(comentario);
 		c.setTema(tema);
 		c.setUsuario(u);
 		c.setFecha(new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date()));
-		entityManager.merge(c);
 
 		session.setAttribute(CargaAtributos.user, u);
 		CargaAtributos.foro(session, entityManager, tema);
@@ -894,9 +862,7 @@ public class UserController {
 
 	/*
 	 * #######################################################################
-	 * ######################################################################### ###
-	 * ### ### RANKING ### ### ###
-	 * #########################################################################
+	 * ### 						   RANKING 								   ###
 	 * #######################################################################
 	 */
 
@@ -935,9 +901,7 @@ public class UserController {
 
 	/*
 	 * #######################################################################
-	 * ######################################################################### ###
-	 * ### ### AUXILIARES ### ### ###
-	 * #########################################################################
+	 * ### 					       AUXILIARES                              ###
 	 * #######################################################################
 	 */
 
@@ -997,7 +961,7 @@ public class UserController {
 	@SuppressWarnings("unchecked")
 	private void verRankingPais(HttpSession session) {
 
-		User u = (User) session.getAttribute(CargaAtributos.user);
+		User u = CargaAtributos.userFromSession(entityManager, session);
 		List<User> usuarios = (List<User>) entityManager.createNamedQuery("getUsuarioNacion")
 				.setParameter("nacionParam", u.getNacion()).getResultList();
 
@@ -1010,14 +974,10 @@ public class UserController {
 	 * @return void
 	 */
 	private void verRankingAmigos(HttpSession session) {
-		User u = (User) session.getAttribute(CargaAtributos.user);
-		List<User> amigos = new ArrayList<User>(u.getAmigos().size());
+		
+		User u = CargaAtributos.userFromSession(entityManager, session);
 
-		for (User u2 : u.getAmigos()) {
-			amigos.add(u2);
-		}
-
-		session.setAttribute("ranking", ordena(amigos));
+		session.setAttribute("ranking", ordena(u.getAmigos()));
 	}
 
 	/**
@@ -1128,5 +1088,10 @@ public class UserController {
 
 		return false;
 
+	}
+	
+	private boolean revisaModificacion(String nuevoValor, String antiguoValor) {
+		if(!"".equals(nuevoValor) && !nuevoValor.equals(antiguoValor)) return true;
+		return false;
 	}
 }

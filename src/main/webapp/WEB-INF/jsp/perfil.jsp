@@ -107,10 +107,10 @@
 	<hr />
 	<div>
 		<strong>Introduce el nombre del amigo al que deseas ver el perfil.</strong>
-		<form action="/user/pefilAmigo" method="get" id = "pefilAmigo">
+		<form action="/user/perfilAmigo" method="get" id = "perfilAmigo">
 			<label for="nombre">Nombre del amigo<input name="nombre" /></label> 
 			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-			<button type="submit" class="btn" form="pefilAmigo" value="Submit">Ver perfil</button>
+			<button type="submit" class="btn" form="perfilAmigo" value="Submit">Ver perfil</button>
 		</form>
 	</div>
 	<hr />

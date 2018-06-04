@@ -1,6 +1,7 @@
 package es.ucm.fdi.iw.model;
 
-import java.util.Set;
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -38,15 +39,15 @@ public class User {
 	private int dinero;
 	private String email;
 	private Nacionalidades nacion;
-	private Set<User> amigos;
-	private Set<ComentarioForo> comentarios;
+	private List<User> amigos;
+	private List<ComentarioForo> comentarios;
 	private int Pganadas;
 	private int Pperdidas;
 	private int Pjugadas;
 	private int Dperdido;
 	private int Dganado;
 	private Partida partida;
-	private Set<Item> propiedades;
+	private List<Item> propiedades;
 	private boolean listo;
 
 	@Id
@@ -119,20 +120,20 @@ public class User {
 	}
 
 	@ManyToMany(targetEntity = User.class, fetch = FetchType.EAGER)
-	public Set<User> getAmigos() {
+	public List<User> getAmigos() {
 		return amigos;
 	}
 
-	public void setAmigos(Set<User> miHashSet) {
+	public void setAmigos(List<User> miHashSet) {
 		this.amigos = miHashSet;
 	}
 
 	@OneToMany(targetEntity = ComentarioForo.class, fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
-	public Set<ComentarioForo> getComentarios() {
+	public List<ComentarioForo> getComentarios() {
 		return comentarios;
 	}
 
-	public void setComentarios(Set<ComentarioForo> comentarios) {
+	public void setComentarios(List<ComentarioForo> comentarios) {
 		this.comentarios = comentarios;
 	}
 
@@ -146,11 +147,11 @@ public class User {
 	}
 	
 	@ManyToMany(targetEntity = Item.class,fetch = FetchType.EAGER)	
-	public Set<Item> getPropiedades() {
+	public List<Item> getPropiedades() {
 		return propiedades;
 	}
 
-	public void setPropiedades(Set<Item> propiedades) {
+	public void setPropiedades(List<Item> propiedades) {
 		this.propiedades = propiedades;
 	}
 
