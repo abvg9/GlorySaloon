@@ -44,14 +44,14 @@ Total Apostado
 	Apostar
 </button>	
 
-<form id= "salirJuego" action="/user/salirDelJuego" method="post" >
-
-	<input id="dineroFinal" hidden="submit" name="dineroFinal"/>
-	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-	<div class="form-actions">
-		<button type="submit"class ="btn"name="salir"id = btn_salir>Salir</button>	
-	</div>
-</form>
+<div>
+	<form id= "salirJuego" action="/user/salirDelJuego" method="post" id = "salirDelJuego">
+	
+		<input id="dineroFinal" hidden="submit" name="dineroFinal"/>
+		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+		<button type="submit"class ="btn" form="salirDelJuego" value="Submit" id = btn_salir>Salir</button>
+	</form>
+</div>
 
 <script type="text/javascript">
 window.onload = function() {

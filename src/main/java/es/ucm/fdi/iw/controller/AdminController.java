@@ -1,6 +1,6 @@
 package es.ucm.fdi.iw.controller;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
@@ -73,9 +73,9 @@ public class AdminController {
 			u.setPjugadas(0);
 			u.setDperdido(0);
 			u.setDganado(0);
-			u.setAmigos(new ArrayList<User>());
-			u.setComentarios(new ArrayList<ComentarioForo>());
-			u.setPropiedades(new ArrayList<Item>());
+			u.setAmigos(new HashSet<User>());
+			u.setComentarios(new HashSet<ComentarioForo>());
+			u.setPropiedades(new HashSet<Item>());
 			u.setPartida(null);
 				
 			entityManager.persist(u);
@@ -131,7 +131,7 @@ public class AdminController {
 	    	i.setNombre(nombre);
 	    	i.setPrecio(precio);
 	    	i.setDescripcion(descripcion);
-	    	i.setPropietarios(new ArrayList<User>());	
+	    	i.setPropietarios(new HashSet<User>());	
 			entityManager.persist(i);
 			log.info("Item anadido a la BD");
 			

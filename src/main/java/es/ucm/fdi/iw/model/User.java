@@ -1,15 +1,12 @@
 package es.ucm.fdi.iw.model;
 
-import java.util.List;
-
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -33,15 +30,15 @@ public class User {
 	private int dinero;
 	private String email;
 	private Nacionalidades nacion;
-	private List<User> amigos;
-	private List<ComentarioForo> comentarios;
+	private Set<User> amigos;
+	private Set<ComentarioForo> comentarios;
 	private int Pganadas;
 	private int Pperdidas;
 	private int Pjugadas;
 	private int Dperdido;
 	private int Dganado;
 	private Partida partida;
-	private List<Item> propiedades;
+	private Set<Item> propiedades;
 	private boolean listo;
 
 	@Id
@@ -113,25 +110,21 @@ public class User {
 		this.nacion = nacion;
 	}
 
-	@JoinTable(name = "user_amigos", joinColumns = {
-		@JoinColumn(name = "amigo_A", referencedColumnName = "id", nullable = false) }, inverseJoinColumns = {
-		@JoinColumn(name = "amigo_B", referencedColumnName = "id", nullable = false) })
 	@ManyToMany(targetEntity = User.class, fetch = FetchType.EAGER)
-	public List<User> getAmigos() {
+	public Set<User> getAmigos() {
 		return amigos;
 	}
 
-	public void setAmigos(List<User> amigos) {
-		this.amigos = amigos;
+	public void setAmigos(Set<User> miHashSet) {
+		this.amigos = miHashSet;
 	}
 
 	@OneToMany(targetEntity = ComentarioForo.class, fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
-	@JoinColumn(name = "usuario_id")
-	public List<ComentarioForo> getComentarios() {
+	public Set<ComentarioForo> getComentarios() {
 		return comentarios;
 	}
 
-	public void setComentarios(List<ComentarioForo> comentarios) {
+	public void setComentarios(Set<ComentarioForo> comentarios) {
 		this.comentarios = comentarios;
 	}
 
@@ -144,15 +137,12 @@ public class User {
 		this.partida = partida;
 	}
 	
-	@JoinTable(name = "user_item", joinColumns = {
-		@JoinColumn(name = "user") }, inverseJoinColumns = {
-		@JoinColumn(name = "item") })
-	@ManyToMany(targetEntity = Item.class, fetch = FetchType.EAGER)
-	public List<Item> getPropiedades() {
+	@ManyToMany(targetEntity = Item.class,fetch = FetchType.EAGER)	
+	public Set<Item> getPropiedades() {
 		return propiedades;
 	}
 
-	public void setPropiedades(List<Item> propiedades) {
+	public void setPropiedades(Set<Item> propiedades) {
 		this.propiedades = propiedades;
 	}
 

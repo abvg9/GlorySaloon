@@ -1,6 +1,7 @@
 package es.ucm.fdi.iw.model;
 
-import java.util.List;
+import java.util.Set;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -20,18 +21,18 @@ public class Partida {
 	
 	private long id;
 	private String nombre;
-	private List<User> jugadores;
+	private Set<User> jugadores;
 	private int maxJugadores;
 	private Juegos juego;
 	private String pass;
 	private boolean abierta;
 
 	@OneToMany(targetEntity=User.class)
-	public List<User> getJugadores() {
+	public Set<User> getJugadores() {
 		return jugadores;
 	}
 
-	public void setJugadores(List<User> jugadores) {
+	public void setJugadores(Set<User> jugadores) {
 		this.jugadores = jugadores;
 	}
 	

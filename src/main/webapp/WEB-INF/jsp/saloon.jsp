@@ -24,7 +24,7 @@
 		<c:choose>
 		    <c:when test="${p.abierta == true}">
 		        Abierta 
-		        <form action="/user/unirsePartida" method="post">
+		        <form action="/user/unirsePartida" method="post" id = "unirsePartida">
 		        	<input hidden="submit" name="id_p" value="${p.id}" />
 		        	<c:choose>
 					    <c:when test="${p.pass == 'no'}">
@@ -35,10 +35,9 @@
 					        <label for="pass">Contrasena <input type="password" name="pass" /> </label>
 					    </c:otherwise>
 					</c:choose>
-					<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-					<div class="form-actions">
-						<button type="submit" class="btn">Unirse</button>
-					</div>
+					<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+					
+					<button type="submit" class="btn" form="unirsePartida" value="Submit">Unirse</button>
 				</form>
 		    </c:when>    
 		    <c:otherwise>
@@ -59,31 +58,31 @@
 	}
 	</script>
 	
-	<form action="/user/empezarPartida" id=formEmpezar method="post"> 
-		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-	</form>
+	<div>
+		<form action="/user/empezarPartida" id=formEmpezar method="post"> 
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+		</form>
+	</div>
 	
-	<form action="/user/salirDeLaPartida" method="post">
-		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-		<div class="form-actions">
-			<button type="submit" class="btn">Salir de la partida</button>
-		</div>
-	</form>
+	<div>
+		<form action="/user/salirDeLaPartida" method="post" id = "salirDeLaPartida">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+			<button type="submit" class="btn" form="salirDeLaPartida" value="Submit">Salir de la partida</button>
+		</form>
+	</div>
 </c:if>
 
 <c:if test="${empty user.partida}">
 
 	<script>
 	window.onload = function() {
-		// code in here will only be executed when page fully loaded
-		console.log("entered into chat");
-		
+				
 		var socket = new WebSocket("${endpoint}");
 		$("#escrito").submit(function (e) {
 			var t = $("#texto").val();
 			socket.send(t);
 			$("#texto").val("");
-			e.preventDefault(); // avoid actual submit
+			e.preventDefault();
 		});
 		socket.onmessage = function(e) {
 			var ta = $("#recibido");
@@ -103,37 +102,37 @@
 
 
 	<strong>Crear partida</strong>
-	<form action="/user/crearPartida" method="post">
-	
-		<label for="nombrePar">Nombre<input name="nombrePar" /></label>
-		Contrasena(si la dejas en blaco, todo el mundo podra entrar)<label for="cont" > <input type="password" name="cont" /></label>
-		<label for="maxJugadores">Maximo de jugadores<input name="maxJugadores" /></label>
-		<select name="juego">
-			<option value="BlackJack">BlackJack</option>
-			<option value="Poker">Poker</option>
-		</select>
-		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-		<div class="form-actions">
-			<button type="submit" class="btn">Crear partida</button>
-		</div>
-	</form>
+	<div>
+		<form action="/user/crearPartida" method="post" id = "crearPartida">
+		
+			<label for="nombrePar">Nombre<input name="nombrePar" /></label>
+			Contrasena(si la dejas en blaco, todo el mundo podra entrar)<label for="cont" > <input type="password" name="cont" /></label>
+			<label for="maxJugadores">Maximo de jugadores<input name="maxJugadores" /></label>
+			<select name="juego">
+				<option value="BlackJack">BlackJack</option>
+				<option value="Poker">Poker</option>
+			</select>
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+			<button type="submit" class="btn" form="crearPartida" value="Submit">Crear partida</button>
+		</form>
+	</div>
 
 
 	<strong>Buscar partidas</strong>
-	<form action="/user/verSaloon" method="get">
-	
-		Buscara por el campo que rellenes mas arriba. El de abajo, si esta rellenado, lo ignorará.
-		<label for="nombrePar">Nombre<input name="nombrePar" /></label>
-		<select name="juego">
-			<option value="Pocker">Pocker</option>
-			<option value="Amigos">Amigos</option>
-		</select>
+	<div>
+		<form action="/user/verSaloon" method="get" id = "verSaloon">
 		
-		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-		<div class="form-actions">
-			<button type="submit" class="btn">Buscar partidas</button>
-		</div>
-	</form>
+			Buscara por el campo que rellenes mas arriba. El de abajo, si esta rellenado, lo ignorará.
+			<label for="nombrePar">Nombre<input name="nombrePar" /></label>
+			<select name="juego">
+				<option value="Pocker">Pocker</option>
+				<option value="Amigos">Amigos</option>
+			</select>
+			
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+			<button type="submit" class="btn" form="verSaloon" value="Submit">Buscar partidas</button>
+		</form>
+	</div>
 	
 </c:if>
 

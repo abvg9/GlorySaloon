@@ -28,46 +28,45 @@
 		<td>${f.comentario}</td>
 		
 	</tr>
-	<form action="/user/borrarComentario" method="post">
-		<c:if test="${f.usuario.id == user.id or fn:contains(user.roles, 'ADMIN')}">
-			<input hidden="submit" name="id_c" value="${f.id}" />
-			<input hidden="submit" name="tema" value="${f.tema}" />
-			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-			<div class="form-actions">
-				<button type="submit" class="btn">Borrar comentario</button>
-			</div>
-		</c:if>
-	</form>
+	<div>
+		<form action="/user/borrarComentario" method="post" id = "borrarComentario">
+			<c:if test="${f.usuario.id == user.id or fn:contains(user.roles, 'ADMIN')}">
+				<input hidden="submit" name="id_c" value="${f.id}" />
+				<input hidden="submit" name="tema" value="${f.tema}" />
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+				<button type="submit" class="btn" form="borrarComentario" value="Submit">Borrar comentario</button>
+			</c:if>
+		</form>
+	</div>
 	</c:forEach>
 </c:if>
 
 <c:if test="${not empty tema}">
 	<strong>Anade un comentario.</strong>
-	<form action="/user/comentar" method="post">
-		<label for="comentario">Comentario<input name="comentario" /></label>
-		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-		<input hidden="hidden" name="tema" value="${tema}" />
-		<div class="form-actions">
-			<button type="submit" class="btn">Comentar</button>
-		</div>
-	</form>
+	<div>
+		<form action="/user/comentar" method="post" id = "comentar">
+			<label for="comentario">Comentario<input name="comentario" /></label>	
+			<input hidden="hidden" name="tema" value="${tema}" />
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+			<button type="submit" class="btn" form="comentar" value="Submit">Comentar</button>
+		</form>
+	</div>
 </c:if>
 
 <strong>Introduce el tema que quieres abrir.</strong>
-<form action="/user/foro" method="get">
-	<select name="tema">
-		<option value="Actualidad">Actualidad</option>
-		<option value="General">General</option>
-		<option value="Noobs">Noobs</option>
-		<option value="Noticias">Noticias</option>
-		<option value="Pros">Pros</option>
-	</select> 
-	<input hidden="hidden" name="tema" value="${tema}" />	
-	<div class="form-actions">
-		<button type="submit" class="btn">Ver tema</button>
-	</div>
-</form>
-
+<div>
+	<form action="/user/foro" method="get" id = "foro">
+		<select name="tema">
+			<option value="Actualidad">Actualidad</option>
+			<option value="General">General</option>
+			<option value="Noobs">Noobs</option>
+			<option value="Noticias">Noticias</option>
+			<option value="Pros">Pros</option>
+		</select> 
+		<input hidden="hidden" name="tema" value="${tema}" />	
+		<button type="submit" class="btn" form="foro" value="Submit">Ver tema</button>
+	</form>
+</div>
 
 
 <%@ include file="../jspf/footer.jspf"%>
