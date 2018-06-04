@@ -3,13 +3,17 @@ package es.ucm.fdi.iw.common.utils;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import org.springframework.ui.Model;
+
 import es.ucm.fdi.iw.common.enums.Temas;
 import es.ucm.fdi.iw.model.ComentarioForo;
 import es.ucm.fdi.iw.model.Item;
+import es.ucm.fdi.iw.model.User;
 
 public final class CargaAtributos {
 	
@@ -52,5 +56,17 @@ public final class CargaAtributos {
 				.replaceFirst("[^:]*", "ws")
 				.replace(replace, by));
 	}
-		
+	
+	/**
+	 * Actualiza y devuelve el usuario de sesión
+	 * @param em
+	 * @param session
+	 * @return
+	 */
+	public static User userFromSession(EntityManager em, HttpSession session) {
+		User u = (User)session.getAttribute(user);
+		u = em.find(User.class, u.getId());
+		session.setAttribute(user, u);
+		return u;
+	}
 }

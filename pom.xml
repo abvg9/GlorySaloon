@@ -6,8 +6,10 @@
 	<groupId>es.ucm.fdi</groupId>
 	<artifactId>ejemplo</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>war</packaging>
 
 	<name>GlorySaloon</name>
+	<description>Pagina web sobre juegos de azar.</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -92,7 +94,4 @@
 		</plugins>
 	</build>
 
-
-	<description>Pagina web sobre juegos de azar.</description>
-	<packaging>pom</packaging>
 </project>

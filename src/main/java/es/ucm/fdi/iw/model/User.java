@@ -16,10 +16,18 @@ import javax.validation.constraints.Min;
 import es.ucm.fdi.iw.common.enums.Nacionalidades;
 
 @Entity
-@NamedQueries({ @NamedQuery(name = "getUsuario", query = "select u from User u where u.login = :loginParam"),
-		@NamedQuery(name = "getUsuarios", query = "select u from User u"),
-		@NamedQuery(name = "noRepes", query = "select u from User u where u.login = :loginParam or u.email = :emailParam"),
-		@NamedQuery(name = "getUsuarioNacion", query = "select u from User u where u.nacion = :nacionParam") })
+@NamedQueries({ 
+@NamedQuery(name = "getUsuario", 
+	query = "select u from User u where u.login = :loginParam"),
+@NamedQuery(name = "getUsuarios", 
+	query = "select u from User u"),
+@NamedQuery(name = "noRepes", 
+	query = "select u from User u where "
+			+ "u.login = :loginParam or "
+			+ "u.email = :emailParam"),
+@NamedQuery(name = "getUsuarioNacion", 
+	query = "select u from User u where u.nacion = :nacionParam") }
+)
 public class User {
 
 	private long id;
