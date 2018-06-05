@@ -48,7 +48,7 @@ public class AdminController {
 							  HttpSession session,
 							  @RequestParam String isAdmin) {
 		
-    	User us = (User)session.getAttribute(CargaAtributos.user);
+    	User us = CargaAtributos.userFromSession(entityManager, session);
     	
 		if("".equals(nombre) || "".equals(cont) ||
 		   "".equals(email) || "".equals(nacion.toString())) {

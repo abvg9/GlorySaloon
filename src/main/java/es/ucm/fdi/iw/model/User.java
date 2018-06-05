@@ -128,7 +128,7 @@ public class User {
 		this.amigos = miHashSet;
 	}
 
-	@OneToMany(targetEntity = ComentarioForo.class, fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+	@OneToMany(targetEntity = ComentarioForo.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	public List<ComentarioForo> getComentarios() {
 		return comentarios;
 	}
