@@ -1,5 +1,6 @@
 package es.ucm.fdi.iw.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -32,7 +33,7 @@ public class ComentarioForo {
 		this.id = id;
 	}	
 
-	@ManyToOne(targetEntity=User.class, fetch = FetchType.EAGER)
+	@ManyToOne(targetEntity=User.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	public User getUsuario() {
 		return usuario;
 	}

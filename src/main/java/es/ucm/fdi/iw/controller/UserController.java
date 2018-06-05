@@ -730,9 +730,7 @@ public class UserController {
 
 	/*
 	 * #######################################################################
-	 * ######################################################################### ###
-	 * ### ### TIENDA ### ### ###
-	 * #########################################################################
+	 * ###                           TIENDA                                ###
 	 * #######################################################################
 	 */
 
@@ -784,9 +782,7 @@ public class UserController {
 
 	/*
 	 * #######################################################################
-	 * ######################################################################### ###
-	 * ### ### FORO ### ### ###
-	 * #########################################################################
+	 * ###                           FORO                                  ###
 	 * #######################################################################
 	 */
 
@@ -817,6 +813,7 @@ public class UserController {
 		c.setTema(tema);
 		c.setUsuario(u);
 		c.setFecha(new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date()));
+		entityManager.persist(c);
 
 		session.setAttribute(CargaAtributos.user, u);
 		CargaAtributos.foro(session, entityManager, tema);
@@ -854,7 +851,7 @@ public class UserController {
 	public String foro(Temas tema, HttpSession session) {
 
 		session.setAttribute(CargaAtributos.mensaje, null);
-		CargaAtributos.foro(session, entityManager, tema);
+		CargaAtributos.foro(session, entityManager, tema);	
 		session.setAttribute(CargaAtributos.tema, tema);
 		return "foro";
 
