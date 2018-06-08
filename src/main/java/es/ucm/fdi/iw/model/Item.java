@@ -1,6 +1,6 @@
 package es.ucm.fdi.iw.model;
 
-import java.util.Set;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -25,7 +25,7 @@ public class Item {
 	private int precio;
 	private String nombre;
 	private String descripcion;
-	private Set<User> propietarios;
+	private List<User> propietarios;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -64,11 +64,11 @@ public class Item {
 	}
 	
 	@ManyToMany(targetEntity = User.class,fetch = FetchType.EAGER)
-	public Set<User> getPropietarios() {
+	public List<User> getPropietarios() {
 		return propietarios;
 	}
 
-	public void setPropietarios(Set<User> propietarios) {
+	public void setPropietarios(List<User> propietarios) {
 		this.propietarios = propietarios;
 	}
 		

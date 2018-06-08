@@ -7,7 +7,7 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
-import es.ucm.fdi.iw.common.utils.CargaAtributos;
+import es.ucm.fdi.iw.common.utils.Utils;
 import es.ucm.fdi.iw.controller.ChatSocketHandler;
 import es.ucm.fdi.iw.games.PartidaBJSocketHandler;
 
@@ -18,10 +18,10 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
     	
-        registry.addHandler(chatHandler(), "/"+CargaAtributos.chatSocket)
+        registry.addHandler(chatHandler(), "/"+Utils.chatSocket)
         	.addInterceptors(new HttpSessionHandshakeInterceptor());
         
-        registry.addHandler(partidaHandler(), "/"+CargaAtributos.partidaSocket)
+        registry.addHandler(partidaHandler(), "/"+Utils.partidaSocket)
     	.addInterceptors(new HttpSessionHandshakeInterceptor());
     }
 

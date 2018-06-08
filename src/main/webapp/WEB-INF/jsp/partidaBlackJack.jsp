@@ -1,55 +1,90 @@
 <%@ page pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
+<%@ taglib prefix="sec"
+	uri="http://www.springframework.org/security/tags"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ include file="../jspf/header.jspf"%>
-<%@ page import="es.ucm.fdi.iw.model.User" %>
+<%@ page import="es.ucm.fdi.iw.model.User"%>
 
-<h1>Partida: ${user.partida.nombre}</h1>
+<div class=container>
+	<h1 style="text-align: center;">Partida: ${user.partida.nombre}</h1>
+	<br> <br>
+	<div class="row">
+		<div class="col-4">
+			Jugadores
+			<textarea id="jugadores" cols="30" rows="6" disabled>
+		<c:forEach items="${user.partida.jugadores}" var="j">${j.login} ${j.dinero} &#10</c:forEach>
+		</textarea>
+		</div>
+		<div class="col-6">
+			<div class="row">
+				<div class="col-12">
+					Mano<br>
+					<textarea id="cartas" cols="30" rows="6" disabled></textarea>
+				</div>
+			</div>
+			<br>
+			<div class="row">
+				<div class="col-5">
+					<button type="submit" class="btn" name="pediCarta" id=btn_pedir>
+						Pedir carta</button>
+				</div>
+				<div class="col-5">
+					<button type="submit" class="btn" name="apostar" id=btn_pasar>
+						Pasar turno</button>
+				</div>
+			</div>
+			<br>
+			<div class="row">
+				<div class="col-6">
+					<label for="apostado">Apuesta</label>
+				</div>
+				<div class="col-6">
+					<input id="apostado" name="apostado" />
+				</div>
+			</div>
+			<br>
+			<div class="row">
+				<div class="col-6">
+					Total Apostado
+					<textarea id="bote" cols="10" rows="1" disabled></textarea>
+				</div>
+				<div class="col-6">
+					<button type="submit" class="btn" name="apostar" id=btn_apostar>
+						Apostar</button>
+				</div>
+			</div>
+		</div>
+		<div class="col-2">
+			Movimientos
+			<textarea id="recibido" cols="30" rows="15" disabled></textarea>
+		</div>
 
-Movimientos
-<textarea id="recibido" cols="50" rows="20" disabled></textarea>
 
-Mano
-<textarea id="cartas" cols="30" rows="6" disabled></textarea>
+	</div>
+</div>
 
-Jugadores
-<textarea id="jugadores" cols="30" rows="6" disabled>
-<c:forEach items="${user.partida.jugadores}" var="j">${j.login} ${j.dinero} &#10</c:forEach>
-</textarea>
 
-Total Apostado
-<textarea id="bote" cols="10" rows="1" disabled></textarea>
 
-<button type="submit"
-  	class ="btn"
-   	name="apostar"
-   	id = btn_pasar>
-	Pasar turno
-</button>	
 
-<button type="submit"
-  	class ="btn"
-   	name="pediCarta"
-   	id = btn_pedir>
-	Pedir carta
-</button>	
 
-<label for="apostado">Apuesta<input id= "apostado" name="apostado" /></label>
-<button type="submit"
-	class ="btn"
-	name="apostar"
-	id = btn_apostar>
-	Apostar
-</button>	
+
+
+
+
+
+
+
 
 <div>
-	<form id= "salirJuego" action="/user/salirDelJuego" method="post" id = "salirDelJuego">
-	
-		<input id="dineroFinal" hidden="submit" name="dineroFinal"/>
-		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-		<button type="submit"class ="btn" form="salirDelJuego" value="Submit" id = btn_salir>Salir</button>
+	<form id="salirJuego" action="/user/salirDelJuego" method="post"
+		id="salirDelJuego">
+
+		<input id="dineroFinal" hidden="submit" name="dineroFinal" /> <input
+			type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+		<button type="submit" class="btn" form="salirDelJuego" value="Submit"
+			id=btn_salir>Salir</button>
 	</form>
 </div>
 

@@ -1,25 +1,55 @@
 <%@ include file="../jspf/header.jspf"%>
 
-<strong>Ranking</strong>
-<c:forEach items="${ranking}" var="r">
-	<tr>
-		<td><img src="${imagen}${r.id}" /></td>
-		<td>${r.login}</td>
-		<td>${r.dinero}</td>
-		<td>${r.nacion}</td>
-	</tr>
-</c:forEach>
+<div class="container">
 
-<div>
-	<strong>Ver ranking</strong>
-	<form action="/user/verRanking" method="get" id = "verRanking">
-		<select name="busqueda">
-			<option value="amigos">Por amigos</option>
-			<option value="pais">Por pais</option>
-			<option value="global">Global</option>
-		</select> 
-		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-		<button type="submit" class="btn" form="verRanking" value="Submit">Ver ranking</button>
-	</form>
+	<c:if test="${not empty mensaje }">
+		<div class="alert alert-info" role="alert">
+			<strong>${mensaje} ${classMensaje}</strong>
+		</div>
+		<br>
+	</c:if>
+<br>
+
+	<div class="wrapper">
+
+		<table>
+			<thead>
+				<tr class="myTableHead">
+					<th><p style="text-align: center; vertical-align: middle;">
+							<strong># PUESTO</strong>
+						</p></th>
+					<th><p style="text-align: center; vertical-align: middle;">
+							<strong>USUARIO</strong>
+						</p></th>
+					<th><p style="text-align: center; vertical-align: middle;">
+							<strong>PUNTOS</strong>
+						</p></th>
+					<th><p style="text-align: center; vertical-align: middle;">
+							<strong>PAIS</strong>
+						</p></th>
+				</tr>
+			</thead>
+			<tbody>
+				<c:forEach items="${ranking}" var="r">
+
+					<tr>
+						<td><p style="text-align: center; vertical-align: middle;">
+								<strong>1</strong>
+							</p></td>
+						<td><img class="img-thumbnail maxImgSize"
+							src="${imagen}${r.id}"> <strong>${r.login}</strong></td>
+						<td><p style="text-align: center; vertical-align: middle;">
+								<strong>${r.dinero}</strong>
+							</p></td>
+						<td><p style="text-align: center; vertical-align: middle;">
+								<strong>${r.nacion}</strong>
+							</p></td>
+					</tr>
+
+				</c:forEach>
+
+			</tbody>
+		</table>
+	</div>
 </div>
 <%@ include file="../jspf/footer.jspf"%>
