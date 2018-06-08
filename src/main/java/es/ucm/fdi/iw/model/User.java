@@ -35,7 +35,6 @@ public class User {
 	private String login;
 	private String password;
 	private String roles;
-	private byte enabled;
 	private int dinero;
 	private String email;
 	private Nacionalidades nacion;
@@ -85,14 +84,6 @@ public class User {
 		this.roles = roles;
 	}
 
-	public byte getEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(byte enabled) {
-		this.enabled = enabled;
-	}
-
 	@Min(0)
 	public int getDinero() {
 		return dinero;
@@ -119,7 +110,7 @@ public class User {
 		this.nacion = nacion;
 	}
 
-	@ManyToMany(targetEntity = User.class, fetch = FetchType.EAGER)
+	@ManyToMany(targetEntity = User.class, fetch=FetchType.EAGER)
 	public List<User> getAmigos() {
 		return amigos;
 	}
@@ -128,7 +119,7 @@ public class User {
 		this.amigos = miHashSet;
 	}
 
-	@OneToMany(targetEntity = ComentarioForo.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToMany(targetEntity = ComentarioForo.class, fetch=FetchType.EAGER)
 	public List<ComentarioForo> getComentarios() {
 		return comentarios;
 	}
@@ -137,7 +128,7 @@ public class User {
 		this.comentarios = comentarios;
 	}
 
-	@ManyToOne(targetEntity = Partida.class, cascade = CascadeType.ALL)
+	@ManyToOne(targetEntity = Partida.class, cascade=CascadeType.ALL)
 	public Partida getPartida() {
 		return partida;
 	}

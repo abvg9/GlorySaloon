@@ -11,7 +11,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
-import es.ucm.fdi.iw.common.utils.CargaAtributos;
+import es.ucm.fdi.iw.common.utils.Utils;
 import es.ucm.fdi.iw.model.User;
 
 public class IwUserDetailsService implements UserDetailsService{
@@ -35,18 +35,17 @@ public class IwUserDetailsService implements UserDetailsService{
 	                            .setParameter("login", username)
 	                            .getSingleResult();
     		
-	        // build UserDetails object
 	        ArrayList<SimpleGrantedAuthority> roles = new ArrayList<>();
 	        for (String r : u.getRoles().split("[,]")) {
 	        	roles.add(new SimpleGrantedAuthority("ROLE_" + r));
 		        log.info("Roles for " + username + " include " + roles.get(roles.size()-1));
 	        }
-	        request.getSession().setAttribute(CargaAtributos.user, u);
+	        request.getSession().setAttribute(Utils.user, u);
 	        return new org.springframework.security.core.userdetails.User(
 	        		u.getLogin(), u.getPassword(), roles); 
 	    } catch (Exception e) {
     		log.info("No existe ningun usuario llamado: " + username);
-    		request.getSession().setAttribute(CargaAtributos.mensaje, "No existe ningun usuario llamado: " + username);
+    		request.getSession().setAttribute(Utils.mensaje, "No existe ningun usuario llamado: " + username);
     		return null;
     	}
     }

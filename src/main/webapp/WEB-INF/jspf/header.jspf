@@ -13,59 +13,150 @@
 <title>Aplicacion Web IW</title>
 
 <!-- Bootstrap -->
-<link href="${s}/css/bootstrap.min.css" rel="stylesheet">
+<link
+	href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css"
+	rel="stylesheet">
+<link rel="stylesheet" type="text/css"
+	href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+<link href="${s}/css/bootstrap.css" rel="stylesheet">
+<link href="${s}/css/bootstrap-grid.css" rel="stylesheet">
+<link href="${s}/css/bootstrap-reboot.css" rel="stylesheet">
+<link href="${s}/css/bootstrap-theme.css" rel="stylesheet">
 <link href="${s}/css/starter-template.css" rel="stylesheet">
 <link href="${s}/css/myOwnTheme.css" rel="stylesheet">
+<link
+	href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css"
+	rel="stylesheet" id="bootstrap-css">
+<script
+	src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
 </head>
 <body>
-	<img class="img-responsive" src="${s}/img/headerExtenso.jpg">
 
-	<nav class="navbar navbar-inverse navbar-relative-top">
+	<img class="img-fluid" src="${s}/img/headerExtenso.jpg">
+
+	<c:if test="${not empty user}">
+
+	</c:if>
 
 
-		<div class="container">
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle collapsed"
-					data-toggle="collapse" data-target="#navbar" aria-expanded="false"
-					aria-controls="navbar">
-					<span class="sr-only">Toggle navigation</span> <span
-						class="icon-bar"></span> <span class="icon-bar"></span> <span
-						class="icon-bar"></span>
-				</button>
-			</div>
 
-			<div id="navbar" class="collapse navbar-collapse">
-				<ul class="nav navbar-nav">
-				
-					<c:if test="${not empty user and empty user.partida}">
-						<li><a href="/">Home</a></li>
-					</c:if>
-					<c:if test="${empty user}">
-						<li><a href="/login">Login</a></li>
-					</c:if>
-					<c:if test="${not empty user and empty user.partida}">
-						<li><a href="/saloon">Saloon</a></li>
-					</c:if>
-					<c:if test="${not empty user and empty user.partida}">
-			        	<li><a href="/perfil">Perfil</a></li> 
-					</c:if>
-					<c:if test="${not empty user and empty user.partida}">
-						<li><a href="/tienda">Tienda</a></li>
-					</c:if>
-					<c:if test="${not empty user and empty user.partida}">
-						<li><a href="/reglas">Reglas</a></li>
-					</c:if>
-					<c:if test="${not empty user and empty user.partida}">
-						<li><a href="/user/foro">Foro</a></li>
-					</c:if>
-					<c:if test="${not empty user and empty user.partida}">
-						<li><a href="/ranking">Ranking</a></li>
-					</c:if>
-					<c:if test="${not empty user and not empty user.partida}">
-						<li><a href="partidaBlackJack">Partida: "${user.partida.nombre}"</a></li>
-					</c:if>
-				</ul>
-			</div>
-			<!--/.nav-collapse -->
+	<nav class="navbar navbar-expand-lg navbar-light bg-dark">
+		<button class="navbar-toggler" type="button" data-toggle="collapse"
+			data-target="#navbarNav" aria-controls="navbarNav"
+			aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse readableMenu" style="vertical-align: middle;"
+			id="navbarNav">
+			<ul class="navbar-nav" style="margin-left: 50px;">
+				<c:if test="${not empty user and empty user.partida}">
+					<li class="nav-item marginRightMenu"><a
+						class="nav-link text-white" href="/">Home</a></li>
+				</c:if>
+				<c:if test="${not empty user and empty user.partida}">
+					<li class="nav-item marginRightMenu"><a
+						class="nav-link text-white" href="/saloon">Saloon</a></li>
+				</c:if>
+				<c:if test="${not empty user and empty user.partida}">
+					<li class="nav-item marginRightMenu"><a
+						class="nav-link text-white" href="/tienda">Tienda</a></li>
+				</c:if>
+				<c:if test="${not empty user and empty user.partida}">
+					<li class="nav-item marginRightMenu"><a
+						class="nav-link text-white" href="/reglas">Reglas</a></li>
+				</c:if>
+				<c:if test="${not empty user and empty user.partida}">
+					<li class="nav-item marginRightMenu"><a
+						class="nav-link text-white" href="/user/foro">Foro</a></li>
+				</c:if>
+				<c:if test="${not empty user and empty user.partida}">
+					<li class="nav-item marginRightMenu"><a
+						class="nav-link text-white dropdown-toggle" id="dropdownMenuLink"
+						data-toggle="dropdown" href="/ranking"> Ranking </a>
+						<div class="dropdown show">
+							<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+
+								<form action="/user/verRanking" method="get">
+									<button type="submit" value="amigos" name="busqueda"
+										class="dropdown-item">Amigos</button>
+									<button type="submit" value="pais" name="busqueda"
+										class="dropdown-item">Pais</button>
+									<button type="submit" value="global" name="busqueda"
+										class="dropdown-item">Global</button>
+
+								</form>
+							</div>
+						</div></li>
+				</c:if>
+				<c:if test="${not empty user and not empty user.partida}">
+					<li class="nav-item marginRightMenu"><a
+						class="nav-link text-white" href="partidaBlackJack">Partida:
+							"${user.partida.nombre}"</a></li>
+				</c:if>
+				<c:if test="${empty user}">
+					<li class="nav-item marginRightMenu"><a
+						class="nav-link text-white" href="/login">Login</a></li>
+				</c:if>
+			</ul>
+
+
+			<c:if test="${not empty user and empty user.partida}">
+
+				<div class="topRightFixed">
+					<ul class="navbar-nav pull-right">
+						<li class="dropdown"><a href="#"
+							class="dropdown-toggle nav-link text-white"
+							data-toggle="dropdown"><img src="${imagen}${user.id}"
+								class="rounded-circle smallImg" alt="Sample image"></a>
+							<ul class="dropdown-menu dropdown-menu-right">
+								<li><form>
+										<a class="dropdown-item" href="/perfil">Perfil</a>
+									</form></li>
+								<c:if test="${fn:contains(user.roles, 'ADMIN')}">
+									<li><form>
+											<a class="dropdown-item" href="/adminConf">Admin</a>
+										</form></li>
+								</c:if>
+								<li><form>
+										<a class="dropdown-item" href="/configuracion">Configuración</a>
+									</form></li>
+								<li>
+									<form action="/user/eliminarCuenta" method="post">
+										<input type="hidden" name="${_csrf.parameterName}"
+											value="${_csrf.token}" />
+										<button type="submit" 
+											class="dropdown-item">Borrar cuenta</button>
+									</form>
+
+								</li>
+
+								<li class="divider"></li>
+								<li><form action="/user/logout" method="post"
+										style="text-align: center;">
+										<input type="hidden" name="${_csrf.parameterName}"
+											value="${_csrf.token}" />
+										<button type="submit">
+											Logout <span class="glyphicon glyphicon-log-out"></span>
+										</button>
+
+									</form></li>
+							</ul></li>
+					</ul>
+				</div>
+			</c:if>
 		</div>
 	</nav>
+	<c:if test="${not empty user and empty user.partida}">
+		<button type="button" class="btn btn-light disabled topRightNormal">
+			<strong>$${user.dinero}</strong>
+		</button>
+	</c:if>
+	<br>
+	<br>
