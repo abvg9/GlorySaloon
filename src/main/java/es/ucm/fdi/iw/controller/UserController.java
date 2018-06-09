@@ -689,14 +689,12 @@ public class UserController {
 	 * #######################################################################
 	 */
 	
-
 	/**
 	 * Operaciones:
 	 * 
 	 * 1º Comprar item
 	 */
 	
-
 	/**
 	 * Operacion modicadora: Usuario compra item
 	 * 
@@ -744,14 +742,12 @@ public class UserController {
 	 * #######################################################################
 	 */
 	
-
 	/**
 	 * Operaciones:
 	 * 
 	 * 1º Comentar en foro 2º Borrar comentario
 	 */
 	
-
 	/**
 	 * Operacion creadora: Usuario comenta en el foro en un tema en concreto
 	 * 
@@ -783,7 +779,6 @@ public class UserController {
 		return "foro";
 	}
 
-	
 	/**
 	 * Operacion eliminadora: Usuario borra un comentario.
 	 * 
@@ -811,7 +806,6 @@ public class UserController {
 		return "foro";
 	}
 
-	
 	/**
 	 * Operacion observadora: Muestra el foro en funcion del tema.
 	 * 
@@ -828,21 +822,18 @@ public class UserController {
 		return "foro";
 
 	}
-
 	
 	/*
 	 * #######################################################################
 	 * ### 						   RANKING 								   ###
 	 * #######################################################################
 	 */
-
 	
 	/**
 	 * Operaciones: 1º Ver ranking por amigos.
 	 * 				2º Por pais.
 	 * 				3º Por global.
 	 */
-
 	
 	/**
 	 * Operacion observadora: Muestra el ranking en funcion de la busqueda
@@ -870,17 +861,16 @@ public class UserController {
 		session.setAttribute(Utils.imagen, "/user/fotoPerfil/");
 		return "ranking";
 	}
-
 	
 	/*
 	 * #######################################################################
-	 * ### 					       AUXILIARES                              ###
+	 * ### 					        IMAGENES                               ###
 	 * #######################################################################
 	 */
-
+	
 	/**
 	 * Operacion observadora: Descarga una foto de la bd
-	 * 
+	 * 	
 	 * @param id:
 	 *            Identificador del usuario al que le pertenece la fotp
 	 * @return la imagen o error.
@@ -925,8 +915,13 @@ public class UserController {
 
 		return "perfil";
 	}
-
 	
+	/*
+	 * #######################################################################
+	 * ### 					       AUXILIARES                              ###
+	 * #######################################################################
+	 */
+
 	/**
 	 * Operacion auxiliar: Carga en la sesion una lista de usuarios
 	 * 
@@ -941,7 +936,6 @@ public class UserController {
 
 		session.setAttribute("ranking", ordena(usuarios));
 	}
-
 	
 	/**
 	 * Operacion auxiliar: Carga en la sesion una lista de usuarios
@@ -954,7 +948,6 @@ public class UserController {
 
 		session.setAttribute("ranking", ordena(u.getAmigos()));
 	}
-
 	
 	/**
 	 * Operacion auxiliar: Carga en la sesion una lista de usuarios
@@ -967,7 +960,6 @@ public class UserController {
 		List<User> usuarios = (List<User>) entityManager.createNamedQuery("getUsuarios").getResultList();
 		session.setAttribute("ranking", ordena(usuarios));
 	}
-
 	
 	/**
 	 * Operacion auxiliar: Ordena una lista de usuarios mayor a menor en funcion de
@@ -990,7 +982,6 @@ public class UserController {
 		});
 		return usuarios;
 	}
-
 	
 	/**
 	 * Operacion auxiliar: Saca un usuario de la partida en la que está.
@@ -1008,7 +999,6 @@ public class UserController {
 		
 		u.getPartida().getJugadores().remove(itJugadores);
 	}
-
 	
 	/**
 	 * Operación auxiliar: Busca si un usuario tiene un amigo en concreto. Si
@@ -1042,7 +1032,6 @@ public class UserController {
 		return false;
 
 	}
-
 	
 	/**
 	 * Operación auxiliar: Busca si un usuario tiene un item en concreto. 
@@ -1085,8 +1074,7 @@ public class UserController {
 		return false;
 
 	}
-	
-	
+		
 	/**
 	 * Operación auxiliar: Revisa si el nuevo valor que introdujo el usuario es
 	 * igual al nuevo. La idea de este método es evitar transacciones inecesarias 
@@ -1102,5 +1090,4 @@ public class UserController {
 		if(!"".equals(nuevoValor) && !nuevoValor.equals(antiguoValor)) return true;
 		return false;
 	}
-
 }
