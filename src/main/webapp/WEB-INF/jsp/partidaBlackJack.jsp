@@ -45,13 +45,23 @@ Total Apostado
 </button>	
 
 <div>
-	<form id= "salirJuego" action="/user/salirDelJuego" method="post">
+	<form action="/user/salirDelJuego" method="post" id=salirJuego>
 	
 		<input id="dineroFinal" hidden="submit" name="dineroFinal"/>
 		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 		<button type="submit"class ="btn" value="Submit" id = btn_salir>Salir</button>
 	</form>
 </div>
+
+<script>
+window.addEventListener("beforeunload", function (event) {
+	  debugger;
+	  let confirmationMessage = "Adios"; 
+	  document.forms["salirJuego"].submit();	  
+	  event.returnValue = confirmationMessage; 
+	  return confirmationMessage;   
+});
+</script>
 
 <script type="text/javascript">
 window.onload = function() {
@@ -174,7 +184,6 @@ window.onload = function() {
 	    		break;
 	    		
 	    	default:
-	    		debugger;
 	    		if(mens[1] == "apostó"){
 	    			let bt = parseInt(bote.val()) + parseInt(mens[2]);
 	    			bote.val(bt.toString());

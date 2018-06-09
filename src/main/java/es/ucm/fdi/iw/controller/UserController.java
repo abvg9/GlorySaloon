@@ -506,6 +506,7 @@ public class UserController {
 		} else {
 			session.setAttribute(Utils.mensaje, "Esa partida ya no existe.");
 		}
+		session.setAttribute(Utils.saloon, null);
 		return "saloon";
 	}
 
@@ -525,6 +526,7 @@ public class UserController {
 			HttpServletRequest request) {
 
 		session.setAttribute(Utils.mensaje, null);
+		session.setAttribute(Utils.saloon, null);
 		List<Partida> partidas = new ArrayList<Partida>();
 		User u = Utils.userFromSession(entityManager, session);
 
@@ -678,6 +680,7 @@ public class UserController {
 		u.setDinero(dinero);
 
 		session.setAttribute(Utils.user, u);
+		session.setAttribute(Utils.saloon, null);
 
 		return "redirect:/saloon";
 	}
