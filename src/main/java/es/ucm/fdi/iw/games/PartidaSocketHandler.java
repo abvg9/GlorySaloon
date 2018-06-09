@@ -21,7 +21,7 @@ public abstract class PartidaSocketHandler extends TextWebSocketHandler {
 		this.partidas  = new ArrayList<Partida>();
 		this.cartasIniciales = cartasIniciales;
 		this.hayJugadores = true;
-		this.tiempoDeEspera = 100;
+		this.tiempoDeEspera = 10;
 	}
 		
 	void broadcast(String message,List<WebSocketSession> jugadores) {

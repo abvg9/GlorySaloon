@@ -30,6 +30,7 @@ public class PartidaBJSocketHandler extends PartidaSocketHandler {
 				indicePartida = indices[0];
 				indiceJugador = indices[1];
 				partidas.get(indicePartida).donaAjugador(indiceJugador, Integer.valueOf(mensaje[2]));
+				broadcast(session.getPrincipal().getName() +" sinblanca",partidas.get(indicePartida).getJugadoresSk());
 				break;
 		
 			case "apostó": 
