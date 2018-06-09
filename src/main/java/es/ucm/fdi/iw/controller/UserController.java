@@ -1062,7 +1062,7 @@ public class UserController {
 
 			int iPropietarios = 0;
 			while (iPropietarios < i.getPropietarios().size() && 
-				   !i.getPropietarios().get(iPropiedades).getLogin().equals(u.getLogin())) {
+				   !i.getPropietarios().get(iPropietarios).getLogin().equals(u.getLogin())) {
 				iPropietarios++;
 			}
 
