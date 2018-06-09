@@ -33,19 +33,19 @@ public class AdminController {
 	private EntityManager entityManager;
 
 	/**
-	 * Operacion creadora: Crea un nuevo usuario Igual que la del ususario salvo que
-	 * en esta se puede elegir si la nueva cuenta es admin o usuario
+	 * Operacion creadora: Crea un nuevo usuario. Igual que la del ususario salvo que
+	 * en esta se puede elegir si la nueva cuenta es admin o usuario.
 	 * 
 	 * @param nombre:
-	 *            Nombre del usuario
+	 *            Nombre del usuario.
 	 * @param cont:
-	 *            Contraseña del usuario
+	 *            Contraseña del usuario.
 	 * @param email:
-	 *            Email del usuario
+	 *            Email del usuario.
 	 * @param nacion:
-	 *            Pais del usuario
+	 *            Pais del usuario.
 	 * @param isAdmin:
-	 *            Si el nuevo usuario es admin
+	 *            Si el nuevo usuario es admin.
 	 * @return Te redirige a admin y carga en la sesion el mensaje.
 	 */
 	@RequestMapping(value = "/crearCuenta", method = RequestMethod.POST)
@@ -82,12 +82,12 @@ public class AdminController {
 	}
 
 	/**
-	 * Operacion modificadora: Elimina un item de la bd
+	 * Operacion eliminadora: Elimina un item de la bd.
 	 * 
 	 * @param id:
-	 *            Id del item
+	 *            Id del item.
 	 * @return Te redirige a la tienda, cargando en el sesion la respusta(correcta o
-	 *         incorrecta ante la peticion)
+	 *         incorrecta ante la petición)
 	 */
 	@RequestMapping(value = "/borrarItem", method = RequestMethod.POST)
 	@Transactional
@@ -109,7 +109,7 @@ public class AdminController {
 	}
 
 	/**
-	 * Operacion modificadora: Anadde un item de la bd
+	 * Operacion creadora: Anade un item de la bd
 	 * 
 	 * @param precio:
 	 *            Precio del item
@@ -176,7 +176,7 @@ public class AdminController {
 		}
 
 		if (iguales) {
-			return "login";
+			return "redirect:/login";
 		}
 
 		return "redirect:/perfil";

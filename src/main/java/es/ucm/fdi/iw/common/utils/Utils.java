@@ -129,7 +129,7 @@ public final class Utils {
 
 			int iPropietarios = 0;
 			while (iPropietarios < i.getPropietarios().size() && 
-				   i.getPropietarios().get(iPropiedades).getLogin().equals(u.getLogin())) {
+				   !i.getPropietarios().get(iPropiedades).getLogin().equals(u.getLogin())) {
 				iPropietarios++;
 			}
 
