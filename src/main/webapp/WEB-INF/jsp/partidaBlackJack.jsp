@@ -45,11 +45,11 @@ Total Apostado
 </button>	
 
 <div>
-	<form id= "salirJuego" action="/user/salirDelJuego" method="post" id = "salirDelJuego">
+	<form id= "salirJuego" action="/user/salirDelJuego" method="post">
 	
 		<input id="dineroFinal" hidden="submit" name="dineroFinal"/>
 		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-		<button type="submit"class ="btn" form="salirDelJuego" value="Submit" id = btn_salir>Salir</button>
+		<button type="submit"class ="btn" value="Submit" id = btn_salir>Salir</button>
 	</form>
 </div>
 
@@ -118,27 +118,21 @@ window.onload = function() {
 	    			mostrarMensaje("Habeis empatado:");
 	    		}
 	    		let j = 1;
-				for(let i = 0; i < length;i++){
-					debugger;
-					
-					if(mensaje[j+1] != "0"){
-						mostrarMensaje(mens[j] + " " + mens[j+1]);	
-					}else{
-						mostrarMensaje(mens[j] + " 100");
-					}
+				for(let i = 0; i < length;i++){					
+					mostrarMensaje(mens[j] + " " + mens[j+1]);	
 					if(mens[j] == "${user.login}"){
 						dinero += parseInt(mens[j+2]);
-						dineroFinal.val(dinero);
-						//si se queda sin dinero, le damos 100 moneditas y avisamos al servidor
-						if(dinero == 0){
-							dinero = 100;
-							mostrarMensaje("Te has quedado sin dinero, toma 100 monedas :)");
-							socket.send("${user.login} sinblanca "+100);
-						}
-						
+						dineroFinal.val(dinero);						
 					}
 					actualizaJugador(mens[j],+mens[j+2]);
 					j = j+3;				
+				}
+				//si se queda sin dinero, le damos 100 moneditas y avisamos al servidor
+				if(dinero == 0){
+					dinero = 100;
+					mostrarMensaje("Te has quedado sin dinero, toma 100 monedas :)");
+					socket.send("${user.login} sinblanca "+100);
+					actualizaJugador("${user.login}",+100);
 				}
 	    		btn_salir.prop("disabled",false);
 	    		break;
@@ -180,11 +174,18 @@ window.onload = function() {
 	    		break;
 	    		
 	    	default:
+	    		debugger;
 	    		if(mens[1] == "apostó"){
 	    			let bt = parseInt(bote.val()) + parseInt(mens[2]);
 	    			bote.val(bt.toString());
 	    			actualizaJugador(mens[0],-mens[2]);
+	    			
+	    		}else if(mens[1] == "sinblanca"){
+	    			mostrarMensaje("Se le ha dado dinero a" + mens[0]);
+	    			actualizaJugador(mens[0],+100);
+	    			break;
 	    		}
+	    	    
 	    		mostrarMensaje(e.data);
 				break;
 		}
