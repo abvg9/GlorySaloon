@@ -180,7 +180,9 @@ window.onload = function() {
 	    			bote.val(bt.toString());
 	    			actualizaJugador(mens[0],-mens[2]);
 	    			
-	    		}else if(mens[1] == "sinblanca"){
+	    		}
+	    		
+	    		if(mens[1] == "sinblanca"){
 	    			mostrarMensaje("Se le ha dado dinero a" + mens[0]);
 	    			actualizaJugador(mens[0],+100);
 	    			break;
