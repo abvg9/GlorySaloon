@@ -75,8 +75,6 @@
 		</a>
 	</div>
 
-
-
 	<br> <br> <br>
 	<div class="row">
 		<div class="col-4">
@@ -138,32 +136,12 @@
 				</div>
 			</div>
 		</div>
-		<!-- <div class="col-7">
-			<div class="row homeMargin2">Ranking</div>
-			<div class="row homeMargin2">Foro</div>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-11 homeMargin">Saloon</div>
-	</div>
-	<div class="row">
-		<div class="col-7 homeMargin">Tienda</div>
-		<div class="col-3 homeMargin">Reglas</div>
-
-	</div> -->
-
-
-
-
-
-
-
 	</div>
 	<br> <br>
 	<div class="row">
 		<div class="col-2"></div>
 		<div class="col-8">
-			<div style="cursor: pointer;" onclick="window.location='/ranking';"
+			<div style="cursor: pointer;" id=rank 
 				class="card tarjeta desvanecer">
 				<div style="margin: 2%;">
 					<img src="${s}/img/top10.jpg" alt="Ranking" width="100%"
@@ -184,5 +162,18 @@
 	</div>
 </div>
 
+<form action="/user/verRanking" method="get" id=formRanking>
+	<input type="hidden" name="${_csrf.parameterName}"
+	value="${_csrf.token}" />
+	<input type="hidden" name="busqueda"
+	value="global" />
+</form>
+
+<script>
+	$("#rank").on('click', function() {
+		debugger;
+		$("#formRanking").submit();
+	});
+</script>
 
 <%@ include file="../jspf/footer.jspf"%>

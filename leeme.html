@@ -15,7 +15,80 @@
 
 <h2>Proyecto</h2>
 
-Copia y pega aquí el texto de la última versión de proyecto.
+Práctica Ingeniería Web
+Álvaro Velasco Garcia y Pablo Esteve Calzado
+2018
+Introducción
+En este documento describiremos cómo será la estructura general de la página web y los
+contenidos de ésta de manera orientativa. Este documento será como un mockup explicativo de
+la pagina que a medida que avancemos la iremos adaptando a las modificaciones y cambios
+necesarios.
+Visualización y Organización
+Header
+Estará presente en todas las vistas de nuestra pagina. La motivación es que el usuario pueda
+navegar fácil y rápidamente entre todas ellas sin generar en este mucha inversión de tiempo en
+ello. Esta vista contiene los siguientes menús:
+o Una barra horizontal de navegación con:
+▪ login
+▪ home
+▪ saloon
+▪ tienda
+▪ reglas
+▪ foro
+▪ ranking
+• amigos
+• pais
+• global
+o Un menú desplegable en la parte superior derecha de la pantalla con:
+▪ Perfil
+▪ Admin
+▪ Configuracion
+▪ Borrar Cuenta
+▪ Logout
+Contiene además una imagen en la parte superior realizada con photoshop con el título de la web.
+Perfil
+El perfil contendrá toda la información acerca del usuario. Está se podrá consultar a través de una
+serie de menús (perfil, amigos, inventario).
+En la pestaña perfil se dispone de la información más relevante del usuario (email, pais y
+estadísticas)
+En la pestaña amigos, podrás ver los amigos que tengas agregados, agregar más amigos,
+eliminarlos y ver sus perfiles.
+En la pestaña inventario podrás ver los items que hayas comprador en la tienda y podrás también
+deshacerte de los que ya no te gusten.
+Home
+Esta será una pagina estática usada para recibir a los usuarios y redirigirlos a otras vistas que
+puedan interesarles
+Saloon
+En el saloon habrá 3 funcionalidades:
+1. Chat común: podrás chatear con toda la gente que esté de forma simultánea en esa
+vista.
+2. Podrás crear una partida de blackjack eligiendo el número de jugadores, el nombre de
+la partida y, si quieres, una contraseña.
+3. Podrás buscar partidas de otras personas
+Reglas
+Al igual que home, es una páginas estática donde definimos las reglas de nuestro juego de blackjack
+Foro
+En la vista “foro” hay 5 temas: actualidad, general, noobs, noticias y pros. Podrás dejar comentarios en cada tema, y ver los escritos con anterioridad.
+Ranking
+En esta vista podrás medirte con el resto de jugadores y ver quién tiene más puntos.
+Hay 3 variantes de ranking:
+• Amigos
+• País
+• Global
+Compras
+En esta vista el usuario podrá ver los items disponibles para comprar. Los items tienen un título, descripción y precio. Al final no hemos implementado las imágenes, y sería algo a hacer a posteriori. Si eres administrador podrás eliminar y añadir nuevos items.
+Partida
+En la vista partida es donde los jugadores podrán poner a prueba sus habilidades de juego. Podrán hacer apuestas y ganar dinero con el que comprar más tarde items en la tienda.
+La vista consta de un log de los movimientos dentro de la partida, Un campo de texto con la mano que te ha tocado, los jugadores que hay con su respectivo dinero, El total de las apuestas realizadas (bote), un campo para introducer la apuesta deseada, y las opciones (en forma de botones) de pasar turno o de pedir otra carta.
+Configuración
+En esta vista el usuario podrá cambiar sus datos del perfil. Para ello tendrá siempre que confirmer los cambios introduciendo su contraseña.
+AdminConf
+En esta vista el administrador podrá borrar una cuenta ajena y crear otras.
+Footer
+El footer tendrá los autores de la web (Álvaro y Pablo) y tendrá un alto determinado para mejorar la apariencia de la página.
+Base de datos
+Hemos usado una base de datos relacional. Consiste en 9 tablas, y cuyo modelo de datos consta de 4 clases (Partida, Usuario, Item y ComentarioForo)
+El diagrama de la base de datos con sus relaciones aparece explicado en un pdf a parte.
 
 <h2>Comentarios al profesor</h2>
 
@@ -32,7 +105,8 @@ probar todas las funcionalidades desde cero.
 
 Detalla aquí tus vistas. Usa enlaces a localhost:8080/ (SIN nombre de proyecto; correspondientes a arrancar la aplicación en modo spring-boot desde STS) para enlazar cada vista.
 <ul>
-    <li><a href="localhost:8080/crearCuenta">vista principal</a> - descripción muy corta de la vista
+	<li><a href="localhost:8080/adminConf">adminConf</a> - Menú del administrador para desempeñar sus funciones como tal
+	<li><a href="localhost:8080/adminConf">configuracion</a> - Lugar donde el usuario puede modificar sus datos de perfil.	
     <li><a href="localhost:8080/foro">foro</a> - Foro de debate de los miembros de la web
     <li><a href="localhost:8080/home">home</a> - Pagina de bienvenida a la web
     <li><a href="localhost:8080/login">login</a> - Pantalla donde los usuario entran a la web
@@ -42,12 +116,11 @@ Detalla aquí tus vistas. Usa enlaces a localhost:8080/ (SIN nombre de proyecto;
     <li><a href="localhost:8080/ranking">ranking</a> - Ranking en funcion del dinero de los usuarios
     <li><a href="localhost:8080/reglas">reglas</a> - Pagina explicatoria de las reglas de los juegos implementados
     <li><a href="localhost:8080/saloon">saloon</a> - Punto de encuentro entre los jugadores para unirse a una partida
-    <li><a href="localhost:8080/tienda">tienda</a> - Lugar donde los usuarios pueden compar items
+    <li><a href="localhost:8080/tienda">tienda</a> - Lugar donde los usuarios pueden comprar items
+    
 </ul>
 
 <h2>Recursos</h2>
-
-Esto es un listado de todos los recursos externos utilizados (es decir: no escritos por los desarrolladors ni incluidos en la plantilla del profesor).
 
 <ul>
     <li><a href="localhost:8080/spring.jpg">imagen de primavera</a> (<a href="https://en.wikipedia.org/wiki/Spring_(season)#/media/File:Camino_entre_el_bosque_de_cerezos_en_flor.jpg">
@@ -59,8 +132,8 @@ Esto es un listado de todos los recursos externos utilizados (es decir: no escri
 
 <h2>Bibliografía</h2>
 
-<i>https://pixabay.com/es/tarjeta-de-p%C3%B3quer-ace-juego-casino-1738844/</i>
-<i>https://pixabay.com/es/jugar-tarjeta-de-juego-poker-593207/</i>
-<i>https://pixabay.com/es/tarjetas-blackjack-casino-1030852/</i>
+	<i>https://pixabay.com/es/tarjeta-de-p%C3%B3quer-ace-juego-casino-1738844/</i>
+	<i>https://pixabay.com/es/jugar-tarjeta-de-juego-poker-593207/</i>
+	<i>https://pixabay.com/es/tarjetas-blackjack-casino-1030852/</i>
 </body>
 </html>

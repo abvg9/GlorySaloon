@@ -30,11 +30,11 @@
 				</tr>
 			</thead>
 			<tbody>
-				<c:forEach items="${ranking}" var="r">
-
+				<c:forEach items="${ranking}" var="r" varStatus="loop">
+					
 					<tr>
 						<td><p style="text-align: center; vertical-align: middle;">
-								<strong>1</strong>
+								<strong>${loop.index+1}</strong>
 							</p></td>
 						<td><img class="img-thumbnail maxImgSize"
 							src="${imagen}${r.id}"> <strong>${r.login}</strong></td>

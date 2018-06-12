@@ -11,11 +11,6 @@
 
 
 	<c:if test="${fn:contains(user.roles, 'ADMIN')}">
-
-		
-
-
-
 		<h2>Eliminar Cuenta</h2>
 
 		<form role="form" action="/admin/eliminarCuenta" method="post"
