@@ -36,10 +36,11 @@
 		<div class="row">
 			<div class="col-md-3">
 
-				<form action="/user/verSaloon" method="get" id="verSaloon" class="
-					form-horizontal"
-					role="form">
-					<input type="hidden" name="${_csrf.parameterName}"value="${_csrf.token}" />
+				<form action="/user/verSaloon" method="get" id="verSaloon"
+					class="
+					form-horizontal" role="form">
+					<input type="hidden" name="${_csrf.parameterName}"
+						value="${_csrf.token}" />
 					<div style="text-align: center;">
 						<h2>Buscar partidas</h2>
 						<hr>
@@ -74,25 +75,6 @@
 						</div>
 					</div>
 				</form>
-
-
-
-
-
-				<%-- <div>
-					<form action="/user/verSaloon" method="get" id="verSaloon">
-
-						Buscara por el campo que rellenes mas arriba. El de abajo, si esta
-						rellenado, lo ignorará. <label for="nombrePar">Nombre<input
-							name="nombrePar" /></label> <select name="juego">
-							<option value="Pocker">Pocker</option>
-							<option value="Amigos">Amigos</option>
-						</select> <input type="hidden" name="${_csrf.parameterName}"
-							value="${_csrf.token}" />
-						<button type="submit" class="btn" form="verSaloon" value="Submit">Buscar
-							partidas</button>
-					</form>
-				</div> --%>
 			</div>
 			<div class="col-md-1"></div>
 			<div class="col-md-4">
@@ -153,15 +135,12 @@
 							</div>
 						</div>
 					</div>
-					<!-- <div class="row">
-						<input type="range" name="maxJugadores" min="2" max="7" step="1" value="2">
-						<output name="range1value" for="maxJugadores">2</output>
-					</div> -->
 					<div class="row">
 						<div class="col-md-6"></div>
 						<div class="col-md-6">
-							<input type="hidden" name="juego" value="BlackJack" />
-							<input type="hidden" name="${_csrf.parameterName}"value="${_csrf.token}" />
+							<input type="hidden" name="juego" value="BlackJack" /> <input
+								type="hidden" name="${_csrf.parameterName}"
+								value="${_csrf.token}" />
 							<button type="submit" class="btn btn-success" form="crearPartida"
 								value="Submit">
 								<i class="fa fa-user-plus"></i> Register
@@ -169,68 +148,29 @@
 						</div>
 					</div>
 				</form>
-
-				<!-- <form name="myform"
-					oninput="range1value.value = range1.valueAsNumber">
-					<input name="range1" type="range" step="1" min="0" max="4"
-						value="1">
-					<output name="range1value" for="range1">1</output>
-				</form> -->
-
-
-
-
-
-				<%-- <strong>Crear partida</strong>
-				<div>
-					<form action="/user/crearPartida" method="post" id="crearPartida">
-
-						<label for="nombrePar">Nombre<input name="nombrePar" /></label>
-						Contraseña(si la dejas en blaco, todo el mundo podra entrar)<label
-							for="cont"> <input type="password" name="cont" /></label> <label
-							for="maxJugadores">Maximo de jugadores<input
-							name="maxJugadores" /></label> <select name="juego">
-							<option value="BlackJack">BlackJack</option>
-							<option value="Poker">Poker</option>
-						</select> <input type="hidden" name="${_csrf.parameterName}"
-							value="${_csrf.token}" />
-						<button type="submit" class="btn" form="crearPartida"
-							value="Submit">Crear partida</button>
-					</form>
-				</div> --%>
 			</div>
 			<div class="fixedChat">
 				<textarea id="recibido" cols="40" rows="10"
 					style="background-color: rgba(255, 255, 255, 0.7);" disabled>
-	</textarea>
+				</textarea>
 				<form id="escrito">
 					<input id="texto" class="form-control"
 						placeholder="escribe algo y pulsa enter para enviarlo" />
 				</form>
 			</div>
 		</div>
-
-
-
-
-
-
-
 	</c:if>
-
-
-
-
-
-
 
 	<c:if test="${not empty saloon and empty user.partida}">
 		<c:forEach items="${saloon}" var="p">
-		Nombre<td>${p.nombre}</td>Juego<td>${p.juego}</td>
+			Nombre:&nbsp&nbsp<td>${p.nombre}</td>
+			<br>Juego:&nbsp&nbsp<td>${p.juego}</td>
+			<br>
 			<td>${fn:length(p.jugadores)}/${p.maxJugadores}</td>
 		
-		Jugadores
-		<c:forEach items="${p.jugadores}" var="j">
+			Jugadores
+			<c:forEach items="${p.jugadores}" var="j">
+				<br>
 				<td>${j.login}</td>
 			</c:forEach>
 
@@ -242,7 +182,7 @@
 						<input hidden="submit" name="id_p" value="${p.id}" />
 						<c:choose>
 							<c:when test="${p.pass == 'no'}">
-					        Sin contrasena 
+					        Sin contraseña 
 					    </c:when>
 							<c:otherwise>
 					        Con Contraseña	        
@@ -278,7 +218,8 @@
 
 		<div>
 			<form action="/user/empezarPartida" id=formEmpezar method="post">
-				<input type="hidden" name="${_csrf.parameterName}"value="${_csrf.token}" />
+				<input type="hidden" name="${_csrf.parameterName}"
+					value="${_csrf.token}" />
 			</form>
 		</div>
 

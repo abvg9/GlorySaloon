@@ -102,22 +102,6 @@
 			</c:if>
 		</div>
 	</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 </div>
 
 <%@ include file="../jspf/footer.jspf"%>

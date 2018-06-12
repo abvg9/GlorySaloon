@@ -157,7 +157,7 @@ public class AdminController {
 
 			uEliminado = Utils.usuarioExiste(entityManager, nombre, session, log);
 			if (uEliminado == null) {
-				return "perfil";
+				return "redirect:/perfil";
 			}
 
 		} else {

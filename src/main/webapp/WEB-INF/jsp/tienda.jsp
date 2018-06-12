@@ -22,8 +22,6 @@
 				<div class="col-lg-4 col-md-6 mb-4">
 					<form action="/admin/anadirItem" method="post">
 						<div class="card h-100">
-							<img class="card-img-top" src="http://placehold.it/700x400"
-								alt="">
 							<div class="card-body">
 								<label for="nombre"><input placeholder="Nombre"
 									name="nombre" /></label> <label for="precio"><input
@@ -47,7 +45,7 @@
 
 				<div class="col-lg-4 col-md-6 mb-4">
 					<div class="card h-100">
-						<img class="card-img-top" src="http://placehold.it/700x400" alt="">
+						
 						<div class="card-body">
 							<h4 class="card-title">${i.nombre}</h4>
 							<h5>${i.precio}</h5>
